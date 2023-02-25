@@ -1,0 +1,1 @@
+<span class="help-block error"><?= esc($error) ?></span>
