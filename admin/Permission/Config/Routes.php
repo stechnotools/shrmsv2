@@ -1,6 +1,6 @@
 <?php
 if(!isset($routes))
-{ 
+{
     $routes = \Config\Services::routes(true);
 }
 $routes->group(env('app.adminROUTE'), ['namespace' => 'Admin','filter' => 'login'], function($routes)
@@ -13,6 +13,3 @@ $routes->group(env('app.adminROUTE'), ['namespace' => 'Admin','filter' => 'login
     $routes->post('permission/delete','Permission\Controllers\Permission::delete');
 
 });
-
-?>
-    

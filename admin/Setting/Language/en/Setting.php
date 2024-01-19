@@ -11,7 +11,7 @@ return [
 
 // Entry
 'entry_title'                      => 'Site Title',
-'entry_tagline'=> 'Site Tagline',
+'entry_tagline'                     => 'Site Tagline',
 'entry_logo'                    	=> 'Site Logo',
 'entry_icon'=> 'Site Icon',
 'entry_meta_title'                 => 'Meta Title',
@@ -38,6 +38,7 @@ return [
 'entry_delay_members'             	=> 'Delay members Warning',
 
 'entry_site_homepage'              => 'Site Homepage',
+'entry_admin_theme_mode'           => 'Admin Theme Mode',
 'entry_front_theme'                => 'Front Theme',
 'entry_front_template'             => 'Front Default Layout',
 'entry_header_layout'              => 'Header Layout',

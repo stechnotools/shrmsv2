@@ -1,9 +1,5 @@
 <?php
 namespace Admin\Localisation\Config;
-if(!isset($routes))
-{
-    $routes = \Config\Services::routes(true);
-}
 $routes->group(env('app.adminROUTE'), ['namespace' => 'Admin','filter' => 'login'], function($routes)
 {
     $routes->add('country', 'Localisation\Controllers\Country::index');
@@ -15,19 +11,19 @@ $routes->group(env('app.adminROUTE'), ['namespace' => 'Admin','filter' => 'login
     $routes->get('country/delete/(:segment)',   'Localisation\Controllers\Country::delete/$1');
     $routes->post('country/delete','Localisation\Controllers\Country::delete');
 
+    $routes->add('state', 'Localisation\Controllers\State::index');
+    $routes->post('state/search','Localisation\Controllers\State::search');
+    $routes->add('state/city/','Localisation\Controllers\State::city/');
+    $routes->get('state/city/(:segment)','Localisation\Controllers\State::city/$1');
+    $routes->match(['get','post'],'state/add', 'Localisation\Controllers\State::add');
+    $routes->match(['get','post'],'state/edit/(:segment)', 'Localisation\Controllers\State::edit/$1');
+    $routes->get('state/delete/(:segment)',   'Localisation\Controllers\State::delete/$1');
+    $routes->post('state/delete','Localisation\Controllers\State::delete');
 
-    $routes->add('village', 'Localisation\Controllers\Village::index');
-    $routes->post('village/search','Localisation\Controllers\Village::search');
-    $routes->match(['get','post'],'village/add', 'Localisation\Controllers\Village::add');
-    $routes->match(['get','post'],'village/edit/(:segment)', 'Localisation\Controllers\Village::edit/$1');
-    $routes->get('village/delete/(:segment)',   'Localisation\Controllers\Village::delete/$1');
-    $routes->post('village/delete','Localisation\Controllers\Village::delete');
-
-    $routes->add('cluster', 'Localisation\Controllers\Cluster::index');
-    $routes->post('cluster/search','Localisation\Controllers\Cluster::search');
-    $routes->get('cluster/grampanchayat/(:segment)','Localisation\Controllers\Cluster::grampanchayat/$1');
-    $routes->match(['get','post'],'cluster/add', 'Localisation\Controllers\Cluster::add');
-    $routes->match(['get','post'],'cluster/edit/(:segment)', 'Localisation\Controllers\Cluster::edit/$1');
-    $routes->get('cluster/delete/(:segment)',   'Localisation\Controllers\Cluster::delete/$1');
-    $routes->post('cluster/delete','Localisation\Controllers\Cluster::delete');
+    $routes->add('city', 'Localisation\Controllers\City::index');
+    $routes->post('city/search','Localisation\Controllers\City::search');
+    $routes->match(['get','post'],'city/add', 'Localisation\Controllers\City::add');
+    $routes->match(['get','post'],'city/edit/(:segment)', 'Localisation\Controllers\City::edit/$1');
+    $routes->get('city/delete/(:segment)',   'Localisation\Controllers\City::delete/$1');
+    $routes->post('city/delete','Localisation\Controllers\City::delete');
 });

@@ -15,6 +15,7 @@ class Auth extends AdminController
         if($this->user->isLogged()){
             return redirect()->to(admin_url());
         }
+
         if($this->request->getMethod(1)=='POST'){
             $logged_in = $this->user->login(
                 $this->request->getPost('username'),
@@ -50,7 +51,7 @@ class Auth extends AdminController
         $data['button_reset'] 				= lang('Auth.button_reset');
 
 
-		
+
 		if($this->uri->getTotalSegments() > 0){
 			$route=uri_string();
 			$data['redirect'] = $route;

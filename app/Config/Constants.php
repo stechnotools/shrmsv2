@@ -94,7 +94,6 @@ define('EVENT_PRIORITY_NORMAL', 100);
 define('EVENT_PRIORITY_HIGH', 10);
 
 
-
 /*
 |--------------------------------------------------------------------------
 | AIO ADMIN Version
@@ -153,20 +152,29 @@ $packages = array(
     'datepicker' => array(
         'javascript' => array(
             'plugins/datetimepicker/moment.js',
-            'plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.js',
+            'plugins/bootstrap-datepicker/bootstrap-datepicker.min.js',
         ),
         'stylesheet' => array(
-            'plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css',
+            'plugins/bootstrap-datepicker/bootstrap-datepicker.css',
+
+        ),
+    ),
+    'daterangepicker' => array(
+        'javascript' => array(
+            'plugins/daterangepicker/moment.min.js',
+            'plugins/daterangepicker/daterangepicker.js',
+        ),
+        'stylesheet' => array(
+            'plugins/daterangepicker/daterangepicker.css',
 
         ),
     ),
     'select2' => array(
         'javascript' => array(
-            'plugins/select2/dist/js/select2.min.js',
+            'plugins/select2/select2.min.js',
         ),
         'stylesheet' => array(
-            'plugins/select2/dist/css/select2.css',
-            'plugins/select2/dist/css/select2-bootstrap.min.css',
+            'plugins/select2/select2.min.css'
         ),
     ),
     'ladda' => array(
@@ -233,12 +241,12 @@ $packages = array(
         ),
     ),
 
-    'toast' => array(
+    'toastr' => array(
         'javascript' => array(
-            'plugins/iziToast/dist/js/iziToast.min.js',
+            'plugins/toastr/toastr.min.js',
         ),
         'stylesheet' => array(
-            'plugins/iziToast/dist/css/iziToast.min.css',
+            'plugins/toastr/toastr.min.css',
         ),
     ),
 

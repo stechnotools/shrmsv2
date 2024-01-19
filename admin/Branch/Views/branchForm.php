@@ -4,15 +4,15 @@ $validation = \Config\Services::validation();
 <div class="row">
 	<div class="col-lg-12">
 		<div class="card">
-			<div class="card-header">
-				<h3 class="card-title float-left"><?php echo $text_form; ?></h3>
+			<div class="card-header py-2 text-white">
+				<h3 class="card-title float-left my-2"><?php echo $text_form; ?></h3>
 				<div class="panel-tools float-right">
-					<button type="submit" data-toggle="tooltip" title="<?php echo $button_save; ?>" class="btn btn-danger" form="form-branch"><i class="fa fa-save"></i></button>
-					<a href="<?php echo $cancel; ?>" data-toggle="tooltip" title="<?php echo $button_cancel; ?>" class="btn btn-primary"><i class="fa fa-reply"></i></a>
+					<button type="submit" data-toggle="tooltip" title="<?php echo $button_save; ?>" class="btn btn-danger btn-sm" form="form-branch"><i class="fa fa-save"></i></button>
+					<a href="<?php echo $cancel; ?>" data-toggle="tooltip" title="<?php echo $button_cancel; ?>" class="btn btn-primary btn-sm"><i class="fa fa-reply"></i></a>
 				</div>
 			</div>
 			<div class="card-body">
-				<?php echo form_open_multipart('',array('class' => 'form-horizontal', 'id' => 'form-branch','role'=>'form')); ?>
+				<?php echo form_open_multipart("",array('class' => 'form-horizontal', 'id' => 'form-branch','role'=>'form')); ?>
 				<ul class="nav nav-tabs tabs" role="tablist">
 					<li class="nav-item tab">
 						<a class="nav-link active" id="branch-tab" data-toggle="tab" href="#branch" role="tab" aria-controls="branch" aria-selected="false">
@@ -27,6 +27,18 @@ $validation = \Config\Services::validation();
 						</a>
 					</li>
 					<li class="nav-item tab">
+						<a class="nav-link" id="penalty-tab" data-toggle="tab" href="#penalty" role="tab" aria-controls="penalty" aria-selected="false">
+							<span class="d-block d-sm-none"><i class="fa fa-dashboard fa-lg"></i></span>
+							<span class="d-none d-sm-block">Penalty Setup</span>
+						</a>
+					</li>
+					<li class="nav-item tab">
+						<a class="nav-link" id="payroll-tab" data-toggle="tab" href="#payroll" role="tab" aria-controls="payroll" aria-selected="false">
+							<span class="d-block d-sm-none"><i class="fa fa-dashboard fa-lg"></i></span>
+							<span class="d-none d-sm-block">Payroll Setup</span>
+						</a>
+					</li>
+					<li class="nav-item tab">
 						<a class="nav-link" id="geofence-tab" data-toggle="tab" href="#geofence" role="tab" aria-controls="geofence" aria-selected="false">
 							<span class="d-block d-sm-none"><i class="fa fa-dashboard fa-lg"></i></span>
 							<span class="d-none d-sm-block">Branch Geofence</span>
@@ -38,7 +50,7 @@ $validation = \Config\Services::validation();
 						<div class="form-group row required">
 							<label class="col-md-2 control-label" for="input-firstname">Branch Name</label>
 							<div class="col-md-10">
-								<?php echo form_input(array('class'=>'form-control','name' => 'name', 'id' => 'firstname', 'placeholder'=>"name",'value' => set_value('name', $name))); ?>
+								<?php echo form_input(array('class'=>'form-control','name' => 'name', 'id' => 'input-name', 'placeholder'=>"name",'value' => set_value('name', $name))); ?>
 								<?php echo $validation->showError('name', 'aio_error'); ?>
 							</div>
 						</div>
@@ -46,14 +58,14 @@ $validation = \Config\Services::validation();
 							<label class="col-md-2 control-label" for="input-code">Branch Code</label>
 							<div class="col-md-10">
 								<?php echo form_input(array('class'=>'form-control','name' => 'code', 'id' => 'firstname', 'placeholder'=>"code",'value' => set_value('code', $code))); ?>
-								<?php echo $validation->showError('code', 'single'); ?>
+								<?php echo $validation->showError('code', 'aio_error'); ?>
 							</div>
 						</div>
 						<div class="form-group row required">
 							<label class="col-md-2 control-label" for="input-short">Short Name</label>
 							<div class="col-md-10">
 								<?php echo form_input(array('class'=>'form-control','name' => 'short', 'id' => 'input-short', 'placeholder'=>'short','value' => set_value('short', $short))); ?>
-								<?php echo $validation->showError('short', 'single'); ?>
+								<?php echo $validation->showError('short', 'aio_error'); ?>
 							</div>
 						</div>
 						<div class="form-group row required">
@@ -61,17 +73,11 @@ $validation = \Config\Services::validation();
 							<div class="col-md-10">
 								<textarea name="address" id="input-address" class="form-control" placeholder="Address"><?=$address?></textarea>
 							</div>
-						</div>		
-						<div class="form-group row required">
-							<label class="col-sm-2 control-label" for="input-phone">Email ID1</label>
-							<div class="col-md-10">
-								<?php echo form_input(array('class'=>'form-control','name' => 'email1', 'id' => 'input-email1', 'placeholder'=>'email','value' => set_value('email1', $email1))); ?>
-							</div>
 						</div>
 						<div class="form-group row required">
-							<label class="col-sm-2 control-label" for="input-phone">Email ID2</label>
+							<label class="col-sm-2 control-label" for="input-phone">Email ID</label>
 							<div class="col-md-10">
-								<?php echo form_input(array('class'=>'form-control','name' => 'email2', 'id' => 'input-email2', 'placeholder'=>'email','value' => set_value('email2', $email2))); ?>
+								<?php echo form_input(array('class'=>'form-control','name' => 'email', 'id' => 'input-email', 'placeholder'=>'email','value' => set_value('email', $email))); ?>
 							</div>
 						</div>
 						<div class="form-group row required">
@@ -128,7 +134,7 @@ $validation = \Config\Services::validation();
 										<?php echo form_input(array('class'=>'form-control timepicker','name' => 'envirnment[max_early_departue_duration]', 'id' => 'input-email1', 'placeholder'=>'','value' => set_value('max_early_departue_duration',isset($envirnment['max_early_departue_duration'])?$envirnment['max_early_departue_duration']:''))); ?>
 									</div>
 								</div>
-								
+
 								<div class="form-group row required">
 									<label class="col-sm-7 control-label" for="input-phone">7. Permissible Half calculation</label>
 									<div class="col-md-5">
@@ -171,8 +177,8 @@ $validation = \Config\Services::validation();
 										<?php echo form_input(array('class'=>'form-control timepicker','name' => 'envirnment[min_absent_hrs]', 'id' => 'input-email1', 'placeholder'=>'','value' => set_value('min_absent_hrs',isset($envirnment['min_absent_hrs'])?$envirnment['min_absent_hrs']:''))); ?>
 									</div>
 								</div>
-								
-								
+
+
 								<div class="form-group row required">
 									<label class="col-sm-7 control-label" for="input-phone">14. MaxWrkDuration</label>
 									<div class="col-md-5">
@@ -203,7 +209,7 @@ $validation = \Config\Services::validation();
 										<?php  echo form_dropdown('envirnment[auto_absent_allowed]', array('yes'=>'Yes','no'=>'No'), set_value('auto_absent_allowed',isset($envirnment['auto_absent_allowed'])?$envirnment['auto_absent_allowed']:''),array('class'=>'form-control select2','id' => 'auto_absent_allowed')); ?>
 									</div>
 								</div>
-								
+
 								<div class="form-group row required">
 									<label class="col-sm-7 control-label" for="input-phone">19. Status For MIS</label>
 									<div class="col-sm-5">
@@ -222,10 +228,10 @@ $validation = \Config\Services::validation();
 										<?php  echo form_dropdown('envirnment[hld_present]', array('yes'=>'Yes','no'=>'No'), set_value('hld_present',isset($envirnment['hld_present'])?$envirnment['hld_present']:''),array('class'=>'form-control select2','id' => 'hld_present')); ?>
 									</div>
 								</div>
-								
-								
-								
-								
+
+
+
+
 								<div class="form-group row required">
 									<label class="col-sm-7 control-label" for="input-phone">22. COF consider days of limit required user difine</label>
 									<div class="col-sm-5">
@@ -238,8 +244,8 @@ $validation = \Config\Services::validation();
 										<?php  echo form_dropdown('envirnment[nh_fh_ot]', array('yes'=>'Yes','no'=>'No'), set_value('nh_fh_ot',isset($envirnment['nh_fh_ot'])?$envirnment['nh_fh_ot']:''),array('class'=>'form-control select2','id' => 'nh_fh_ot')); ?>
 									</div>
 								</div>
-								
-								
+
+
 							</div>
 							<div class="col-6">
 								<h4>Payroll</h4>
@@ -256,7 +262,7 @@ $validation = \Config\Services::validation();
 										<?php  echo form_dropdown('envirnment[trans_month_close]', array('yes'=>'Yes','no'=>'No'), set_value('trans_month_close',isset($envirnment['trans_month_close'])?$envirnment['trans_month_close']:''),array('class'=>'form-control select2','id' => 'trans_month_close')); ?>
 									</div>
 								</div>
-								
+
 								<div class="form-group row required">
 									<label class="col-sm-7 control-label" for="input-phone">25. OT Round off</label>
 									<div class="col-md-5">
@@ -329,7 +335,7 @@ $validation = \Config\Services::validation();
 										<?php  echo form_dropdown('envirnment[cl_calendar]', array('yes'=>'Yes','no'=>'No'), set_value('cl_calendar',isset($envirnment['cl_calendar'])?$envirnment['cl_calendar']:''),array('class'=>'form-control select2','id' => 'cl_calendar')); ?>
 									</div>
 								</div>
-								
+
 								<div class="form-group row required">
 									<label class="col-sm-7 control-label" for="input-phone">37. SL is applicable from the date of joining. Allowed during probation period also</label>
 									<div class="col-md-5">
@@ -360,9 +366,230 @@ $validation = \Config\Services::validation();
 										<?php echo form_input(array('class'=>'form-control','name' => 'envirnment[salary_sl]', 'id' => 'salary_sl', 'placeholder'=>'','value' => set_value('salary_sl',isset($envirnment['salary_sl'])?$envirnment['salary_sl']:''))); ?>
 									</div>
 								</div>
+								<div class="form-group row required">
+									<label class="col-sm-7 control-label" for="input-phone">42. Absent Day Allow for Present</label>
+									<div class="col-md-5">
+										<?php echo form_input(array('class'=>'form-control','name' => 'envirnment[absent_allow]', 'id' => 'absent_allow', 'placeholder'=>'','value' => set_value('absent_allow',isset($envirnment['absent_allow'])?$envirnment['absent_allow']:''))); ?>
+									</div>
+								</div>
+								<div class="form-group row required">
+									<label class="col-sm-7 control-label" for="input-phone">43. Half Day Allow for Present(multiple of two half=1 day)</label>
+									<div class="col-md-5">
+										<?php echo form_input(array('class'=>'form-control','name' => 'envirnment[half_allow]', 'id' => 'half_allow', 'placeholder'=>'','value' => set_value('half_allow',isset($envirnment['half_allow'])?$envirnment['half_allow']:''))); ?>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
+					<div class="tab-pane" id="payroll" role="tabpanel" aria-labelledby="payroll-tab">
+						<div class="row">
+							<div class="col-6">
+								<h4>PF Details</h4>
+								<hr>
+								<div class="form-group row required">
+									<label class="col-sm-7 control-label" for="input-phone">Pension Fund (FPF) %</label>
+									<div class="col-md-5">
+										<?php echo form_input(array('class'=>'form-control','name' => 'envirnment[fpf]', 'id' => 'input-fpf', 'placeholder'=>'','value' => set_value('fpf', isset($envirnment['fpf'])?$envirnment['fpf']:''))); ?>
+									</div>
+								</div>
+								<div class="form-group row required">
+									<label class="col-sm-7 control-label" for="input-phone">Provided Fund (PF) %</label>
+									<div class="col-md-5">
+										<?php echo form_input(array('class'=>'form-control','name' => 'envirnment[pf]', 'id' => 'input-pf', 'placeholder'=>'','value' => set_value('pf', isset($envirnment['pf'])?$envirnment['pf']:''))); ?>
+									</div>
+								</div>
+								<div class="form-group row required">
+									<label class="col-sm-7 control-label" for="input-phone">PF Limit</label>
+									<div class="col-md-5">
+										<?php echo form_input(array('class'=>'form-control','name' => 'envirnment[pf_limit]', 'id' => 'input-pf_limit', 'placeholder'=>'','value' => set_value('pf_limit',isset($envirnment['pf_limit'])?$envirnment['pf_limit']:''))); ?>
+									</div>
+								</div>
+								<h4>ESI Details</h4>
+								<hr>
+								<div class="form-group row required">
+									<label class="col-sm-7 control-label" for="input-phone">ESI (Employee) %</label>
+									<div class="col-md-5">
+										<?php echo form_input(array('class'=>'form-control','name' => 'envirnment[esi_emp]', 'id' => 'input-esi_emp', 'placeholder'=>'','value' => set_value('esi_emp', isset($envirnment['esi_emp'])?$envirnment['esi_emp']:''))); ?>
+									</div>
+								</div>
+								<div class="form-group row required">
+									<label class="col-sm-7 control-label" for="input-phone">ESI (Employer) % </label>
+									<div class="col-md-5">
+										<?php echo form_input(array('class'=>'form-control','name' => 'envirnment[esi_empr]', 'id' => 'input-esi_empr', 'placeholder'=>'','value' => set_value('esi_empr', isset($envirnment['esi_empr'])?$envirnment['esi_empr']:''))); ?>
+									</div>
+								</div>
+								<div class="form-group row required">
+									<label class="col-sm-7 control-label" for="input-phone">ESI Limit</label>
+									<div class="col-md-5">
+										<?php echo form_input(array('class'=>'form-control','name' => 'envirnment[esi_limit]', 'id' => 'input-esi_limit', 'placeholder'=>'','value' => set_value('esi_limit',isset($envirnment['esi_limit'])?$envirnment['esi_limit']:''))); ?>
+									</div>
+								</div>
+								<div class="form-group row required">
+									<label class="col-sm-7 control-label" for="input-phone">Deduct ESI on OT</label>
+									<div class="col-md-5">
+										<?php  echo form_dropdown('envirnment[deduct_esi_ot]', array('yes'=>'Yes','no'=>'No'), set_value('deduct_esi_ot',isset($envirnment['deduct_esi_ot'])?$envirnment['deduct_esi_ot']:''),array('class'=>'form-control select2','id' => 'deduct_esi_ot')); ?>
+									</div>
+								</div>
+								<div class="form-group row required">
+									<label class="col-sm-7 control-label" for="input-phone">Show OT Values</label>
+									<div class="col-md-5">
+										<?php  echo form_dropdown('envirnment[show_ot]', array('yes'=>'Yes','no'=>'No'), set_value('show_ot',isset($envirnment['show_ot'])?$envirnment['show_ot']:''),array('class'=>'form-control select2','id' => 'show_ot')); ?>
+									</div>
+								</div>
+
+								<h4>Bonus Details</h4>
+								<hr>
+								<div class="form-group row required">
+									<label class="col-sm-7 control-label" for="input-phone">Bonus Applicable upto limit</label>
+									<div class="col-md-5">
+										<?php echo form_input(array('class'=>'form-control','name' => 'envirnment[bonus_limit]', 'id' => 'input-bonus_limit', 'placeholder'=>'','value' => set_value('bonus_limit',isset($envirnment['bonus_limit'])?$envirnment['bonus_limit']:''))); ?>
+									</div>
+								</div>
+								<div class="form-group row required">
+									<label class="col-sm-7 control-label" for="input-phone">Bonus Rate</label>
+									<div class="col-md-5">
+										<?php echo form_input(array('class'=>'form-control','name' => 'envirnment[bonus_rate]', 'id' => 'input-bonus_rate', 'placeholder'=>'','value' => set_value('bonus_rate',isset($envirnment['bonus_rate'])?$envirnment['bonus_rate']:''))); ?>
+									</div>
+								</div>
+								<div class="form-group row required">
+									<label class="col-sm-7 control-label" for="input-phone">Bonus Max Payble Limit</label>
+									<div class="col-md-5">
+										<?php echo form_input(array('class'=>'form-control','name' => 'envirnment[bonus_max_limit]', 'id' => 'input-bonus_max_limit', 'placeholder'=>'','value' => set_value('bonus_max_limit',isset($envirnment['bonus_max_limit'])?$envirnment['bonus_max_limit']:''))); ?>
+									</div>
+								</div>
+
+							</div>
+							<div class="col-6">
+								<h4>Exgratia</h4>
+								<hr>
+								<div class="form-group row required">
+									<label class="col-sm-7 control-label" for="input-phone">Exgratia Rate</label>
+									<div class="col-md-5">
+										<?php echo form_input(array('class'=>'form-control','name' => 'envirnment[exgratia_rate]', 'id' => 'input-exgratia_rate', 'placeholder'=>'','value' => set_value('exgratia_rate',isset($envirnment['exgratia_rate'])?$envirnment['exgratia_rate']:''))); ?>
+									</div>
+								</div>
+								<div class="form-group row required">
+									<label class="col-sm-7 control-label" for="input-phone">Exgratia Max Payble Limit</label>
+									<div class="col-md-5">
+										<?php echo form_input(array('class'=>'form-control','name' => 'envirnment[exgratia_limit]', 'id' => 'input-exgratia_limit', 'placeholder'=>'','value' => set_value('exgratia_limit',isset($envirnment['exgratia_limit'])?$envirnment['exgratia_limit']:''))); ?>
+									</div>
+								</div>
+								<h4>Other Details</h4>
+								<hr>
+								<div class="form-group row required">
+									<label class="col-sm-7 control-label" for="input-phone">Calculate LTA</label>
+									<div class="col-md-5">
+										<?php  echo form_dropdown('envirnment[lta]', array('yes'=>'Yes','no'=>'No'), set_value('lta',isset($envirnment['lta'])?$envirnment['lta']:''),array('class'=>'form-control select2','id' => 'lta')); ?>
+									</div>
+								</div>
+								<div class="form-group row required">
+									<label class="col-sm-7 control-label" for="input-phone">Calculate LIC Gratuity</label>
+									<div class="col-md-5">
+										<?php  echo form_dropdown('envirnment[lic]', array('yes'=>'Yes','no'=>'No'), set_value('lic',isset($envirnment['lic'])?$envirnment['lic']:''),array('class'=>'form-control select2','id' => 'lic')); ?>
+									</div>
+								</div>
+								<div class="form-group row required">
+									<label class="col-sm-7 control-label" for="input-phone">No of Months for Gratuity Period</label>
+									<div class="col-md-5">
+										<?php echo form_input(array('class'=>'form-control','name' => 'envirnment[gratuity_period]', 'id' => 'input-gratuity_period', 'placeholder'=>'','value' => set_value('gratuity_period',isset($envirnment['gratuity_period'])?$envirnment['gratuity_period']:''))); ?>
+									</div>
+								</div>
+								<div class="form-group row required">
+									<label class="col-sm-7 control-label" for="input-phone">Professional Tax</label>
+									<div class="col-md-5">
+										<?php  echo form_dropdown('envirnment[pt]', array('yes'=>'Yes','no'=>'No'), set_value('pt',isset($envirnment['pt'])?$envirnment['pt']:''),array('class'=>'form-control select2','id' => 'pt')); ?>
+									</div>
+								</div>
+								<div class="form-group row required">
+									<label class="col-sm-7 control-label" for="input-phone">Print Leave Balance on Pay Slip</label>
+									<div class="col-md-5">
+										<?php  echo form_dropdown('envirnment[print_leave]', array('yes'=>'Yes','no'=>'No'), set_value('print_leave',isset($envirnment['print_leave'])?$envirnment['print_leave']:''),array('class'=>'form-control select2','id' => 'print_leave')); ?>
+									</div>
+								</div>
+								<div class="form-group row required">
+									<label class="col-sm-7 control-label" for="input-phone">Print Salary Arrear on Pay slip</label>
+									<div class="col-md-5">
+										<?php  echo form_dropdown('envirnment[print_arrear]', array('yes'=>'Yes','no'=>'No'), set_value('print_arrear',isset($envirnment['print_arrear'])?$envirnment['print_arrear']:''),array('class'=>'form-control select2','id' => 'print_arrear')); ?>
+									</div>
+								</div>
+								<div class="form-group row required">
+									<label class="col-sm-7 control-label" for="input-phone">Do you Print Full & Final settlement employees in pay slip and salary register</label>
+									<div class="col-md-5">
+										<?php  echo form_dropdown('envirnment[print_full_final]', array('yes'=>'Yes','no'=>'No'), set_value('print_full_final',isset($envirnment['print_full_final'])?$envirnment['print_full_final']:''),array('class'=>'form-control select2','id' => 'print_full_final')); ?>
+									</div>
+								</div>
+								<div class="form-group row required">
+									<label class="col-sm-7 control-label" for="input-phone">Salary Slip Footer</label>
+									<div class="col-md-5">
+										<?php echo form_input(array('class'=>'form-control','name' => 'envirnment[salary_footer]', 'id' => 'input-salary_footer', 'placeholder'=>'','value' => set_value('salary_footer',isset($envirnment['salary_footer'])?$envirnment['salary_footer']:''))); ?>
+									</div>
+								</div>
+								<div class="form-group row required">
+									<label class="col-sm-7 control-label" for="input-phone">Mode of Salary</label>
+									<div class="col-md-5">
+										<?php  echo form_dropdown('envirnment[salary_mode]', array('yes'=>'Yes','no'=>'No'), set_value('salary_mode',isset($envirnment['salary_mode'])?$envirnment['salary_mode']:''),array('class'=>'form-control select2','id' => 'salary_mode')); ?>
+									</div>
+								</div>
+								<div class="form-group row required">
+									<label class="col-sm-7 control-label" for="input-phone">Line / Page</label>
+									<div class="col-md-5">
+										<?php echo form_input(array('class'=>'form-control','name' => 'envirnment[line_page]', 'id' => 'input-line_page', 'placeholder'=>'','value' => set_value('line_page',isset($envirnment['line_page'])?$envirnment['line_page']:''))); ?>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+					<div class="tab-pane" id="penalty" role="tabpanel" aria-labelledby="penalty-tab">
+						<table id="penalty_configs" class="table table-striped table-bordered table-hover">
+							<thead>
+								<tr class="">
+									<th class="text-left">Type</th>
+									<th class="text-left">Rule Name</th>
+									<th class="text-left">Absent Days</th>
+									<th class="text-left">Penalty Day</th>
+									<th class="text-right">Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php $pconfig_row = 0; ?>
+								<?php if(isset($envirnment['penalty_config'])) foreach ($envirnment['penalty_config'] as $penalty_config) { ?>
+								<tr id="pconfig-row<?php echo $pconfig_row; ?>">
+									<td class="text-left">
+										<select name="envirnment[penalty_config][<?php echo $pconfig_row; ?>][rule_type]" class="form-control select2">
+										<?php foreach($rule_types as $key=>$rule_type){
+											if($key==$penalty_config['rule_type']){?>
+											<option value="<?php echo $key ;?>" selected="selected"><?php echo $rule_type;?></option>
+											<?php } else {?>
+											<option value="<?php echo $key ;?>"><?php echo $rule_type ;?></option>
+											<?}?>
+										<?}?>
+										</select>
+									</td>
+									<td class="text-left">
+										<input type="text" name="envirnment[penalty_config][<?php echo $pconfig_row; ?>][rule_name]" value="<?php echo  $penalty_config['rule_name']; ?>" placeholder="Rule Name" class="form-control" />
+									</td>
+									<td class="text-left">
+										<input type="text" name="envirnment[penalty_config][<?php echo $pconfig_row; ?>][absent_days]" value="<?php echo  $penalty_config['absent_days']; ?>" placeholder="Absent Days" class="form-control" />
+									</td>
+									<td class="text-left">
+										<input type="text" name="envirnment[penalty_config][<?php echo $pconfig_row; ?>][penalty_days]" value="<?php echo  $penalty_config['penalty_days']; ?>" placeholder="Penalty Days" class="form-control" />
+									</td>
+
+									<td class="text-right"><button type="button" onclick="$('#pconfig-row<?php echo $pconfig_row; ?>, .tooltip').remove();" data-toggle="tooltip" title="Remove" class="btn btn-danger"><i class="fa fa-minus"></i></button></td>
+								</tr>
+								<?php $pconfig_row++; ?>
+								<?php } ?>
+							</tbody>
+							<tfoot>
+								<tr>
+									<td colspan="4"></td>
+									<td class="text-right"><button type="button" onclick="addPenalty();" data-toggle="tooltip" title="Penalty Add" class="btn btn-primary"><i class="fa fa-plus"></i></button></td>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+
 					<div class="tab-pane" id="geofence" role="tabpanel" aria-labelledby="geofence-tab">
 						<div class="row">
 							<div class="col-3">
@@ -398,7 +625,7 @@ $validation = \Config\Services::validation();
 <?php js_start(); ?>
 <script type="text/javascript"><!--
 var all_overlays = [];
-var coordinates	=	[];	
+var coordinates	=	[];
 var polygons = [];
 var polylines = [];
 var map;
@@ -417,11 +644,11 @@ function initialize() {
    });
     var input = document.getElementById('oaddress');
     //map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-    
+
 	var geocoder = new google.maps.Geocoder();
     var autocomplete = new google.maps.places.Autocomplete(input);
     autocomplete.bindTo('bounds', map);
-    var infowindow = new google.maps.InfoWindow();   
+    var infowindow = new google.maps.InfoWindow();
     autocomplete.addListener('place_changed', function() {
         infowindow.close();
         marker.setVisible(false);
@@ -430,7 +657,7 @@ function initialize() {
             window.alert("Autocomplete's returned place contains no geometry");
             return;
         }
-  
+
         // If the place has a geometry, then present it on a map.
         if (place.geometry.viewport) {
             map.fitBounds(place.geometry.viewport);
@@ -438,20 +665,20 @@ function initialize() {
             map.setCenter(place.geometry.location);
             map.setZoom(17);
         }
-       
+
         marker.setPosition(place.geometry.location);
-        marker.setVisible(true);          
-    
+        marker.setVisible(true);
+
         bindDataToForm(place.formatted_address,place.geometry.location.lat(),place.geometry.location.lng());
         infowindow.setContent(place.formatted_address);
         infowindow.open(map, marker);
-       
+
     });
-    // this function will work on marker move event into map 
+    // this function will work on marker move event into map
     google.maps.event.addListener(marker, 'dragend', function() {
         geocoder.geocode({'latLng': marker.getPosition()}, function(results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
-          if (results[0]) {        
+          if (results[0]) {
               bindDataToForm(results[0].formatted_address,marker.getPosition().lat(),marker.getPosition().lng());
               infowindow.setContent(results[0].formatted_address);
               infowindow.open(map, marker);
@@ -460,7 +687,7 @@ function initialize() {
         });
     });
 	var selectedShape;
-	
+
 	var drawingManager = new google.maps.drawing.DrawingManager({
 		drawingMode: google.maps.drawing.OverlayType.POLYGON,
 		drawingControl: true,
@@ -470,7 +697,7 @@ function initialize() {
 				google.maps.drawing.OverlayType.POLYGON,
 			]
 		},
-		
+
 		polygonOptions: {
 			clickable: true,
 			draggable: true,
@@ -479,8 +706,8 @@ function initialize() {
 			fillOpacity: 1,
 
 		},
-		
-		
+
+
 	});
 
 	function clearSelection() {
@@ -496,17 +723,17 @@ function initialize() {
 		console.log(shape);
 		shape.setEditable(true);
 		ctype=shape.type;
-		
-		vertices = selectedShape.getPath(); // MVCArray  
-		console.log('v',vertices);	
+
+		vertices = selectedShape.getPath(); // MVCArray
+		console.log('v',vertices);
 		var pointsArray = [];
-		 //list of polyline points  
+		 //list of polyline points
 		for (var i =0; i < vertices.getLength(); i++) {
 			var xy = vertices.getAt(i); //LatLang for a polyline
 			var item = { "lat" : xy.lat(), "lng":xy.lng()};
 			pointsArray.push(item);
 		}
-		
+
 		htmlStr = "";
 		var checkLast = vertices.getLength() - 1;
 		for (var i = 0; i < vertices.getLength(); i++) {
@@ -521,13 +748,13 @@ function initialize() {
 		}
 		document.getElementById('boundary').innerHTML = htmlStr;
 		console.log(pointsArray);
-		
+
 		cpoints={};
 		cpoints[ctype] = pointsArray;
-		
+
 		coordinates.push(cpoints);
 		document.getElementById('boundary_point').value = JSON.stringify(coordinates);
-		
+
 		google.maps.event.addListener(selectedShape.getPath(), 'insert_at', getPolygonCoords(shape));
 		google.maps.event.addListener(selectedShape.getPath(), 'set_at', getPolygonCoords(shape));
 	}
@@ -544,7 +771,7 @@ function initialize() {
 		}
 		all_overlays = [];
 	}
-	
+
 	function CenterControl(controlDiv, map) {
 
 		// Set CSS for the control border.
@@ -584,7 +811,7 @@ function initialize() {
 			console.log(newShape.getPath().getAt(i).toUrlValue(6));
 		}
 	};
-	
+
 	google.maps.event.addListener(drawingManager, 'polygoncomplete', function(event) {
 
 		event.getPath().getLength();
@@ -618,8 +845,8 @@ function initialize() {
 			setSelection(newShape);
 		}
 	});
-	
-	
+
+
 
 
 	var centerControlDiv = document.createElement('div');
@@ -627,16 +854,16 @@ function initialize() {
 
 	centerControlDiv.index = 1;
 	map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(centerControlDiv);
-	
-	
-	
+
+
+
 	var bounds = new google.maps.LatLngBounds();
 
 	var geofences=<?php echo json_encode($points);?>;
 	console.log(geofences);
-	
+
 	arr = [];
-	
+
 	for (var j = 0; j < geofences.length; j++) {
 	  arr.push(new google.maps.LatLng(
 		parseFloat(geofences[j][0]),
@@ -645,7 +872,7 @@ function initialize() {
 
 	  bounds.extend(arr[arr.length - 1])
 	}
-		
+
 	polygons.push(new google.maps.Polygon({
 	  paths: arr,
 	  strokeColor: '#FF0000',
@@ -657,10 +884,10 @@ function initialize() {
 	}));
 	polygons[polygons.length - 1].setMap(map);
 
-	  
+
 	  // });
 	map.fitBounds(bounds);
-	
+
 	//google.maps.event.addListener(polygons.getPath(), "insert_at", getPolygonCoords);
     //google.maps.event.addListener(polygons.getPath(), "set_at", getPolygonCoords);
 }
@@ -670,7 +897,7 @@ function bindDataToForm(address,lat,lng){
 }
 
 $(function(){
-	$('a[href="#geofence"]').one('click', function() { 
+	$('a[href="#geofence"]').one('click', function() {
 		initialize();
 	});
 })
@@ -680,6 +907,36 @@ $(function(){
 
 
 
-	
+
 //--></script>
+<script type="text/javascript"><!--
+var pconfig_row = <?php echo $pconfig_row; ?>;
+
+function addPenalty() {
+
+   html = '<tr id="pconfig-row' +pconfig_row + '">';
+	html += '  	<td class="text-left">';
+	html += '		<select name="envirnment[penalty_config][' + pconfig_row + '][rule_type]" class="form-control select2">';
+					<?php foreach($rule_types as $key=>$rule_type){?>
+	html += '			<option value="<?php echo $key ;?>"><?php echo $rule_type;?></option>';
+					<?}?>
+	html += '		</select>';
+	html += '	</td>';
+	html += '  	<td class="text-left">';
+	html += '		<input type="text" name="envirnment[penalty_config][' + pconfig_row + '][rule_name]" value="" placeholder="Rule name" class="form-control" />';
+	html += '	</td>';
+	html += '	<td class="text-left">';
+	html += '		<input type="text" name="envirnment[penalty_config][' + pconfig_row + '][absent_days]" value="" placeholder="Absent Days" class="form-control" />';
+	html += '	</td>';
+	html += '	<td class="text-left">';
+	html += '		<input type="text" name="envirnment[penalty_config][' + pconfig_row + '][penalty_days]" value="" placeholder="Penalty Days" class="form-control" />';
+	html += '	</td>';
+	html += '  	<td class="text-right"><button type="button" onclick="$(\'#pconfig-row' + pconfig_row  + '\').remove();" data-toggle="tooltip" title="Remove" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
+	html += '</tr>';
+
+	$('#penalty_configs tbody').append(html);
+	pconfig_row++;
+}
+//--></script>
+
 <?php js_end(); ?>

@@ -1,152 +1,147 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-class State extends Admin_Controller {
+<?php
+namespace Admin\Localisation\Controllers;
+use App\Controllers\AdminController;
+use Admin\Localisation\Models\StateModel;
+use Admin\Localisation\Models\ClusterModel;
+use Admin\Localisation\Models\CountryModel;
+use Admin\Localisation\Models\DistrictModel;
+use Admin\Localisation\Models\GrampanchayatModel;
+
+class State extends AdminController{
 	private $error = array();
-	
-	function __construct(){
-      parent::__construct();
-		$this->load->model('state_model');		
+	private $stateModel;
+
+	public function __construct(){
+		$this->stateModel=new StateModel();
 	}
+
 	public function index(){
-      $this->lang->load('state');
-		$this->template->set_meta_title($this->lang->line('heading_title'));
-		$this->getListForm();  
+		$this->template->set_meta_title(lang('State.heading_title'));
+		return $this->getList();
 	}
-	protected function getListForm() {
-		
+
+	public function add(){
+
+		$this->template->set_meta_title(lang('State.heading_title'));
+
+		if ($this->request->getMethod(1) === 'POST' && $this->validateForm()){
+
+			//$code=$this->stateModel->getStateCode($this->request->getPost());
+			//$_POST['code']=$code;
+
+			$id=$this->stateModel->insert($this->request->getPost());
+
+			$this->session->setFlashdata('message', 'State Saved Successfully.');
+
+			return redirect()->to(base_url('admin/state'));
+		}
+		$this->getForm();
+	}
+
+	public function edit(){
+
+		$this->template->set_meta_title(lang('State.heading_title'));
+
+		if ($this->request->getMethod(1) === 'POST' && $this->validateForm()){
+			$id=$this->uri->getSegment(4);
+
+			$this->stateModel->update($id,$this->request->getPost());
+
+			$this->session->setFlashdata('message', 'State Updated Successfully.');
+
+			return redirect()->to(base_url('admin/state'));
+		}
+		$this->getForm();
+	}
+
+	public function delete(){
+		if ($this->request->getPost('selected')){
+			$selected = $this->request->getPost('selected');
+		}else{
+			$selected = (array) $this->uri->getSegment(4);
+		}
+		$this->stateModel->delete($selected);
+
+		$this->session->setFlashdata('message', 'State deleted Successfully.');
+		return redirect()->to(base_url('admin/state'));
+	}
+
+	protected function getList() {
+
 		$data['breadcrumbs'] = array();
 		$data['breadcrumbs'][] = array(
-			'text' => "state",
-			'href' => admin_url('localisation/state')
+			'text' => lang('State.heading_title'),
+			'href' => admin_url('state')
 		);
-		/*form*/
+
 		$this->template->add_package(array('datatable','select2'),true);
-      
-		$data['heading_title'] 	= $this->lang->line('heading_title');
-		
-		$data['text_form'] = $this->uri->segment(5) ? $this->lang->line('text_edit') : $this->lang->line('text_add');
-		$data['button_save'] = $this->lang->line('button_save');
-		$data['button_cancel'] = $this->lang->line('button_cancel');
-		
-		if (!$this->uri->segment(4)) {
-			$data['action'] = admin_url("localisation/state/add");
-		} else {
-			$data['action'] = admin_url("localisation/state/edit/".$this->uri->segment(5));
-		}
-		
-		if(isset($this->error['warning']))
-		{
+
+		$data['add'] = admin_url('state/add');
+		$data['delete'] = admin_url('state/delete');
+		$data['datatable_url'] = admin_url('state/search');
+
+		$data['heading_title'] = lang('State.heading_title');
+
+		$data['text_list'] = lang('State.text_list');
+		$data['text_no_results'] = lang('State.text_no_results');
+		$data['text_confirm'] = lang('State.text_confirm');
+
+		$data['button_add'] = lang('State.button_add');
+		$data['button_edit'] = lang('State.button_edit');
+		$data['button_delete'] = lang('State.button_delete');
+
+		if(isset($this->error['warning'])){
 			$data['error'] 	= $this->error['warning'];
 		}
-		
-		$data['cancel'] = admin_url('localisation/state');
 
-		if ($this->uri->segment(5) && ($this->input->server('REQUEST_METHOD') != 'POST')) {
-			$state_info = $this->state_model->getState($this->uri->segment(5));
-		}
-		
-		if ($this->input->post('name')) {
-			$data['name'] = $this->input->post('name');
-		} elseif (!empty($state_info)) {
-			$data['name'] = $state_info->name;
-		} else {
-			$data['name'] = '';
-		}
-		
-		$this->load->model('localisation/country_model');
-		$data['countries'] = $this->country_model->getCountries();
-		
-		if ($this->input->post('country_id')) {
-			$data['country_id'] = $this->input->post('country_id');
-		} elseif (!empty($state_info)) {
-			$data['country_id'] = $state_info->country_id;
-		} else {
-			$data['country_id'] = '';
-		}
-		
-		
-		if ($this->input->post('code')) {
-			$data['code'] = $this->input->post('code');
-		} elseif (!empty($state_info)) {
-			$data['code'] = $state_info->code;
-		} else {
-			$data['code'] = '';
-		}
-		
-		if ($this->input->post('status')) {
-			$data['status'] = $this->input->post('status');
-		} elseif (!empty($state_info)) {
-			$data['status'] = $state_info->status;
-		} else {
-			$data['status'] = '';
-		}
-		
-		/*list*/
-		$data['delete'] = admin_url('localisation/state/delete');
-		$data['datatable_url'] = admin_url('localisation/state/search');
-
-		
-		$data['text_list'] = $this->lang->line('text_list');
-		$data['text_no_results'] = $this->lang->line('text_no_results');
-		$data['text_confirm'] = $this->lang->line('text_confirm');
-
-		$data['button_edit'] = $this->lang->line('button_edit');
-		$data['button_delete'] = $this->lang->line('button_delete');
-
-
-		if ($this->input->post('selected')) {
-			$data['selected'] = (array)$this->input->post('selected');
+		if ($this->request->getPost('selected')) {
+			$data['selected'] = (array)$this->request->getPost('selected');
 		} else {
 			$data['selected'] = array();
 		}
 
-		$this->template->view('state_list_form', $data);
+		$coutryModel=new CountryModel();
+		$data['countries'] = $coutryModel->getAll();
+
+
+
+		return $this->template->view('Admin\Localisation\Views\state', $data);
 	}
-	
+
 	public function search() {
 		$requestData= $_REQUEST;
-		
-		$columns = array( 
-			0 => '',
-			1 => 's.name',
-			2 => 's.code',
-			3 => 'c.name',
-			4 => 's.status'
-		);
-		
-		$totalData = $this->state_model->getTotalState();
-		
+		$totalData = $this->stateModel->getTotals();
 		$totalFiltered = $totalData;
-		
+
 		$filter_data = array(
 			'filter_search' => $requestData['search']['value'],
+			'filter_district' => $requestData['district'],
+			'filter_state' => $requestData['state'],
 			'order'  		 => $requestData['order'][0]['dir'],
-			'sort' 			 => $columns[$requestData['order'][0]['column']],
+			'sort' 			 => $requestData['order'][0]['column'],
 			'start' 			 => $requestData['start'],
 			'limit' 			 => $requestData['length']
 		);
-		$totalFiltered = $this->state_model->getTotalState($filter_data);
-			
-		$filteredData = $this->state_model->getStates($filter_data);
-		//printr($filteredData);
-		
+		$totalFiltered = $this->stateModel->getTotals($filter_data);
+
+		$filteredData = $this->stateModel->getAll($filter_data);
+
 		$datatable=array();
 		foreach($filteredData as $result) {
 
 			$action  = '<div class="btn-group btn-group-sm pull-right">';
-			$action .= 		'<a class="btn btn-sm btn-primary" href="'.admin_url('localisation/state/edit/'.$result->id).'"><i class="fa fa-pencil"></i></a>';
-			$action .=		'<a class="btn-sm btn btn-danger btn-remove" href="'.admin_url('localisation/state/delete/'.$result->id).'" onclick="return confirm(\'Are you sure?\') ? true : false;"><i class="fa fa-trash-o"></i></a>';
+			$action .= 		'<a class="btn btn-sm btn-primary" href="'.admin_url('state/edit/'.$result->id).'"><i class="fa fa-pencil"></i></a>';
+			$action .=		'<a class="btn-sm btn btn-danger btn-remove" href="'.admin_url('state/delete/'.$result->id).'" onclick="return confirm(\'Are you sure?\') ? true : false;"><i class="fa fa-trash-o"></i></a>';
 			$action .= '</div>';
-			
-			
+
 			$datatable[]=array(
 				'<input type="checkbox" name="selected[]" value="'.$result->id.'" />',
-				$result->name,
 				$result->code,
-				$result->country,
-				$result->status ? 'Enable':'Disable',
+				$result->name,
+				$result->district,
 				$action
 			);
-	
+
 		}
 		//printr($datatable);
 		$json_data = array(
@@ -156,98 +151,112 @@ class State extends Admin_Controller {
 			"data"            => $datatable
 		);
 
-		$this->output
-		->set_content_type('application/json')
-		->set_output(json_encode($json_data));  // send data as json format
+		return $this->response->setContentType('application/json')
+								->setJSON($json_data);
+
 	}
-	
-	public function add(){
-		$this->lang->load('state');
-		$this->template->set_meta_title($this->lang->line('heading_title'));
-		
-		if ($this->input->server('REQUEST_METHOD') === 'POST' && $this->validateForm()){	
-			
-			
-			$state_id=$this->state_model->addState($this->input->post());
-			
-			$this->session->set_flashdata('message', 'state Saved Successfully.');
-			redirect(ADMIN_PATH."/localisation/state");
-		}
-		$this->getListForm();
-	}
-	
-	public function edit(){
-		
-		$this->lang->load('state');
-		$this->template->set_meta_title($this->lang->line('heading_title'));
-		
-		if ($this->input->server('REQUEST_METHOD') === 'POST' && $this->validateForm()){	
-			$state_id=$this->uri->segment(5);
-			
-			
-			$userid=$this->state_model->editState($state_id,$this->input->post());
-			
-			$this->session->set_flashdata('message', 'state Updated Successfully.');
-			redirect(ADMIN_PATH."/localisation/state");
-		}
-		$this->getListForm();
-	}
-	
-	public function delete(){
-		if ($this->input->post('selected')){
-         $selected = $this->input->post('selected');
-      }else{
-         $selected = (array) $this->uri->segment(5);
-       }
-		$this->state_model->deleteState($selected);
-		$this->session->set_flashdata('message', 'state deleted Successfully.');
-		redirect(ADMIN_PATH."/localisation/state");
-	}
-	
-	protected function validateForm() {
-		$state_id=$this->uri->segment(3);
-		
-		$rules=array(
-			'state_name' => array(
-				'field' => 'name', 
-				'label' => 'State Name', 
-				'rules' => 'trim|required|max_length[100]'
-			),
-			'state_country_id' => array(
-				'field' => 'country_id', 
-				'label' => 'Country Name', 
-				'rules' => 'trim|required|max_length[100]'
-			),
+
+	protected function getForm(){
+
+		$this->template->add_package(array('colorbox'),true);
+
+		$data['breadcrumbs'] = array();
+		$data['breadcrumbs'][] = array(
+			'text' => lang('State.heading_title'),
+			'href' => admin_url('state')
 		);
-		$this->form_validation->set_rules($rules);
-		if ($this->form_validation->run($this) == TRUE)
-		{
+
+		//printr($_SESSION);
+		$_SESSION['isLoggedIn'] = true;
+
+		$data['heading_title'] 	= lang('State.heading_title');
+		$data['text_form'] = $this->uri->getSegment(3) ? "State Edit" : "State Add";
+		$data['cancel'] = admin_url('state');
+
+		if(isset($this->error['warning'])){
+			$data['error'] 	= $this->error['warning'];
+		}
+
+		if ($this->uri->getSegment(4) && ($this->request->getMethod(true) != 'POST')) {
+			$state_info = $this->stateModel->find($this->uri->getSegment(4));
+		}
+
+		foreach($this->stateModel->getFieldNames('state') as $field) {
+			if($this->request->getPost($field)) {
+				$data[$field] = $this->request->getPost($field);
+			} else if(isset($state_info->{$field}) && $state_info->{$field}) {
+				$data[$field] = html_entity_decode($state_info->{$field},ENT_QUOTES, 'UTF-8');
+			} else {
+				$data[$field] = '';
+			}
+		}
+
+		$districtModel=new DistrictModel();
+		$data['districts'] = $districtModel->getAll();
+
+	    if($this->request->isAJAX()){
+            echo $this->template->view('Admin\Localisation\Views\stateForm',$data,true);
+        }else{
+            echo $this->template->view('Admin\Localisation\Views\stateForm',$data);
+        }
+    }
+
+
+	protected function validateForm() {
+		//printr($_POST);
+		$validation =  \Config\Services::validation();
+		$id=$this->uri->getSegment(4);
+		$regex = "(\/?([a-zA-Z0-9+\$_-]\.?)+)*\/?"; // Path
+		$regex .= "(\?[a-zA-Z+&\$_.-][a-zA-Z0-9;:@&%=+\/\$_.-]*)?"; // GET Query
+		$regex .= "(#[a-zA-Z_.-][a-zA-Z0-9+\$_.-]*)?"; // Anchor
+
+		$rules = $this->stateModel->validationRules;
+
+
+
+		if ($this->validate($rules)){
 			return true;
     	}
-		else
-		{
-			$this->error['warning']=$this->lang->line('error_warning');
+		else{
+			//printr($validation->getErrors());
+			$this->error['warning']="Warning: Please check the form carefully for errors!";
 			return false;
     	}
 		return !$this->error;
 	}
 
-	public function city($state_id=0){
+	public function cluster($state=''){
 		if (is_ajax()){
-			$this->load->model('localisation/city_model');	
-			$json = array();
+			$clusterModel=new ClusterModel();
 			$json = array(
-				'state_id'  => $state_id,
-				'city'      => $this->city_model->getCitiesByStateId($state_id)		
+				'state'  	=> $state,
+				'cluster'   => $clusterModel->getClustersByState($state)
 			);
 			echo json_encode($json);
 		}else{
          	return show_404();
       	}
 	}
-	
-	
-	
+
+	public function grampanchayat($state=''){
+		if (is_ajax()){
+			$grampanchayatModel=new GrampanchayatModel();
+            if(!is_numeric($state)){
+                $staterow=$this->stateModel->where('code', $state)->first();
+
+                $state=$staterow->id;
+            }
+			$json = array(
+				'state'  	=> $state,
+				'grampanchayat'   => $grampanchayatModel->getGpsByState($state)
+			);
+			echo json_encode($json);
+		}else{
+         	return show_404();
+      	}
+	}
+
 }
+
 /* End of file hmvc.php */
 /* Location: ./application/widgets/hmvc/controllers/hmvc.php */

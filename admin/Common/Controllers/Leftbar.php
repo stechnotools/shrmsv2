@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace Admin\Common\Controllers;
 use App\Controllers\AdminController;
 
@@ -10,12 +10,12 @@ class Leftbar extends AdminController{
 	}
 	public function index()
 	{
-		
+
 		$data=array();
 
         $data['menus'][] = array(
             'id'       => 'menu-dashboard',
-            'icon'	  => 'md-home',
+            'icon'	  => 'mdi-home',
             'name'	  => lang('Leftbar.text_dashboard'),
             'href'     => admin_url('/'),
             'children' => array()
@@ -29,6 +29,14 @@ class Leftbar extends AdminController{
             $masters[] = array(
                 'name'	  => lang('Leftbar.text_branch'),
                 'href'     => admin_url('branch'),
+                'children' => array()
+            );
+        }
+
+        if ($this->user->hasPermission('access', 'hod/index')) {
+            $masters[] = array(
+                'name'	  => lang('Leftbar.text_hod'),
+                'href'     => admin_url('hod'),
                 'children' => array()
             );
         }
@@ -73,13 +81,7 @@ class Leftbar extends AdminController{
             );
         }
 
-        if ($this->user->hasPermission('access', 'hod/index')) {
-            $masters[] = array(
-                'name'	  => lang('Leftbar.text_hod'),
-                'href'     => admin_url('hod'),
-                'children' => array()
-            );
-        }
+
 
         if ($this->user->hasPermission('access', 'designation/index')) {
             $masters[] = array(
@@ -88,6 +90,23 @@ class Leftbar extends AdminController{
                 'children' => array()
             );
         }
+
+        if ($this->user->hasPermission('access', 'location/index')) {
+			$masters[] = array(
+				'name'	  => lang('Leftbar.text_location'),
+				'href'     => admin_url('location'),
+				'children' => array()
+			);
+		}
+
+		if ($this->user->hasPermission('access', 'workorder/index')) {
+			$masters[] = array(
+				'name'	  => lang('Leftbar.text_workorder'),
+				'href'     => admin_url('workorder'),
+				'children' => array()
+			);
+		}
+
 
         if ($this->user->hasPermission('access', 'bank/index')) {
             $masters[] = array(
@@ -129,10 +148,10 @@ class Leftbar extends AdminController{
             );
         }
 
-        if ($this->user->hasPermission('access', 'leave/opening')) {
+        if ($this->user->hasPermission('access', 'leaveopening')) {
             $masters[] = array(
                 'name'	  => lang('Leftbar.text_leaveopening'),
-                'href'     => admin_url('leave/opening'),
+                'href'     => admin_url('leaveopening'),
                 'children' => array()
             );
         }
@@ -162,7 +181,7 @@ class Leftbar extends AdminController{
         if ($masters) {
             $data['menus'][] = array(
                 'id'       => 'menu-masters',
-                'icon'	   => 'md-pages',
+                'icon'	   => 'mdi-warehouse ',
                 'name'	   => lang('Leftbar.text_master'),
                 'href'     => '',
                 'children' => $masters
@@ -173,10 +192,10 @@ class Leftbar extends AdminController{
         // Pages
         $operations = array();
 
-        if ($this->user->hasPermission('access', 'mpunch/index')) {
+        if ($this->user->hasPermission('punch')) {
             $operations[] = array(
                 'name'	  => lang('Leftbar.text_mpunch'),
-                'href'     => admin_url('mpunch'),
+                'href'     => admin_url('punch'),
                 'children' => array()
             );
         }
@@ -288,7 +307,7 @@ class Leftbar extends AdminController{
         if ($operations) {
             $data['menus'][] = array(
                 'id'       => 'menu-operations',
-                'icon'	   => 'md-pages',
+                'icon'	   => 'mdi-language-swift ',
                 'name'	   => lang('Leftbar.text_operation'),
                 'href'     => '',
                 'children' => $operations
@@ -319,7 +338,7 @@ class Leftbar extends AdminController{
         if ($dutyroster) {
             $data['menus'][] = array(
                 'id'       => 'menu-dutyroster',
-                'icon'	   => 'md-pages',
+                'icon'	   => 'mdi-folder-key-outline',
                 'name'	   => lang('Leftbar.text_dutyroster'),
                 'href'     => '',
                 'children' => $dutyroster
@@ -395,7 +414,7 @@ class Leftbar extends AdminController{
         if ($payroll) {
             $data['menus'][] = array(
                 'id'       => 'menu-payroll',
-                'icon'	   => 'md-pages',
+                'icon'	   => 'mdi-account-cash',
                 'name'	   => lang('Leftbar.text_payroll'),
                 'href'     => '',
                 'children' => $payroll
@@ -405,7 +424,7 @@ class Leftbar extends AdminController{
         if ($this->user->hasPermission('access', 'canteen/index')) {
             $data['menus'][] = array(
                 'id'       => 'menu-canteen',
-                'icon'	   => 'md-pages',
+                'icon'	   => 'mdi-food',
                 'name'	   => lang('Leftbar.text_canteen'),
                 'href'     => admin_url('canteen'),
                 'children' => array()
@@ -414,7 +433,7 @@ class Leftbar extends AdminController{
         if ($this->user->hasPermission('access', 'goldrate/index')) {
             $data['menus'][] = array(
                 'id'       => 'menu-goldrate',
-                'icon'	   => 'md-pages',
+                'icon'	   => 'mdi-bitcoin',
                 'name'	   => 'Gold Rate',
                 'href'     => admin_url('goldrate'),
                 'children' => array()
@@ -423,7 +442,7 @@ class Leftbar extends AdminController{
         if ($this->user->hasPermission('access', 'training/index')) {
             $data['menus'][] = array(
                 'id'       => 'menu-training',
-                'icon'	   => 'md-pages',
+                'icon'	   => 'mdi-google-podcast ',
                 'name'	   => lang('Leftbar.text_training'),
                 'href'     => admin_url('training'),
                 'children' => array()
@@ -524,7 +543,7 @@ class Leftbar extends AdminController{
         if ($reports) {
             $data['menus'][] = array(
                 'id'       => 'menu-reports',
-                'icon'	   => 'md-pages',
+                'icon'	   => 'mdi-file-chart-outline ',
                 'name'	   => lang('Leftbar.text_reports'),
                 'href'     => '',
                 'children' => $reports
@@ -551,10 +570,10 @@ class Leftbar extends AdminController{
             );
         }
 
-        if ($this->user->hasPermission('users/user_groups')) {
+        if ($this->user->hasPermission('roles')) {
             $system[] = array(
                 'name'	  => lang('Leftbar.text_usergroup'),
-                'href'     => admin_url('users/user_groups'),
+                'href'     => admin_url('roles'),
                 'children' => array()
             );
         }
@@ -623,7 +642,7 @@ class Leftbar extends AdminController{
         if ($system) {
             $data['menus'][] = array(
                 'id'       => 'menu-system',
-                'icon'	   => 'md-settings',
+                'icon'	   => 'mdi-settings',
                 'name'	   => lang('Leftbar.text_system'),
                 'href'     => '',
                 'children' => $system

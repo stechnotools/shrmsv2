@@ -1,18 +1,23 @@
 <div class="card">
-    <div class="card-header">
-        <h3 class="card-title float-left"><?php echo $heading_title; ?></h3>
-        <div class="panel-tools float-right">
-            <a href="<?php echo $add; ?>" data-toggle="tooltip" title="<?php echo $button_add; ?>" class="btn btn-primary"><i class="fa fa-plus"></i></a>
-            <button type="button" data-toggle="tooltip" title="<?php echo $button_delete; ?>" class="btn btn-danger" onclick="confirm('<?php echo $text_confirm; ?>') ? $('#form-menu').submit() : false;"><i class="fa fa-trash-o"></i></button>
-        </div>
-    </div>
+	<div class="card-header py-2 text-white">
+		<h3 class="card-title float-left my-2"><?php echo $heading_title; ?></h3>
+		<div class="panel-tools float-right">
+			<a href="<?php echo $add; ?>" data-toggle="tooltip" title="<?php echo $button_add; ?>" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i></a>
+			<button type="button" data-toggle="tooltip" title="<?php echo $button_delete; ?>" class="btn btn-danger btn-sm" onclick="confirm('<?php echo $text_confirm; ?>') ? $('#form-datatable').submit() : false;"><i class="fa fa-trash"></i></button>
+		</div>
+	</div>
 	<div class="card-body">
 		<!-- DataTables functionality is initialized with .js-dataTable-full class in js/country/be_tables_datatables.min.js which was auto compiled from _es6/country/be_tables_datatables.js -->
-		<form action="<?php echo $delete; ?>" method="post" enctype="multipart/form-data" id="form-country">        		
+		<form action="<?php echo $delete; ?>" method="post" enctype="multipart/form-data" id="form-country">
 		<table id="datatable" class="table table-bordered table-striped table-vcenter js-dataTable-full">
 			<thead>
 				<tr>
-					<th style="width: 1px;" class="text-center no-sort"><input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></th>
+					<th style="width: 1px;" class="text-center no-sort">
+						<div class="checkbox checkbox-primary checkbox-single">
+							<input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" />
+							<label></label>
+						</div>
+					</th>
 					<th>Country Name</th>
                     <th>Country Code</th>
                     <th class="text-right no-sort">Actions</th>
@@ -38,7 +43,7 @@ $(function(){
 				$(".datatable_error").html("");
 				$("#datatable").append('<tbody class="datatable_error"><tr><th colspan="5">No data found.</th></tr></tbody>');
 				$("#datatable_processing").css("display","none");
-				
+
 			},
 			dataType:'json'
 		},

@@ -1,4 +1,4 @@
-<?php 
+<?php
 global $template;
 
 $template = service('template');
@@ -44,7 +44,7 @@ if ( ! function_exists('vardump'))
 
 /*
  * Array to Object
- * 
+ *
  * Converts an array to an object
  *
  * @param array
@@ -57,7 +57,7 @@ if ( ! function_exists('array_to_object'))
         $Object = new stdClass();
         foreach($array as $key=>$value)
         {
-            $Object->$key = $value; 
+            $Object->$key = $value;
         }
 
         return $Object;
@@ -68,9 +68,9 @@ if ( ! function_exists('array_to_object'))
 
 /*
  * Object to Array
- * 
+ *
  * Converts an object to an array
- * 
+ *
  * @param object
  * @return array
  */
@@ -95,7 +95,7 @@ if ( ! function_exists('object_to_array'))
  */
 if ( ! function_exists('is_ajax'))
 {
-    function is_ajax() 
+    function is_ajax()
     {
       return (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'));
     }
@@ -130,7 +130,7 @@ if (!function_exists('load_controller'))
  */
 if ( ! function_exists('image_thumb'))
 {
-    function image_thumb($source_image, $width = 0, $height = 0, $crop = FALSE, $props = array()) 
+    function image_thumb($source_image, $width = 0, $height = 0, $crop = FALSE, $props = array())
     {
         //echo $source_image;
 		$CI =& get_instance();
@@ -151,28 +151,28 @@ if ( ! function_exists('image_thumb'))
 }
 if ( ! function_exists('resize'))
 {
-	function resize($filename, $width, $height) 
+	function resize($filename, $width, $height)
 	{
-		
+
         //echo $filename;
 		//$CI->load->library('image_lib');
-		
+
 		if (!is_file(DIR_UPLOAD . $filename) || substr(str_replace('\\', '/', realpath(DIR_UPLOAD . $filename)), 0, strlen(WRITEPATH)) != str_replace('\\', '/',WRITEPATH)) {
 			//return;
 		}
 
 		$extension = pathinfo($filename, PATHINFO_EXTENSION);
-		
+
 		$image_old = $filename;
 		$image_new = 'image-cache' .'/' . substr($filename, 0, strrpos($filename, '.')) . '-' . $width . 'x' . $height . '.' . $extension;
-		
+
         if (!is_file(DIR_UPLOAD . $image_new) || (filectime(DIR_UPLOAD . $image_old) > filectime(DIR_UPLOAD . $image_new))) {
 			list($width_orig, $height_orig, $image_type) = getimagesize(DIR_UPLOAD . $image_old);
-				 
-			if (!in_array($image_type, array(IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF))) { 
+
+			if (!in_array($image_type, array(IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF))) {
 				return DIR_UPLOAD . $image_old;
 			}
- 
+
 			$path = '';
 
 			$directories = explode('/', dirname($image_new));
@@ -186,8 +186,8 @@ if ( ! function_exists('resize'))
 			}
 
 			if ($width_orig != $width || $height_orig != $height) {
-				
-				
+
+
 				$image = \Config\Services::image()
 					  ->withFile(DIR_UPLOAD . $image_old)
 					  ->resize($width, $height, true, 'height')
@@ -197,10 +197,10 @@ if ( ! function_exists('resize'))
 				copy(DIR_UPLOAD . $image_old, DIR_UPLOAD . $image_new);
 			}
 		}
-        
-		
+
+
 		return base_url('uploads/'.$image_new);
-		
+
 	}
 }
 // ------------------------------------------------------------------------
@@ -215,15 +215,15 @@ if ( ! function_exists('resize'))
  */
 if ( ! function_exists('br2nl'))
 {
-    function br2nl($text)                                                                   
-    {                                                                                       
-        return  preg_replace('/<br\\s*?\/??>/i', '', $text);                            
-    }                                                                                       
+    function br2nl($text)
+    {
+        return  preg_replace('/<br\\s*?\/??>/i', '', $text);
+    }
 }
 
 // ------------------------------------------------------------------------
 
-/* 
+/*
  * Option Array Value
  *
  * Returns single dimension array from an Array of objects with the key and value defined
@@ -238,8 +238,8 @@ if ( ! function_exists('option_array_value'))
 {
     function option_array_value($object_array, $key, $value, $default = array())
     {
-        
-		
+
+
         $option_array = array();
 
         if (is_array($default))
@@ -252,12 +252,21 @@ if ( ! function_exists('option_array_value'))
         }
         //printr($option_array);
 
+		if(!is_array($value)){
+			$value=(array)$value;
+		}
+		//printr($value);
 		foreach($object_array as $Object)
         {
-            $option_array[$Object->$key] = $Object->$value;
+			$v=[];
+			foreach($value as $val){
+				$v[]=$Object->$val;
+			}
+			//printr($v);
+			$option_array[$Object->$key] = implode('-',$v);
         }
         //printr($option_array);
-		   return $option_array;
+		return $option_array;
     }
 }
 
@@ -265,8 +274,7 @@ if ( ! function_exists('option_array_values'))
 {
     function option_array_values($object_array, $key, $value, $default = array())
     {
-        
-        
+
         $option_array = array();
 
         if (is_array($default))
@@ -281,7 +289,7 @@ if ( ! function_exists('option_array_values'))
 
         foreach($object_array as $Object)
         {
-            
+
             $option_array[$Object[$key]] = $Object[$value];
 
         }
@@ -292,7 +300,7 @@ if ( ! function_exists('option_array_values'))
 
 // ------------------------------------------------------------------------
 
-/* 
+/*
  * Theme Partial
  *
  * Load a theme partial
@@ -314,7 +322,7 @@ if ( ! function_exists('theme_partial'))
 
 // ------------------------------------------------------------------------
 
-/* 
+/*
  * Theme Url
  *
  * Create a url to the current theme
@@ -337,9 +345,9 @@ if ( ! function_exists('front_url')){
         $query = $CI->db->get('slug');
         $row = $query->row();
         if($row){
-            return base_url($row->slug);  
+            return base_url($row->slug);
         }else{
-            return base_url($url);  
+            return base_url($url);
         }
     }
 }
@@ -364,7 +372,7 @@ if ( ! function_exists('upload_url'))
 
 // ------------------------------------------------------------------------
 
-/* 
+/*
  * Domain Name
  *
  * Returns the site domain name and tld
@@ -405,16 +413,16 @@ if ( ! function_exists('domain_name'))
 if ( ! function_exists('glob_recursive'))
 {
     // Does not support flag GLOB_BRACE
-    
+
     function glob_recursive($pattern, $flags = 0)
     {
         $files = glob($pattern, $flags);
-        
+
         foreach (glob(dirname($pattern).'/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir)
         {
             $files = array_merge($files, glob_recursive($dir.'/'.basename($pattern), $flags));
         }
-        
+
         return $files;
     }
 }
@@ -433,7 +441,7 @@ if(! function_exists('dir_recursive'))
 				$files[$key]['filename']=dir_recursive($file['relative_path'].'/'.$file['name'],$flags);
 			}
 		}
-        
+
         return $files;
     }
 }
@@ -442,9 +450,9 @@ if(! function_exists('dir_recursive'))
 
 /*
  * URL Base64 Encode
- * 
+ *
  * Encodes a string as base64, and sanitizes it for use in a CI URI.
- * 
+ *
  * @param string
  * @return string
  */
@@ -469,7 +477,7 @@ if ( ! function_exists('url_base64_encode'))
  * URL Base64 Decode
  *
  * Decodes a base64 string that was encoded by ci_base64_encode.
- * 
+ *
  * @param string
  * @return string
  */
@@ -478,7 +486,7 @@ if ( ! function_exists('url_base64_decode'))
     function url_base64_decode(&$str="")
     {
         return base64_decode(strtr(
-            $str, 
+            $str,
             array(
                 '.' => '+',
                 '-' => '=',
@@ -495,7 +503,7 @@ if ( ! function_exists('url_base64_decode'))
  *
  * Sets the header content type to XML and
  * outputs the <?php xml tag
- * 
+ *
  * @param string
  * @return string
  */
@@ -515,7 +523,7 @@ if ( ! function_exists('xml_output'))
  * JS Head Start
  *
  * Starts output buffering to place javascript in the <head> of the template
- * 
+ *
  * @return void
  */
 if ( ! function_exists('js_start'))
@@ -532,7 +540,7 @@ if ( ! function_exists('js_start'))
  * JS Head End
  *
  * Ends output buffering to place javascript in the <head> of the template
- * 
+ *
  * @return void
  */
 if ( ! function_exists('js_end'))
@@ -552,7 +560,7 @@ if ( ! function_exists('js_end'))
  *
  * This function analyzes a string and returns false if the string is empty, false, or 0
  * and true for everything else
- * 
+ *
  * @param string
  * @return bool
  */
@@ -566,7 +574,7 @@ if ( ! function_exists('str_to_bool'))
         }
 
         $str = (string) $str;
-        
+
         if (in_array(strtolower($str), array('false', '0', '')))
         {
             return false;
@@ -630,7 +638,7 @@ if ( ! function_exists('is_inline_editable'))
         {
             return FALSE;
         }
-    }   
+    }
 }
 // Override form_hidden to implement an id attribute
 if ( ! function_exists('form_hidden'))
@@ -680,7 +688,7 @@ if ( ! function_exists('tz_list'))
 		$zones_array = array();
 		$timestamp = time();
 		foreach(timezone_identifiers_list() as $key => $zone)
-		{	
+		{
 			$country = explode('/', $zone);
 			date_default_timezone_set($zone);
 			if (isset($country[1]) != '')
@@ -697,7 +705,7 @@ if ( ! function_exists('tz_list'))
 }
 if ( ! function_exists('get_nested'))
 {
-	
+
 	function get_nested ($treelist,$parent = 0)
 	{
 		/*echo "<pre>";
@@ -711,13 +719,13 @@ if ( ! function_exists('get_nested'))
 				$array[] = $tree;
 			}
 		}
-		
+
 		return $array;
 	}
 }
 if ( ! function_exists('get_menu_nested'))
 {
-	
+
 	function get_menu_nested($menulist,$parent = 0)
 	{
 		/*echo "<pre>";
@@ -731,20 +739,20 @@ if ( ! function_exists('get_menu_nested'))
 			}
 			$return[] = array('id' => $tree['id'], 'parentID' => $parent);
 			$return = array_merge($return, $returnSubSubArray);
-			
+
 		}
-		
+
 		return $return;;
 	}
 }
 if ( ! function_exists('list_menu_nav'))
-{  
+{
 	function list_menu_nav($list, $depth = 1)
     {
-		
-        
+
+
         $nav = '<ol class="dd-list">';
-       
+
 
         foreach($list as $Item)
         {
@@ -771,10 +779,10 @@ if ( ! function_exists('list_menu_nav'))
 			}
 			$nav .=			'<p class="input-item"><a onclick="remove_item(this);" class="remove" href="javascript:void(0);">Remove This Menu Item</a>';
 			$nav .=			'<a onclick="update_item(this);" style="float:right" class="update" href="javascript:void(0);">Update Menu Item</a></p>';
-			
+
 			$nav .=		'</div>';
 			$nav .=		'<a onclick="explane(this)" class="explane" href="javascript:void(0);">Explane</a>';
-            
+
             if ( ! empty($Item->sub))
             {
                 $nav .= list_menu_nav($Item->sub, $depth + 1);
@@ -789,10 +797,10 @@ if ( ! function_exists('list_menu_nav'))
     }
 }
 if ( ! function_exists('list_select_nav'))
-{  
+{
 	function list_select_nav($list,$parent_id, $depth = 1)
     {
-		
+
 		$nav='';
         foreach($list as $Item)
         {
@@ -814,13 +822,13 @@ if ( ! function_exists('list_select_nav'))
 						$space.='&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 					}
 				}
-				
+
 				$nav .= $space . $Item->title  . '</option>';
 			}
             if ( ! empty($Item->sub))
             {
                 $nav .= list_select_nav($Item->sub,$parent_id, $depth + 1);
-            }            
+            }
         }
         return $nav;
     }
@@ -833,7 +841,7 @@ if ( ! function_exists('categorylist'))
 		foreach($categories as $category)
 		{
 			$html .= '<ul><li>';
-			$html .= '<label><input type="checkbox" value="'.$category->id.'" name="category_id[]" />'.$category->title .'</label>';                            
+			$html .= '<label><input type="checkbox" value="'.$category->id.'" name="category_id[]" />'.$category->title .'</label>';
 			$html .= categorylist($category->sub,$parent_id);
 			$html .= '</li></ul>';
 		}
@@ -845,7 +853,7 @@ if (!function_exists('load_module'))
 {
    function load_module($module, $params = array())
    {
-		return Modules::run($module, $params);	
+		return Modules::run($module, $params);
    }
 }
 
@@ -884,7 +892,7 @@ if ( ! function_exists('set_filter'))
 /*
  * Process Filter
  *
- * Sets, Gets, and Clears filter session data 
+ * Sets, Gets, and Clears filter session data
  * for various filters in the admin panel
  *
  * @param string
@@ -939,34 +947,34 @@ if ( ! function_exists('pagination'))
 		$config['query_string_segment'] = 'page';
 		$config['total_rows'] = $total;
 		$config['use_page_numbers'] = TRUE;
-        
+
 		$config['full_tag_open'] = '<ul class="pagination pagination-sm">';
         $config['full_tag_close'] = '</ul>';
-        
+
 		$config['first_link'] = false;
         $config['last_link'] = false;
-        
+
 		$config['first_tag_open'] = '<li>';
         $config['first_tag_close'] = '</li>';
-        
+
 		$config['prev_link'] = '&laquo';
         $config['next_link'] = '&raquo';
-		
+
 		$config['prev_tag_open'] = '<li class="prev">';
         $config['prev_tag_close'] = '</li>';
-		
+
         $config['next_tag_open'] = '<li>';
         $config['next_tag_close'] = '</li>';
-		
+
         $config['last_tag_open'] = '<li>';
         $config['last_tag_close'] = '</li>';
-		
+
         $config['cur_tag_open'] = '<li class="active"><a href="#">';
         $config['cur_tag_close'] = '</a></li>';
-		
+
         $config['num_tag_open'] = '<li>';
         $config['num_tag_close'] = '</li>';
-		
+
 		$CI->pagination->initialize($config);
 		$pagination['links'] = $CI->pagination->create_links();
 		$pagination['results'] = sprintf($CI->lang->line('text_pagination'), ($total) ? (($page - 1) * $limit) + 1 : 0, ((($page - 1) * $limit) > ($total - $limit)) ? $total : ((($page - 1) * $limit) + $limit), $total, ceil($total / $limit));
@@ -979,14 +987,14 @@ if ( ! function_exists('query_string'))
 {
     function query_string($url)
     {
-		
+
 		$pos = strpos($url, '&');
-		
+
 		if ($pos == 0) {
-			
+
 			$url=str_replace('&', "?", $url);
 		}
-		
+
 		return $url;
 	}
 }
@@ -998,7 +1006,7 @@ if ( ! function_exists('query_string'))
         /* $exclude contains the columns we do not want */
         $column_names = $CI->list_fields($table_name);
         $statement = "";
-     
+
         foreach($column_names as $name) {
             if(!in_array($name, $exclude)) {
                 if($statement == "")
@@ -1007,7 +1015,7 @@ if ( ! function_exists('query_string'))
                     $statement .= "," . $name;
             }
         }
-     
+
         return $statement;
     }
 }
@@ -1026,14 +1034,14 @@ if ( ! function_exists('filesize_dir'))
 if ( ! function_exists('currency_format'))
 {
     function currency_format($number, $value = '', $format = true) {
-       
+
         $decimal_place=2;
         $symbol_left="$";
         $symbol_right="";
         $amount = $value ? (float)$number * $value : (float)$number;
-        
+
         $amount = round($amount, (int)$decimal_place);
-        
+
         if (!$format) {
             return $amount;
         }
@@ -1055,9 +1063,9 @@ if ( ! function_exists('currency_format'))
 }
 
 if ( ! function_exists('sendmail')){
-   
+
     function sendmail($to,$subject,$message,$attach=""){
-        
+
         $CI =& get_instance();
         $config=Array(
             "protocol"=>$CI->settings->config_mail_protocol,
@@ -1073,7 +1081,7 @@ if ( ! function_exists('sendmail')){
             "crlf" => "\r\n",
             "newline" => "\r\n",
         );
-        
+
         $CI->load->library('email',$config);
         $CI->email->to($to);
         $CI->email->from($CI->settings->config_email);
@@ -1099,7 +1107,33 @@ if ( ! function_exists('sendmail')){
 			return $url;
 		}
 	}
-	
-	
+
+}
+
+if ( ! function_exists('generatePattern')){
+    function generatePattern($inputArray)
+    {
+        $outputArray = [];
+
+        $count = count($inputArray);
+
+        for ($i = 0; $i < $count; $i++) {
+            $key = '';
+            $value = '';
+
+            for ($j = 0; $j < $count; $j++) {
+                $index = ($i + $j) % $count;
+                $key .= $inputArray[$index]->id . '-';
+                $value .= $inputArray[$index]->code . '-';
+            }
+
+            $key = rtrim($key, '-');
+            $value = rtrim($value, '-');
+
+            $outputArray[$key] = $value;
+        }
+
+        return $outputArray;
+    }
 }
   

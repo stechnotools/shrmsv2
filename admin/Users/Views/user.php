@@ -1,74 +1,71 @@
-<div class="block">
-	<div class="block-header block-header-default">
-		<h3 class="block-title"><?php echo $heading_title; ?></h3>
-		<div class="block-options">
-			<a href="<?php echo $add; ?>" data-toggle="tooltip" title="<?php echo $button_add; ?>" class="btn btn-primary"><i class="fa fa-plus"></i></a>
-			<button type="button" data-toggle="tooltip" title="<?php echo $button_delete; ?>" class="btn btn-danger" onclick="confirm('<?php echo $text_confirm; ?>') ? $('#form-users').submit() : false;"><i class="fa fa-trash-o"></i></button>
+<div class="row">
+	<div class="col-lg-12">
+		<div class="card">
+			<div class="card-header py-2 text-white">
+				<h3 class="card-title float-left my-2"><?php echo $heading_title; ?></h3>
+				<div class="panel-tools float-right">
+					<a href="<?php echo $add; ?>" data-toggle="tooltip" title="Add" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i></a>
+					<button type="button" data-toggle="tooltip" title="Delete" class="btn btn-danger btn-sm" onclick="confirm('<?php echo $text_confirm; ?>') ? $('#form-user').submit() : false;"><i class="fa fa-trash"></i></button>
+				</div>
+			</div>
+			<div class="card-body">
+				<form action="<?php echo $delete; ?>" method="post" enctype="multipart/form-data" id="form-user">
+					<div class="row">
+						<div class="col-md-12 col-sm-12 col-12">
+							<table id="datatable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+								<thead>
+									<tr>
+										<th style="width: 1px;" class="text-center no-sort">
+											<div class="checkbox checkbox-primary checkbox-single">
+												<input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" />
+												<label></label>
+											</div>
+										</th>
+										<th>Image</th>
+										<th>Username</th>
+										<th>Name</th>
+										<th>Mobile</th>
+										<th>Email</th>
+										<th>Role</th>
+										<th>Status</th>
+										<th class="no-sort">Action</th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+					</div>
+				</form>
+			</div>
 		</div>
 	</div>
-	<div class="block-content block-content-full">
-		<!-- DataTables functionality is initialized with .js-dataTable-full class in js/users/be_tables_datatables.min.js which was auto compiled from _es6/users/be_tables_datatables.js -->
-		<form action="<?php echo $delete; ?>" method="post" enctype="multipart/form-data" id="form-users">        		
-		<table id="user_list" class="table table-bordered table-striped table-vcenter js-dataTable-full">
-			<thead>
-				<tr>
-					<th style="width: 1px;" class="text-center no-sort"><input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></th>
-					<th>Username</th>
-                    <th>Role</th>
-					<th>District</th>
-					<th>Block</th>
-                    <th>GP</th>
-					<th>Status</th>
-					<th class="text-right no-sort">Actions</th>
-				</tr>
-			</thead>
-		</table>
-		</form>
-	</div>
 </div>
+
 <?php js_start(); ?>
 <script type="text/javascript"><!--
 $(function(){
-	$('#user_list').DataTable({
+	$('#datatable').DataTable({
 		"processing": true,
 		"serverSide": true,
 		"columnDefs": [
-			{ targets: 'no-sort', orderable: false }
+			{ targets: 'no-sort', orderable: false },
+			{ targets: 'no-visible', visible: false },
+			{ responsivePriority: 1, targets: 0 },
+			{ responsivePriority: 2, targets: -1 }
 		],
 		"ajax":{
 			url :"<?=$datatable_url?>", // json datasource
 			type: "post",  // method  , by default get
 			error: function(){  // error handling
-				$(".user_list_error").html("");
-				$("#user_list").append('<tbody class="user_list_error"><tr><th colspan="5">No data found.</th></tr></tbody>');
-				$("#user_list_processing").css("display","none");
-				
+				$(".datatable_error").html("");
+				$("#datatable").append('<tbody class="datatable_error"><tr><th colspan="3">No data found.</th></tr></tbody>');
+				$("#datatable_processing").css("display","none");
+
 			},
 			dataType:'json'
 		},
 	});
-});
-function delete_user(title,id){
 
-	gbox.show({
-		content: '<h2>Delete Manager</h2>Are you sure you want to delete this Manager?<br><b>'+title,
-		buttons: {
-			'Yes': function() {
-				$.post('<?php echo admin_url('members.delete');?>',{user_id:id}, function(data) {
-					if (data.success) {
-						gbox.hide();
-						$('#member_list').DataTable().ajax.reload();
-					} else {
-						gbox.show({
-							content: 'Failed to delete this Manager.'
-						});
-					}
-				});
-			},
-			'No': gbox.hide
-		}
-	});
-	return false;
-}
+
+});
 //--></script>
 <?php js_end(); ?>

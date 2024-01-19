@@ -1,10 +1,5 @@
 <?php
 namespace Admin\Common\Config;
-if(!isset($routes))
-{ 
-    $routes = \Config\Services::routes(true);
-}
-
 $routes->group(env('app.adminROUTE'), ['namespace' => 'Admin','filter' => 'login'], function($routes)
 {
     $routes->add('branch', 'Branch\Controllers\Branch::index');
@@ -14,5 +9,3 @@ $routes->group(env('app.adminROUTE'), ['namespace' => 'Admin','filter' => 'login
     $routes->get('branch/delete/(:segment)',   'Branch\Controllers\Branch::delete/$1');
     $routes->post('branch/delete','Branch\Controllers\Branch::delete');
 });
-
-    

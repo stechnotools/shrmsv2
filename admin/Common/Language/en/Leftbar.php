@@ -13,6 +13,8 @@ return [
     'text_grade'                		=> 'Grade',
     'text_hod'                		=> 'HOD',
     'text_designation'               => 'Designation',
+    'text_location'               => 'Site Location',
+    'text_workorder'               => 'Work Order',
     'text_reason'                	=> 'Reason',
     'text_machine'                	=> 'Machine',
     'text_employee'                	=> 'Employee',
@@ -22,7 +24,7 @@ return [
     'text_canteen'              		=> 'Canteen',
     'text_training'              	=> 'Training',
     'text_bank'              		=> 'Bank',
-    
+
     'text_operation'=> 'Operations',
     'text_mpunch'                 	=> 'Manual Time Entry',
     'text_shiftbyrange'              => 'Shift update by Range',
@@ -38,19 +40,19 @@ return [
     'text_mispunchapproval'          => 'Mis Attendance Approval',
     'text_leaveencashment'           => 'Leave Encashment',
     'text_otapproval'              	=> 'OT Approval',
-    
+
     'text_dutyroster'                => 'Duty Roster',
     'text_duty_creation'             => 'Creation',
     'text_duty_updation'             => 'Updation',
-    
+
     'text_administration'            => 'Administration',
     'text_setup'                 	=> 'Setup',
     'text_userprivilage'             => 'User Privilage',
     'text_backdateprocess'           => 'Back Date Process',
     'text_absentutility'             => 'Absent Utility',
-    
+
     'text_payroll'           		=> 'Payroll',
-    
+
     'text_reports'                 	=> 'Reports',
     'text_spotreport'                => 'Spot Report',
     'text_dailyreport'              	=> 'Daily Report',
@@ -60,13 +62,13 @@ return [
     'text_chartreport'           	=> 'Chart Report',
     'text_payrollreport'             => 'Payroll Report',
     'text_canteenreport'             => 'Canteen Report',
-    
+
     'text_system'                    => 'Administration',
     'text_setting'                   => 'Settings',
     'text_users'               		=> 'Users',
     'text_usergroup'               	=> 'User Role',
     'text_permission'				=> 'Permission Log',
-    
+
     'text_localisation'              => 'Localisation',
     'text_country'              		=> 'Country',
     'text_state'              		=> 'State',

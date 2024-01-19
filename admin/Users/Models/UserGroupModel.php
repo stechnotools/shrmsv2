@@ -47,15 +47,16 @@ class UserGroupModel extends Model
 
     public function getAll($data = array()){
         //printr($data);
-        $builder=$this->db->table($this->table);
+        $builder=$this->db->table("{$this->table} ug");
+
         $this->filter($builder,$data);
 
-        $builder->select("*");
+        $builder->select("ug.*");
 
         if (isset($data['sort']) && $data['sort']) {
             $sort = $data['sort'];
         } else {
-            $sort = "name";
+            $sort = "ug.name";
         }
 
         if (isset($data['order']) && ($data['order'] == 'desc')) {
@@ -96,22 +97,33 @@ class UserGroupModel extends Model
 				name LIKE '%{$data['filter_search']}%'"
             );
         }
+
     }
 
-    public function addUserGroupPermission($id,$data){
-        $builder=$this->db->table("user_group_permission");
-        $builder->where("user_group_id",$id);
+    public function addUserRolePermission($id,$data){
+        $builder=$this->db->table("user_role_permission");
+        $builder->where("user_role_id",$id);
         $builder->delete();
 
         if (isset($data)) {
             foreach ($data as $key => $value) {
                 $array = array(
                     'permission_id'=>$value,
-                    'user_group_id'=>$id
+                    'user_role_id'=>$id
                 );
                 $builder->insert($array);
             }
         }
         return "success";
+    }
+
+    public function getAgencyTypes($filter=[]){
+        $builder=$this->db->table($this->table);
+        $builder->where('agency', 1);
+        if(isset($filter['agency_type_id'])){
+            $builder->where("id",$filter['agency_type_id']);
+        }
+        $res = $builder->get()->getResult();
+        return $res;
     }
 }

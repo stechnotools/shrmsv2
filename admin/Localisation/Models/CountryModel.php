@@ -26,13 +26,13 @@ class CountryModel extends Model
 	// Validation
 	// Validation
 	protected $validationRules      = [
-		'code' => array(
-			'label' => 'Code', 
+		'iso_code_2' => array(
+			'label' => 'Code',
 			'rules' => 'trim|required|max_length[100]'
 		),
-		
+
 		'name' => array(
-			'label' => 'Name', 
+			'label' => 'Name',
 			'rules' => "trim|required|max_length[255]"
 		)
 	];
@@ -50,15 +50,15 @@ class CountryModel extends Model
 	protected $afterFind            = [];
 	protected $beforeDelete         = [];
 	protected $afterDelete          = [];
-	
-	
+
+
 	public function getAll($data = array()){
 		//printr($data);
 		$builder=$this->db->table($this->table);
 		$this->filter($builder,$data);
-		
+
 		$builder->select("*");
-		
+
 		if (isset($data['sort']) && $data['sort']) {
 			$sort = $data['sort'];
 		} else {
@@ -70,8 +70,8 @@ class CountryModel extends Model
 		} else {
 			$order = "asc";
 		}
-		$builder->orderBy($sort, $order); 
-		
+		$builder->orderBy($sort, $order);
+
 		if (isset($data['start']) || isset($data['limit'])) {
 			if ($data['start'] < 0) {
 				$data['start'] = 0;
@@ -88,19 +88,19 @@ class CountryModel extends Model
 
 		return $res;
 	}
-	
+
 	public function getTotals($data = array()) {
 		$builder=$this->db->table($this->table);
 		$this->filter($builder,$data);
 		$count = $builder->countAllResults();
 		return $count;
 	}
-	
+
 	private function filter($builder,$data){
         $builder->where($this->deletedField, null);
         if (!empty($data['filter_search'])) {
 			$builder->where("
-				name LIKE '%{$data['filter_search']}%'"				
+				name LIKE '%{$data['filter_search']}%'"
 			);
 		}
     }
@@ -109,7 +109,7 @@ class CountryModel extends Model
 		$builder->where('code',$code);
 		$res = $builder->get()->getRowArray();
 
-		return $res;	
+		return $res;
 	}
-	
+
 }

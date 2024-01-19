@@ -11,7 +11,7 @@ class BranchModel extends Model
     protected $useAutoIncrement     = true;
     protected $insertID             = 0;
     protected $returnType           = 'object';
-    protected $useSoftDelete        = false;
+    protected $useSoftDelete        = true;
     protected $protectFields        = false;
     protected $allowedFields        = [];
 
@@ -102,6 +102,7 @@ class BranchModel extends Model
 				OR short LIKE '%{$data['filter_search']}%')"
             );
         }
+
     }
 
     protected  function setEnvirnment(array $data){
@@ -110,32 +111,25 @@ class BranchModel extends Model
     }
 
 
-
-
-
-
 	public function getBranchByEmail($email) {
 		$this->db->where('email',$email);
 		$query = $this->db->get('branch');
 		$Branch=$query->row();
 		return $Branch;
 	}
-	
+
 	public function getBranchByName($name) {
 		$this->db->where('name', $name);
 		$query = $this->db->get('branch');
 		$Branch=$query->row();
 		return $Branch;
 	}
-	public function deleteBranch($id){
-		$this->db->where_in("id", $id);
-		$this->db->delete("branch");
-	}
+
 	public function updateAccount($id, $data) {
 		$this->db->where("id",$id);
         $status=$this->db->update("branch", $data);
-        
-        if($status) 
+
+        if($status)
 		{
 			return "success";
 		}

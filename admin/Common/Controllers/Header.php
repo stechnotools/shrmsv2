@@ -25,22 +25,28 @@ class Header extends AdminController
         }else {
             $data['relogin']=false;
         }
-		$data['name']=$this->user->getFirstName();
+		$data['name']=$this->user->getFullName();
 		if($this->user->isLogged()){
 			$leftbar = new Leftbar(); // Create an instance
 			$data['menu']=$leftbar->index();
 		}
 
-        if ($this->uri->getSegment(1)) {
-            $data['class'] = $this->uri->getSegment(1);
-        } else if(!$this->user->isLogged()){
-            $data['class'] = 'login-page';
-        }else{
-            $data['class']="admin";
-        }
+        if (($this->uri->getSegment(1)=='admin' || $this->uri->getSegment(1)=='') && !$this->user->isLogged()) {
+			$data['class'] = 'login-page';
+		} else {
+			$data['class'] = 'admin';
+		}
+
+		$data['bootstrapStylesheet']=theme_url('assets/css/bootstrap-dark.min.css');
+		$data['appStylesheet']=theme_url('assets/css/app-dark.css');
+
+		if($this->settings->config_admin_theme_mode=="light"){
+			$data['bootstrapStylesheet']=theme_url('assets/css/bootstrap.min.css');
+			$data['appStylesheet']=theme_url('assets/css/app.min.css');
+		}
 
 
 		return view('Admin\Common\Views\header',$data);
-		
+
 	}
 }

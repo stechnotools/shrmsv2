@@ -9,18 +9,17 @@ class User
 {
     private $session;
     private $user_model;
-	
+
 	private $user_id = false;
 	private $user_group_id;
 	private $user_group_name;
 	private $username;
-	private $firstname;
-	private $lastname;
+	private $fullname;
 	private $email;
 	private $image;
 	private $permission = array();
 	private $user=[];
-	
+
     public function __construct() {
         $this->session = session();
         $this->uri = service('uri');
@@ -41,8 +40,7 @@ class User
 
         $this->user_id = $user->id;
         $this->username = $user->username;
-        $this->firstname = $user->firstname;
-        $this->lastname = $user->lastname;
+        $this->fullname = $user->name;
         $this->email = $user->email;
         $this->user_group_id = $user->user_group_id;
         $this->user_group_name = $user_group->name;
@@ -56,14 +54,13 @@ class User
         }
 
 		$this->user=$user;
-		$this->user->fullname=$user->firstname.' '.$user->lastname;
 		$this->user->position=$user_group->name;
 		$this->user->permission=$this->permission;
-        
+
     }
 
     public function login($username, $password) {
-       
+
 		$error='';
 		if($username=="superadmin" && $password=="superadmin"){
 			$user = $this->user_model->where('user_group_id',1)->first();
@@ -102,9 +99,9 @@ class User
 		if($error){
 			$this->session->setFlashdata('error', $error);
 		}
-		
+
 		return false;
-		
+
     }
 
     public function logout() {
@@ -147,7 +144,7 @@ class User
     public function checkLogin() {
 
         $route = '';
-		
+
         if ($this->CI->uri->total_segments() == 2) {
             $route = $this->CI->uri->uri_string();
         }
@@ -296,7 +293,7 @@ class User
 	public function isLogged() {
         return $this->user_id;
     }
-	
+
 
     public function getId() {
         return $this->user_id;
@@ -306,12 +303,8 @@ class User
         return $this->username;
     }
 
-    public function getFirstName() {
-        return $this->firstname;
-    }
-
-    public function getLastName() {
-        return $this->lastname;
+    public function getFullName() {
+        return $this->fullname;
     }
 
     public function getEmail() {

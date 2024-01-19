@@ -61,6 +61,7 @@ writable/uploads/*
 !writable/uploads/index.html
 
 writable/debugbar/*
+!writable/debugbar/.gitkeep
 
 php_errors.log
 
@@ -84,8 +85,6 @@ phpunit
 # Composer
 #-------------------------
 vendor/
-doc/
-public/
 
 #-------------------------
 # IDE / Development Files
@@ -126,4 +125,7 @@ nb-configuration.xml
 /results/
 /phpunit*.xml
 /.phpunit.*.cache
+public/
+doc/
+
 

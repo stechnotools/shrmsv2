@@ -35,7 +35,7 @@ class Validation extends BaseConfig
      */
     public array $templates = [
         'list'   => 'CodeIgniter\Validation\Views\list',
-        'singles' => 'CodeIgniter\Validation\Views\single',
+        'single' => 'CodeIgniter\Validation\Views\single',
         'aio_error'=>'validation_error'
     ];
 

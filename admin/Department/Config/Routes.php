@@ -1,10 +1,5 @@
 <?php
 namespace Admin\Common\Config;
-if(!isset($routes))
-{ 
-    $routes = \Config\Services::routes(true);
-}
-
 $routes->group(env('app.adminROUTE'), ['namespace' => 'Admin','filter' => 'login'], function($routes)
 {
     $routes->add('department', 'Department\Controllers\Department::index');
@@ -15,4 +10,3 @@ $routes->group(env('app.adminROUTE'), ['namespace' => 'Admin','filter' => 'login
     $routes->post('department/delete','Department\Controllers\Department::delete');
 });
 
-    

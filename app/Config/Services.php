@@ -1,7 +1,7 @@
 <?php
 
 namespace Config;
-
+use Config\Template as TemplateConfig;
 use App\Libraries\Shortcode;
 use App\Libraries\Template;
 use App\Libraries\User;
@@ -22,29 +22,21 @@ use CodeIgniter\Config\BaseService;
  */
 class Services extends BaseService
 {
-    /*
-     * public static function example($getShared = true)
-     * {
-     *     if ($getShared) {
-     *         return static::getSharedInstance('example');
-     *     }
-     *
-     *     return new \CodeIgniter\Example();
-     * }
-     */
-    public static function template($getShared = true){
+    public static function template($getShared = true)
+    {
         if ($getShared)
         {
             return static::getSharedInstance('template');
         }
-        $tconfig = new \Config\Template();
+
         if (empty($config) || ! (is_array($config) || $config instanceof TemplateConfig))
         {
             $config = config('Template');
         }
         return new Template($config);
     }
-    public static function user($getShared = true){
+    public static function user($getShared = true)
+    {
         if ($getShared)
         {
             return static::getSharedInstance('user');
@@ -52,7 +44,9 @@ class Services extends BaseService
 
         return new User();
     }
-    public static function shortcode($getShared = true){
+
+    public static function shortcode($getShared = true)
+    {
         if ($getShared)
         {
             return static::getSharedInstance('shortcode');
@@ -60,5 +54,4 @@ class Services extends BaseService
 
         return new Shortcode();
     }
-
 }

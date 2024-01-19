@@ -27,13 +27,9 @@ class LoginFilter implements FilterInterface
 	public function before(RequestInterface $request, $arguments = null)
 	{
 	    helper('aio');
-		
-        //$session = session();
         $user = service('user');
 		$template = service('template');
 		$uri = service('uri');
-		//printr($user->getId());
-        //$session->set('redirect',current_url());
 		$route=uri_string();
 		$ignore = array(
             env('app.adminDIR').'login',
@@ -43,12 +39,12 @@ class LoginFilter implements FilterInterface
             'error/not_found',
             'error/permission'
         );
-
+		//printr($ignore);
 
         if(!$user->isLogged() && !in_array($route, $ignore)){
+			//echo $route;
 			echo view_cell('\Admin\Common\Controllers\Auth::login');
 			exit;
-            //return redirect()->to(base_url('login'));
         }
 	}
 

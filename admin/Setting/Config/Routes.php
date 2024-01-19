@@ -1,7 +1,7 @@
 <?php
 namespace Admin\Setting\Config;
 if(!isset($routes))
-{ 
+{
     $routes = \Config\Services::routes(true);
 }
 
@@ -18,6 +18,3 @@ $routes->group(env('app.adminROUTE'), ['namespace' => 'Admin','filter' => 'login
     $routes->post('proceeding/delete','Proceeding\Controllers\Proceeding::delete');*/
 
 });
-
-?>
-    

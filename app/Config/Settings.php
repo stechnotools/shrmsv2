@@ -12,8 +12,8 @@ class Settings extends BaseConfig
 		$this->db = \Config\Database::connect();
 		$this->get_all();
 	}
-	
-	
+
+
    function get_all()
    {
 		$builder = $this->db->table(self::TABLE);
@@ -26,14 +26,15 @@ class Settings extends BaseConfig
 			}else{
 				$this->{$Setting->key} =json_decode($Setting->value, true) ;
 			}
+
 		}
-		
+
    }
-	
+
 	/*function get_config($module){
 		$this->CI->db->where('module',$module);
 		$Settings = $this->CI->db->get(self::TABLE);
-		
-		
+
+
 	}*/
 }

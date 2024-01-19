@@ -1,10 +1,5 @@
 <?php
 namespace Admin\Common\Config;
-if(!isset($routes))
-{ 
-    $routes = \Config\Services::routes(true);
-}
-
 $routes->group(env('app.adminROUTE'), ['namespace' => 'Admin','filter' => 'login'], function($routes)
 {
     $routes->add('/', 'Common\Controllers\Dashboard::index');
@@ -15,6 +10,3 @@ $routes->group(env('app.adminROUTE'), ['namespace' => 'Admin','filter' => 'login
     $routes->add('error', 'Common\Controllers\Errors::index');
 
 });
-
-?>
-    

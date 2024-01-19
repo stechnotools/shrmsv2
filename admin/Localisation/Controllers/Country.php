@@ -123,12 +123,15 @@ class Country extends AdminController{
         foreach($filteredData as $result) {
 
             $action  = '<div class="btn-group btn-group-sm pull-right">';
-            $action .= 		'<a class="btn btn-sm btn-primary ajaxaction" href="'.admin_url('country/edit/'.$result->id).'"><i class="fa fa-pencil"></i></a>';
-            $action .=		'<a class="btn-sm btn btn-danger btn-remove" href="'.admin_url('country/delete/'.$result->id).'" onclick="return confirm(\'Are you sure?\') ? true : false;"><i class="fa fa-trash-o"></i></a>';
-            $action .= '</div>';
+			$action .= 		'<a class="btn btn-sm btn-primary" href="'.admin_url('country/edit/'.$result->id).'"><i class="fas fa-pencil-alt"></i></a>';
+			$action .=		'<a class="btn-sm btn btn-danger btn-remove" href="'.admin_url('country/delete/'.$result->id).'" onclick="return confirm(\'Are you sure?\') ? true : false;"><i class="fas fa-trash"></i></a>';
+			$action .= '</div>';
 
             $datatable[]=array(
-                '<input type="checkbox" name="selected[]" value="'.$result->id.'" />',
+                '<div class="checkbox checkbox-primary checkbox-single">
+                    <input type="checkbox" name="selected[]" value="'.$result->id.'" />
+                    <label></label>
+                </div>',
                 $result->name,
                 $result->iso_code_2,
                 $action
@@ -164,6 +167,8 @@ class Country extends AdminController{
         $data['heading_title'] 	= lang('Country.heading_title');
         $data['text_form'] = $this->uri->getSegment(3) ? "Country Edit" : "Country Add";
         $data['cancel'] = admin_url('country');
+        $data['button_save'] = lang('Country.button_save');
+		$data['button_cancel'] = lang('Country.button_cancel');
 
         if(isset($this->error['warning'])){
             $data['error'] 	= $this->error['warning'];
@@ -195,43 +200,43 @@ class Country extends AdminController{
         $id=$this->uri->getSegment(4);
         $regex = "(\/?([a-zA-Z0-9+\$_-]\.?)+)*\/?"; // Path
         $regex .= "(\?[a-zA-Z+&\$_.-][a-zA-Z0-9;:@&%=+\/\$_.-]*)?"; // GET Query
-        $regex .= "(#[a-zA-Z_.-][a-zA-Z0-9+\$_.-]*)?"; // Anchor 
+        $regex .= "(#[a-zA-Z_.-][a-zA-Z0-9+\$_.-]*)?"; // Anchor
 
         $rules = $this->countryModel->validationRules;
 
         /*$rules=array(
-            
+
             'title' => array(
-                'label' => 'Title', 
+                'label' => 'Title',
                 'rules' => 'trim|required|max_length[100]'
             ),
-            
+
             'slug' => array(
-                'field' => 'slug', 
-                'label' => 'Slug', 
+                'field' => 'slug',
+                'label' => 'Slug',
                 'rules' => "trim|required|max_length[255]|regex_match[/^$regex$/]|is_unique[seo_url.slug,route_id,{id}]"
             ),
             'meta_title' => array(
-                'field' => 'meta_title', 
-                'label' => 'Meta Title', 
+                'field' => 'meta_title',
+                'label' => 'Meta Title',
                 'rules' => 'trim'
-            ), 
+            ),
             'meta_description' => array(
-                'field' => 'meta_description', 
-                'label' => 'Meta Description', 
+                'field' => 'meta_description',
+                'label' => 'Meta Description',
                 'rules' => 'trim'
             ),
             'meta_keywords' => array(
-                'field' => 'meta_keywords', 
-                'label' => 'Meta Keywords', 
+                'field' => 'meta_keywords',
+                'label' => 'Meta Keywords',
                 'rules' => 'trim'
             ),
             'status' => array(
-                'field' => 'status', 
-                'label' => 'Status', 
+                'field' => 'status',
+                'label' => 'Status',
                 'rules' => 'trim|required'
             ),
-            
+
         );*/
 
         //$validation->setRules($rules);

@@ -1,6 +1,5 @@
 <?php
 namespace Admin\Setting\Controllers;
-use Admin\Banner\Models\BannerModel;
 use Admin\Pages\Models\PagesModel;
 use Admin\Setting\Models\SettingModel;
 use Admin\Users\Models\UserGroupModel;
@@ -9,13 +8,15 @@ use App\Controllers\AdminController;
 
 class Setting extends AdminController {
 	private $error = array();
-	
+	public $settings;
+    private $settingModel;
+    private $userModel;
 	function __construct(){
         $this->settingModel=new SettingModel();
         $this->userModel=new UserModel();
         $this->settings = service('settings');
 	}
-	
+
 	public function index(){
 		// Init
       	$data = array();
@@ -29,11 +30,11 @@ class Setting extends AdminController {
 
         $data['breadcrumbs'] = array();
         $data['breadcrumbs'][] = array(
-            'text' => lang('banner.heading_title'),
-            'href' => admin_url('banner')
+            'text' => lang('Setting.heading_title'),
+            'href' => admin_url('setting')
         );
-		
-		
+
+
 		if ($this->request->getMethod(1) === 'POST' && $this->validateSetting()){
 
 			$this->settingModel->editSetting('config',$this->request->getPost());
@@ -41,31 +42,21 @@ class Setting extends AdminController {
             return redirect()->to(current_url());
 
 		}
-		
-		
+
+
 		$data['action'] = admin_url('setting');
 		$data['cancel'] = admin_url('setting');
-        
+
 		if(isset($this->error['warning']))
 		{
 			$data['error'] 	= $this->error['warning'];
 		}
-		
+
 		if ($this->request->getMethod(1) != 'POST') {
 			$user_info = $this->userModel->find(1);
 		}
 
-        $data['config_background_position']='';
-        $data['config_background_repeat']='';
-        $data['config_background_attachment']='';
-        $data['config_ftp_enable']='';
-        $data['config_ssl']='';
-        $data['config_date_format']='';
-        $data['config_time_format']='';
-        $data['config_seo_url']='';
-        $data['config_maintenance_mode']='';
-        $data['config_display_error']='';
-        $data['config_log_error']='';
+
         foreach($this->settingModel->where('module', 'config')->findAll() as $row) {
             $field=$row->key;
             $value=$row->value;
@@ -94,43 +85,17 @@ class Setting extends AdminController {
 		} else {
 			$data['thumb_icon'] = resize('no_image.png', 100, 100);
 		}
-		
+
 		$data['no_image'] = resize('no_image.png', 100, 100);
 
         $pageModel=new PagesModel();
         $data['pages'] = $pageModel->findAll();
 
-		$data['front_themes'] = $this->template->get_themes();
-
-		$front_theme = $this->settings->config_front_theme?$this->settings->config_front_theme:'default';
-		
-        $data['front_templates'] = $this->template->get_theme_layouts($front_theme);
-
-		if ($this->request->getPost('config_header_image') && is_file(DIR_UPLOAD . $this->request->getPost('config_header_image'))) {
-			$data['thumb_header_image'] = resize($this->request->getPost('config_header_image'), 100, 100);
-		} elseif ($this->settings->config_header_image && is_file(DIR_UPLOAD . $this->settings->config_header_image)) {
-			$data['thumb_header_image'] = resize($this->settings->config_header_image, 100, 100);
-		} else {
-			$data['thumb_header_image'] = resize('no_image.png', 100, 100);
-		}
-		
-		$bannerModel=new BannerModel();
-		$data['banners'] = $bannerModel->findAll();
-
-		if ($this->request->getPost('background_image') && is_file(DIR_UPLOAD . $this->request->getPost('background_image'))) {
-			$data['thumb_background_image'] = resize($this->request->getPost('background_image'), 100, 100);
-		} elseif ($this->settings->config_background_image && is_file(DIR_UPLOAD . $this->settings->config_background_image)) {
-			$data['thumb_background_image'] = resize($this->settings->config_background_image, 100, 100);
-		} else {
-			$data['thumb_background_image'] = resize('no_image.png', 100, 100);
-		}
-		
+        $data['admin_theme_modes'] = ['dark'=>'Dark Theme','light'=>'Light Theme'];
 
 
-		//$this->load->helper('date');
-		//printr(tz_list());
 		$data['timezone']=tz_list();
-		//printr($data['timezone']);
+
         echo $this->template->view('Admin\Setting\Views\setting',$data);
 
 	}
@@ -153,7 +118,7 @@ class Setting extends AdminController {
 
         echo $this->template->view('Admin\Setting\Views\serverinfo', $data);
     }
-	
+
 	public function dashboard(){
         $data = array();
         $this->template->set_meta_title(lang('Setting.dashboard_title'));
@@ -222,7 +187,7 @@ class Setting extends AdminController {
         }
         return !$this->error;
 	}
-	
+
 }
 /* End of file hmvc.php */
 /* Location: ./application/widgets/hmvc/controllers/hmvc.php */
