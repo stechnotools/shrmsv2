@@ -246,14 +246,14 @@ $validation = \Config\Services::validation();
 								<div class="form-group row">
 									<label class="col-sm-4 control-label" for="input-website">Date of Birth</label>
 									<div class="col-md-8">
-										<?php echo form_input(array('class'=>'form-control datepicker','name' => 'dob', 'id' => 'input-dob', 'placeholder'=>'Date of Birth','value' => set_value('dob', $dob))); ?>
+										<?php echo form_input(array('class'=>'form-control datepicker','name' => 'dob', 'id' => 'input-dob', 'placeholder'=>'Date of Birth','value' => set_value('dob', date('d-m-Y',strtotime($dob))) )); ?>
 										<?php echo $validation->showerror('dob', 'aio_error'); ?>
 									</div>
 								</div>
 								<div class="form-group row">
 									<label class="col-sm-4 control-label" for="input-facebook">Date of Join</label>
 									<div class="col-md-8">
-										<?php echo form_input(array('class'=>'form-control datepicker','name' => 'doj', 'id' => 'input-doj', 'placeholder'=>'Date of Join','value' => set_value('doj', $doj))); ?>
+										<?php echo form_input(array('class'=>'form-control datepicker','name' => 'doj', 'id' => 'input-doj', 'placeholder'=>'Date of Join','value' => set_value('doj', date('d-m-Y',strtotime($doj))))); ?>
 										<?php echo $validation->showerror('doj', 'aio_error'); ?>
 
 									</div>
@@ -267,7 +267,7 @@ $validation = \Config\Services::validation();
 								<div class="form-group row">
 									<label class="col-sm-4 control-label" for="input-youtube">Blood Group</label>
 									<div class="col-md-8">
-										<?php echo form_dropdown('bg', $blood_groups, set_value('bg', $bg),"id='bg' class='form-control select2'"); ?>
+										<?php echo form_dropdown('blood_group', $blood_groups, set_value('blood_group', $blood_group),"id='blood_group' class='form-control select2'"); ?>
 									</div>
 								</div>
 								<div class="form-group row">
@@ -379,9 +379,9 @@ $validation = \Config\Services::validation();
 									</div>
 								</div>
 								<div class="form-group row">
-									<label class="col-sm-4 control-label" for="input-vimeo">AADHAR</label>
+									<label class="col-sm-4 control-label" for="input-vimeo">AADHAAR</label>
 									<div class="col-md-8">
-										<?php echo form_input(array('class'=>'form-control','name' => 'aadhar', 'id' => 'input-aadhar', 'placeholder'=>'aadhar','value' => set_value('aadhar', $aadhar))); ?>
+										<?php echo form_input(array('class'=>'form-control','name' => 'aadhaar', 'id' => 'input-aadhaar', 'placeholder'=>'aadhaar','value' => set_value('aadhaar', $aadhaar))); ?>
 									</div>
 								</div>
 							</div>

@@ -153,20 +153,20 @@ class EmployeeModel extends Model
 		$builder = $this->db->table("user");
 		$userdata = array(
 			"user_group_id" => 4,
+			"branch_id" => isset($data['branch_id']) ? $data['branch_id'] : '',
 			"name" => isset($data['employee_name']) ? $data['employee_name'] : '',
 			"image" => isset($data['image']) ? $data['image'] : '',
 			"email" => isset($data['email']) ? $data['email'] : '',
 			"phone" => isset($data['telephone']) ? $data['telephone'] : '',
 			"address" => isset($data['permanent']) ? $data['permanent'] : '',
-			"country_id" => '', // You might add isset check for these as well
-			"state_id" => '',   // depending on their source
-			"city_id" => '',    // or existence
-			"branch_id" => isset($data['branch_id']) ? $data['branch_id'] : '',
+			"country_id" => '',
+			"state_id" => '',
+			"city_id" => '',
 			"zip" => isset($data['pincode']) ? $data['pincode'] : '',
 			"username" => isset($data['paycode']) ? $data['paycode'] : '',
 			"password" => md5('1234'), // Consider adjusting password assignment
 			"show_password" => '1234', // if you're hashing differently
-			"enabled" => isset($data['enabled']) ? $data['enabled'] : ''
+			"enabled" => isset($data['enabled']) ? $data['enabled'] : 0
 		);
         $builder->insert($userdata);
       	$user_id=$this->db->insertID() ;
@@ -176,10 +176,12 @@ class EmployeeModel extends Model
 			"user_id" => $user_id,
 			"branch_id" => isset($data['branch_id']) ? $data['branch_id'] : '',
 			"card_no" => isset($data['card_no']) ? $data['card_no'] : '',
-			"dob" => isset($data['dob']) ? $data['dob'] : '',
-			"doj" => isset($data['doj']) ? $data['doj'] : '',
+			"paycode" => isset($data['paycode']) ? $data['paycode'] : '',
+			"safety_pass_no"=>isset($data['safety_pass_no']) ? $data['safety_pass_no'] : '',
+			"dob" => isset($data['dob']) ? date('Y-m-d', strtotime($data['dob'])): '',
+			"doj" => isset($data['doj']) ? date('Y-m-d', strtotime($data['doj']))  : '',
 			"married" => isset($data['married']) ? $data['married'] : '',
-			"bg" => isset($data['bg']) ? $data['bg'] : '',
+			"blood_group" => isset($data['blood_group']) ? $data['blood_group'] : '',
 			"qualification" => isset($data['qualification']) ? $data['qualification'] : '',
 			"experience" => isset($data['experience']) ? $data['experience'] : '',
 			"sex" => isset($data['sex']) ? $data['sex'] : '',
@@ -197,7 +199,7 @@ class EmployeeModel extends Model
 			"bank_account" => isset($data['bank_account']) ? $data['bank_account'] : '',
 			"eid_time" => isset($data['eid_time']) ? $data['eid_time'] : '',
 			"eid_name" => isset($data['eid_name']) ? $data['eid_name'] : '',
-			"aadhar" => isset($data['aadhar']) ? $data['aadhar'] : '',
+			"aadhaar" => isset($data['aadhaar']) ? $data['aadhaar'] : '',
 			"mobile" => isset($data['mobile']) ? $data['mobile'] : '',
 			"imei" => isset($data['imei']) ? $data['imei'] : '',
 			"mobile_make" => isset($data['mobile_make']) ? $data['mobile_make'] : '',
@@ -213,23 +215,22 @@ class EmployeeModel extends Model
 		$employeeofficedata = array(
 			"user_id" => $user_id,
 			"branch_id" => isset($data['branch_id']) ? $data['branch_id'] : '',
-			"card_no" => isset($data['card_no']) ? $data['card_no'] : '',
-			"safety_pass_no" => isset($data['safety_pass_no']) ? $data['safety_pass_no'] : '',
 			"employee_name" => isset($data['employee_name']) ? $data['employee_name'] : '',
 			"guardian_name" => isset($data['guardian_name']) ? $data['guardian_name'] : '',
 			"relationship" => isset($data['relationship']) ? $data['relationship'] : '',
-			"paycode" => isset($data['paycode']) ? $data['paycode'] : '',
 			"department_id" => isset($data['department_id']) ? $data['department_id'] : '',
 			"category_id" => isset($data['category_id']) ? $data['category_id'] : '',
 			"section_id" => isset($data['section_id']) ? $data['section_id'] : '',
 			"grade_id" => isset($data['grade_id']) ? $data['grade_id'] : '',
 			"designation_id" => isset($data['designation_id']) ? $data['designation_id'] : '',
+			"workorder_id"=>isset($data['workorder_id']) ? $data['workorder_id'] : '',
 			"hod_id" => isset($data['hod_id']) ? $data['hod_id'] : '',
 			"image" => isset($data['image']) ? $data['image'] : '',
 			"signature" => isset($data['signature']) ? $data['signature'] : '',
 			"pf_no" => isset($data['pf_no']) ? $data['pf_no'] : '',
 			"esi" => isset($data['esi']) ? $data['esi'] : '',
 			"pan" => isset($data['pan']) ? $data['pan'] : '',
+			"uan_no"=>isset($data['uan_no']) ? $data['uan_no'] : '',
 			"leaving_date" => isset($data['leaving_date']) ? $data['leaving_date'] : '',
 			"reason" => isset($data['reason']) ? $data['reason'] : '',
 			"employee_type" => isset($data['employee_type']) ? $data['employee_type'] : '',
@@ -290,8 +291,11 @@ class EmployeeModel extends Model
 
 	public function editEmployee($user_id, $data) {
 		$builder = $this->db->table("user");
+
+
 		$userdata = array(
 			"user_group_id" => 4,
+			"branch_id" => isset($data['branch_id']) ? $data['branch_id'] : '',
 			"name" => isset($data['employee_name']) ? $data['employee_name'] : '',
 			"image" => isset($data['image']) ? $data['image'] : '',
 			"email" => isset($data['email']) ? $data['email'] : '',
@@ -300,12 +304,11 @@ class EmployeeModel extends Model
 			"country_id" => '',
 			"state_id" => '',
 			"city_id" => '',
-			"branch_id" => isset($data['branch_id']) ? $data['branch_id'] : '',
 			"zip" => isset($data['pincode']) ? $data['pincode'] : '',
 			"username" => isset($data['paycode']) ? $data['paycode'] : '',
-			"password" => md5('1234'),
-			"show_password" => '1234',
-			"enabled" => isset($data['enabled']) ? $data['enabled'] : '',
+			"password" => md5('1234'), // Consider adjusting password assignment
+			"show_password" => '1234', // if you're hashing differently
+			"enabled" => isset($data['enabled']) ? $data['enabled'] : 0,
 			"updated_at" => date("Y-m-d")
 		);
 
@@ -320,10 +323,12 @@ class EmployeeModel extends Model
 			"user_id" => $user_id,
 			"branch_id" => isset($data['branch_id']) ? $data['branch_id'] : '',
 			"card_no" => isset($data['card_no']) ? $data['card_no'] : '',
-			"dob" => isset($data['dob']) ? $data['dob'] : '',
-			"doj" => isset($data['doj']) ? $data['doj'] : '',
+			"paycode" => isset($data['paycode']) ? $data['paycode'] : '',
+			"safety_pass_no"=>isset($data['safety_pass_no']) ? $data['safety_pass_no'] : '',
+			"dob" => isset($data['dob']) ? date('Y-m-d', strtotime($data['dob'])): '',
+			"doj" => isset($data['doj']) ? date('Y-m-d', strtotime($data['doj']))  : '',
 			"married" => isset($data['married']) ? $data['married'] : '',
-			"bg" => isset($data['bg']) ? $data['bg'] : '',
+			"blood_group" => isset($data['blood_group']) ? $data['blood_group'] : '',
 			"qualification" => isset($data['qualification']) ? $data['qualification'] : '',
 			"experience" => isset($data['experience']) ? $data['experience'] : '',
 			"sex" => isset($data['sex']) ? $data['sex'] : '',
@@ -341,7 +346,7 @@ class EmployeeModel extends Model
 			"bank_account" => isset($data['bank_account']) ? $data['bank_account'] : '',
 			"eid_time" => isset($data['eid_time']) ? $data['eid_time'] : '',
 			"eid_name" => isset($data['eid_name']) ? $data['eid_name'] : '',
-			"aadhar" => isset($data['aadhar']) ? $data['aadhar'] : '',
+			"aadhaar" => isset($data['aadhaar']) ? $data['aadhaar'] : '',
 			"mobile" => isset($data['mobile']) ? $data['mobile'] : '',
 			"imei" => isset($data['imei']) ? $data['imei'] : '',
 			"mobile_make" => isset($data['mobile_make']) ? $data['mobile_make'] : '',
@@ -361,23 +366,22 @@ class EmployeeModel extends Model
 		$employeeofficedata = array(
 			"user_id" => $user_id,
 			"branch_id" => isset($data['branch_id']) ? $data['branch_id'] : '',
-			"card_no" => isset($data['card_no']) ? $data['card_no'] : '',
-			"safety_pass_no" => isset($data['safety_pass_no']) ? $data['safety_pass_no'] : '',
 			"employee_name" => isset($data['employee_name']) ? $data['employee_name'] : '',
 			"guardian_name" => isset($data['guardian_name']) ? $data['guardian_name'] : '',
 			"relationship" => isset($data['relationship']) ? $data['relationship'] : '',
-			"paycode" => isset($data['paycode']) ? $data['paycode'] : '',
 			"department_id" => isset($data['department_id']) ? $data['department_id'] : '',
 			"category_id" => isset($data['category_id']) ? $data['category_id'] : '',
 			"section_id" => isset($data['section_id']) ? $data['section_id'] : '',
 			"grade_id" => isset($data['grade_id']) ? $data['grade_id'] : '',
 			"designation_id" => isset($data['designation_id']) ? $data['designation_id'] : '',
+			"workorder_id"=>isset($data['workorder_id']) ? $data['workorder_id'] : '',
 			"hod_id" => isset($data['hod_id']) ? $data['hod_id'] : '',
 			"image" => isset($data['image']) ? $data['image'] : '',
 			"signature" => isset($data['signature']) ? $data['signature'] : '',
 			"pf_no" => isset($data['pf_no']) ? $data['pf_no'] : '',
 			"esi" => isset($data['esi']) ? $data['esi'] : '',
 			"pan" => isset($data['pan']) ? $data['pan'] : '',
+			"uan_no"=>isset($data['uan_no']) ? $data['uan_no'] : '',
 			"leaving_date" => isset($data['leaving_date']) ? $data['leaving_date'] : '',
 			"reason" => isset($data['reason']) ? $data['reason'] : '',
 			"employee_type" => isset($data['employee_type']) ? $data['employee_type'] : '',
@@ -422,6 +426,7 @@ class EmployeeModel extends Model
 		$builder = $this->db->table("employee_shift");
 		$builder->where("user_id", $user_id);
 		$builder->delete();
+
 
 		$employeshiftdata = array(
 			"user_id" => $user_id,

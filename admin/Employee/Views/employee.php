@@ -156,7 +156,7 @@ $(function(){
 
 		fileReader.onload = function(event) {
 			const data = new Uint8Array(event.target.result);
-			const workbook = XLSX.read(data, { type: 'array' });
+			const workbook = XLSX.read(data, { type: 'array',cellDates: true });
 
 			// Read only the first sheet
 			const firstSheetName = workbook.SheetNames[0]; // Get the name of the first sheet

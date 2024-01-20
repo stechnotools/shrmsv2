@@ -12,6 +12,7 @@ use Admin\Hod\Models\HodModel;
 use Admin\Section\Controllers\Section;
 use Admin\Section\Models\SectionModel;
 use Admin\Shift\Models\ShiftModel;
+use Admin\Workorder\Models\WorkorderModel;
 use App\Controllers\AdminController;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -314,7 +315,7 @@ class Employee extends AdminController {
 				} else {
 					$department_data = array(
 						'name' => $department_name,
-						'code' => 'dept_' . time()
+						'code' => 'DEP_' . time()
 					);
 					$department_id = (new DepartmentModel())->insert($department_data);
 				}
@@ -328,7 +329,7 @@ class Employee extends AdminController {
 				} else {
 					$category_data = array(
 						'name' => $category_name,
-						'code' => 'cat_' . time()
+						'code' => 'CAT_' . time()
 					);
 					$category_id = (new CategoryModel())->insert($category_data);
 				}
@@ -342,7 +343,7 @@ class Employee extends AdminController {
 				} else {
 					$section_data = array(
 						'name' => $section,
-						'code' => 'sec_' . time()
+						'code' => 'SEC_' . time()
 					);
 					$section_id = (new SectionModel())->insert($section_data);
 				}
@@ -357,56 +358,75 @@ class Employee extends AdminController {
 				} else {
 					$designation_data = array(
 						'name' => $designation_name,
-						'code' => 'desg_' . time()
+						'code' => 'DES_' . time()
 					);
 					$designation_id = (new DesignationModel())->insert($designation_data);
 				}
 			}
-			$ifsc = trim($sheet[30]);
 
-			$employeeofficedata[] = array(
-				"branch_id" => $sheet[1],
-				"card_no" => $sheet[2],
-				"safety_pass_no" => $sheet[3],
-				"employee_name" => $sheet[4],
-				"guardian_name" => $sheet[5],
-				"relationship" => $sheet[6],
-				"paycode" => $sheet[7],
-				"department_id" => $department_id,
-				"category_id" => $category_id,
-				"section_id" => $section_id,
-				"designation_id" => $designation_id,
-				"pf_no" => $sheet[12],
-				"esi" => $sheet[13],
-				"pan" => $sheet[14],
-				"employee_type" => $sheet[31],
-				"enabled" => 1
+			$workorder_name=trim($sheet[12]);
+			$workorder_id=0;
+			if($workorder_name){
+				$workorder=(new WorkorderModel())->where('name',$workorder_name)->first();
+				if($workorder){
+					$workorder_id=$workorder->id;
+				}else{
+					$workorder_data=array(
+						'name'=>$workorder_name,
+						'code'=>'WO_'.time()
+					);
+					$workorder_id=(new WorkorderModel())->insert($workorder_data);
+				}
+			}
+
+
+			$employeeofficedata[]=array(
+				"branch_id"=>$sheet[1],
+				"department_id"=>$department_id,
+				"category_id"=>$category_id,
+				"section_id"=>$section_id,
+				"designation_id"=>$designation_id,
+				"workorder_id"=>$workorder_id,
+				"employee_name"=>$sheet[5],
+				"guardian_name"=>$sheet[6],
+				"relationship"=>$sheet[7],
+				"pf_no"=>$sheet[13],
+				"esi"=>$sheet[14],
+				"uan_no"=>$sheet[15],
+				"pan"=>$sheet[16],
+				"employee_type"=>$sheet[34],
+				"enabled"=>1
 			);
 
-			$employeedata[] = array(
-				"dob" => $sheet[16],
-				"doj" => $sheet[17],
-				"married" => $sheet[18],
-				"bg" => $sheet[19],
-				"qualification" => $sheet[20],
-				"experience" => $sheet[21],
-				"sex" => $sheet[22],
-				"email" => $sheet[23],
-				"aadhar" => $sheet[24],
-				"permanent" => $sheet[25],
-				"pincode" => $sheet[26],
-				"telephone" => $sheet[27],
-				"bank_account" => $sheet[28],
-				"ifsc" => $ifsc
+
+			$employeedata[]=array(
+				"branch_id"=>$sheet[1],
+				"card_no"=>$sheet[2],
+				"paycode"=>$sheet[3],
+				"safety_pass_no"=>$sheet[4],
+				"dob"=>$sheet[17],
+				"doj"=>$sheet[18],
+				"married"=>$sheet[19],
+				"blood_group"=>$sheet[20],
+				"qualification"=>$sheet[21],
+				"experience"=>$sheet[22],
+				"sex"=>$sheet[23],
+				"aadhaar"=>$sheet[24],
+				"permanent"=>$sheet[25],
+				"pincode"=>$sheet[26],
+				"telephone"=>$sheet[27],
+				"email"=>$sheet[28],
+				"bank_account"=>$sheet[29],
+				"ifsc"=>trim($sheet[30])
 			);
 
-			$employeshiftdata[] = array(
-				"shift_type" => $sheet[29],
-				"shift" => $sheet[30]
+			$employeshiftdata[]=array(
+				"shift_type"=>$sheet[31],
+				"shift_id"=>$sheet[32]
 			);
 
-			$employetimedata[] = array(
-				"punches" => $sheet[31]
+			$employetimedata[]=array(
+				"punches"=>$sheet[33]
 			);
 		}
 
@@ -425,11 +445,12 @@ class Employee extends AdminController {
 			$empdata[$key]=array_merge($empdata[$key],$emp);
 		}
 
-		foreach($empdata as $row=>$edata){
-			$user=$this->employeeModel->where( 'card_no', $edata['card_no'])->first();
 
-			if ($user) {
-				$this->employeeModel->editEmployee($user->id,$edata);
+		foreach($empdata as $row=>$edata){
+			$employee=$this->employeeModel->where('card_no', $edata['card_no'])->first();
+
+			if ($employee) {
+				$this->employeeModel->editEmployee($employee->user_id,$edata);
 				$status="Updated";
 			} else {
 				$this->employeeModel->addEmployee($edata);
@@ -503,7 +524,7 @@ class Employee extends AdminController {
 					}else{
 						$department_data=array(
 							'name'=>$department_name,
-							'code'=>'dept_'.time()
+							'code'=>'DEP_'.time()
 						);
 						$department_id=(new DepartmentModel())->insert($department_data);
 					}
@@ -517,7 +538,7 @@ class Employee extends AdminController {
 					}else{
 						$category_data=array(
 							'name'=>$category_name,
-							'code'=>'cat_'.time()
+							'code'=>'CAT_'.time()
 						);
 						$category_id=(new CategoryModel())->insert($category_data);
 					}
@@ -531,7 +552,7 @@ class Employee extends AdminController {
 					}else{
 						$section_data=array(
 							'name'=>$section,
-							'code'=>'sec_'.time()
+							'code'=>'SEC_'.time()
 						);
 						$section_id=(new SectionModel())->insert($section_data);
 					}
@@ -546,57 +567,75 @@ class Employee extends AdminController {
 					}else{
 						$designation_data=array(
 							'name'=>$designation_name,
-							'code'=>'desg_'.time()
+							'code'=>'DG_'.time()
 						);
 						$designation_id=(new DesignationModel())->insert($designation_data);
 					}
 				}
-				$ifsc=trim($sheet['AE']);
+
+				$workorder_name=trim($sheet['M']);
+				$workorder_id=0;
+				if($workorder_name){
+					$workorder=(new WorkorderModel())->where('name',$workorder_name)->first();
+					if($workorder){
+						$workorder_id=$workorder->id;
+					}else{
+						$workorder_data=array(
+							'name'=>$workorder_name,
+							'code'=>'WO_'.time()
+						);
+						$workorder_id=(new WorkorderModel())->insert($workorder_data);
+					}
+				}
+
 
 				$employeeofficedata[]=array(
 					"branch_id"=>$sheet['B'],
-					"card_no"=>$sheet['C'],
-					"safety_pass_no"=>$sheet['D'],
-					"employee_name"=>$sheet['E'],
-					"guardian_name"=>$sheet['F'],
-					"relationship"=>$sheet['G'],
-					"paycode"=>$sheet['H'],
 					"department_id"=>$department_id,
 					"category_id"=>$category_id,
 					"section_id"=>$section_id,
 					"designation_id"=>$designation_id,
-					"pf_no"=>$sheet['M'],
-					"esi"=>$sheet['N'],
-					"pan"=>$sheet['O'],
-					"employee_type"=>$sheet['AG'],
+					"workorder_id"=>$workorder_id,
+					"employee_name"=>$sheet['E'],
+					"guardian_name"=>$sheet['F'],
+					"relationship"=>$sheet['G'],
+					"pf_no"=>$sheet['N'],
+					"esi"=>$sheet['O'],
+					"uan_no"=>$sheet['P'],
+					"pan"=>$sheet['Q'],
+					"employee_type"=>$sheet['AI'],
 					"enabled"=>1
 				);
 
 
 				$employeedata[]=array(
-					"dob"=>$sheet['P'],
-					"doj"=>$sheet['Q'],
-					"married"=>$sheet['R'],
-					"bg"=>$sheet['S'],
-					"qualification"=>$sheet['T'],
-					"experience"=>$sheet['U'],
-					"sex"=>$sheet['V'],
-					"email"=>$sheet['W'],
-					"aadhar"=>$sheet['X'],
-					"permanent"=>$sheet['Y'],
-					"pincode"=>$sheet['Z'],
-					"telephone"=>$sheet['AA'],
-					"bank_account"=>$sheet['AB'],
-					"ifsc"=>$ifsc
+					"branch_id"=>$sheet['B'],
+					"card_no"=>$sheet['C'],
+					"safety_pass_no"=>$sheet['D'],
+					"paycode"=>$sheet['H'],
+					"dob"=>$sheet['R'],
+					"doj"=>$sheet['S'],
+					"married"=>$sheet['T'],
+					"blood_group"=>$sheet['U'],
+					"qualification"=>$sheet['V'],
+					"experience"=>$sheet['W'],
+					"sex"=>$sheet['X'],
+					"email"=>$sheet['AC'],
+					"aadhaar"=>$sheet['Y'],
+					"permanent"=>$sheet['Z'],
+					"pincode"=>$sheet['AA'],
+					"telephone"=>$sheet['AB'],
+					"bank_account"=>$sheet['AD'],
+					"ifsc"=>trim($sheet['AE'])
 				);
 
 				$employeshiftdata[]=array(
-					"shift_type"=>$sheet['AD'],
-					"shift"=>$sheet['AE']
+					"shift_type"=>$sheet['AF'],
+					"shift_id"=>$sheet['AG']
 				);
 
 				$employetimedata[]=array(
-					"punches"=>$sheet['AF']
+					"punches"=>$sheet['AH']
 				);
 			}
 
@@ -612,6 +651,8 @@ class Employee extends AdminController {
 			foreach($employetimedata as $key=>$emp){
 				$empdata[$key]=array_merge($empdata[$key],$emp);
 			}
+			printr($empdata);
+			exit;
 
 			foreach($empdata as $row=>$edata){
 				$user=$this->employeeModel->where( 'card_no', $edata['card_no'])->first();
@@ -624,7 +665,9 @@ class Employee extends AdminController {
 
 			}
 
-			usleep(50000); // For example, sleep for 0.05 seconds
+
+
+			/*usleep(50000); // For example, sleep for 0.05 seconds
 
 			// Calculate progress
 			$progress = min(100, intval(($row - $startRow + $chunkSize) / ($highestRow - $startRow + $chunkSize) * 100));
@@ -634,7 +677,7 @@ class Employee extends AdminController {
 			$jsonResponse = json_encode($progressData);
 			header('Content-Type: application/json');
 			echo $jsonResponse;
-			ob_end_flush();
+			ob_end_flush();*/
 		}
 
 
