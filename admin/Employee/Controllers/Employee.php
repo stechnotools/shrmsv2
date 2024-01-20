@@ -296,6 +296,8 @@ class Employee extends AdminController {
 			"O-Negative"=>"O-"
 		);
 
+
+
 		echo $this->template->view('Admin\Employee\Views\employeeForm',$data);
 	}
 
