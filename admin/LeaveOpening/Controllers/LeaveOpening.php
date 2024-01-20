@@ -150,7 +150,7 @@ class LeaveOpening extends AdminController {
 			$data['selected'] = array();
 		}
 
-		return $this->template->view('Admin\LeaveOpening\Views\leaveopening', $data);
+		return $this->template->view('Admin\LeaveOpening\Views\leaveOpening', $data);
 	}
 
 	protected function getForm(){
@@ -221,7 +221,7 @@ class LeaveOpening extends AdminController {
 		$data['branches']=(new BranchModel())->getAll();
 		$data['leaves']=(new LeaveModel())->getAll();
 
-		echo $this->template->view('Admin\LeaveOpening\Views\leaveopeningForm',$data);
+		echo $this->template->view('Admin\LeaveOpening\Views\leaveOpeningForm',$data);
 	}
 
 	protected function validateForm() {
