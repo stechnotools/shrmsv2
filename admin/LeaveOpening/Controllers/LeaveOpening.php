@@ -2,6 +2,7 @@
 namespace Admin\LeaveOpening\Controllers;
 
 use Admin\Branch\Models\BranchModel;
+use Admin\Department\Models\DepartmentModel;
 use Admin\Leave\Models\LeaveModel;
 use Admin\LeaveOpening\Models\LeaveOpeningModel;
 use App\Controllers\AdminController;
@@ -34,7 +35,7 @@ class LeaveOpening extends AdminController {
 		$totalFiltered = $this->leaveOpeningModel->getTotal($filter_data);
 
 		$filteredData = $this->leaveOpeningModel->getAll($filter_data);
-		
+
 		$datatable=array();
 		foreach($filteredData as $result) {
 			$action  = '<div class="btn-group btn-group-sm pull-right">';
@@ -216,6 +217,8 @@ class LeaveOpening extends AdminController {
 
 		$data['branches']=(new BranchModel())->getAll();
 		$data['leaves']=(new LeaveModel())->getAll();
+		$data['departments']=(new DepartmentModel())->getAll();
+
 
 		echo $this->template->view('Admin\LeaveOpening\Views\leaveOpeningForm',$data);
 	}

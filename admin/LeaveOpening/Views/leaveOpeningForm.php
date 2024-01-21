@@ -13,13 +13,13 @@ $validation = \Config\Services::validation();
 			</div>
 			<div class="card-body">
 				<?php echo form_open_multipart("",array('class' => 'form-horizontal', 'id' => 'form-leaveopening','role'=>'form')); ?>
-				
+
 				<div class="row">
 					<div class="col-md-6">
 						<div class="form-group row required">
 							<label class="col-md-4 control-label" for="input-firstname">Type</label>
 							<div class="col-md-8">
-								<?php echo form_dropdown('type', $types, set_value('type', $type),"id='type' class='form-control select2'"); ?>	
+								<?php echo form_dropdown('type', $types, set_value('type', $type),"id='type' class='form-control select2'"); ?>
 							</div>
 						</div>
 					</div>
@@ -35,40 +35,39 @@ $validation = \Config\Services::validation();
 				<div class="row paycode action d-none">
 					<div class="col-md-6">
 						<div class="form-group row required">
-							<label class="col-md-4 control-label" for="input-firstname">Paycode From</label>
+							<label class="col-md-4 control-label" for="input-firstname">Employee</label>
 							<div class="col-md-8">
 								<div class="input-group">
-									<?php echo form_input(array('class'=>'form-control','name' => 'paycode_from', 'id' => 'paycode_from', 'placeholder'=>"Paycode From",'readonly'=>'true','value' => set_value('paycode_from', $paycode_from))); ?>
+									<?php echo form_input(array('class'=>'form-control','name' => 'user_id', 'id' => 'user_id', 'placeholder'=>"Employee",'readonly'=>'true','value' => set_value('user_id', $user_id))); ?>
 									<span class="input-group-prepend">
-										<button type="button" class="btn waves-effect waves-light btn-primary employee_list" data-parent="paycode_from"><i class="fa fa-search"></i></button>
+										<button type="button" class="btn waves-effect waves-light btn-primary employee_list" data-parent="user_id"><i class="fa fa-search"></i></button>
 									</span>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class="col-md-6">
-						<div class="form-group row required">
-							<label class="col-md-4 control-label" for="input-firstname">Paycode To</label>
-							<div class="col-md-8">
-								<div class="input-group">
-									<?php echo form_input(array('class'=>'form-control','name' => 'paycode_to', 'id' => 'paycode_to', 'placeholder'=>"Paycode To",'readonly'=>'true','value' => set_value('paycode_to', $paycode_from))); ?>
-									<span class="input-group-prepend">
-										<button type="button" class="btn waves-effect waves-light btn-primary employee_list" data-parent="paycode_to"><i class="fa fa-search"></i></button>
-									</span>
-								</div>
-							</div>
-						</div>
-					</div>
+
 				</div>
 				<div class="row">
 					<div class="col-md-6 branch action d-none">
 						<div class="form-group row required">
 							<label class="col-md-4 control-label" for="input-firstname">Branch</label>
 							<div class="col-md-8">
-								<?php echo form_dropdown('branch_id', option_array_value($branches, 'id', 'name',array(''=>'Select Branch')), set_value('branch_id', $branch_id),"id='branch_id' class='form-control select2'"); ?>	
+								<?php echo form_dropdown('branch_id', option_array_value($branches, 'id', 'name',array(''=>'Select Branch')), set_value('branch_id', $branch_id),"id='branch_id' class='form-control select2'"); ?>
 							</div>
 						</div>
-						
+
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-6 department action d-none">
+						<div class="form-group row required">
+							<label class="col-md-4 control-label" for="input-firstname">Department</label>
+							<div class="col-md-8">
+								<?php echo form_dropdown('department_id', option_array_value($departments, 'id', 'name',array(''=>'Select Department')), set_value('department_id', $department_id),"id='department_id' class='form-control select2'"); ?>
+							</div>
+						</div>
+
 					</div>
 				</div>
 				<hr>
@@ -81,11 +80,11 @@ $validation = \Config\Services::validation();
 								<?php echo form_input(array('class'=>'form-control','name' => 'leave_field['.$leave->id.']', 'id' => 'leave_field', 'placeholder'=>"",'value' => set_value('leave_field['.$leave->id .']', isset($leave_fields[$leave->id])?$leave_fields[$leave->id]:'' ))); ?>
 							</div>
 						</div>
-						
+
 					</div>
 					<?}?>
 				</div>
-				
+
 				<?php echo form_close(); ?>
 			</div> <!-- panel-body -->
 		</div> <!-- panel -->
@@ -108,14 +107,14 @@ $validation = \Config\Services::validation();
 					dataType: 'html',
 					data:{refresh:false},
 					beforeSend: function() {
-					},		
+					},
 					complete: function() {
-					},			
+					},
 					success: function(html) {
 						$('.dmodal .modal-body').html(html);
 
 						// Display Modal
-						$('.dmodal').modal('show'); 
+						$('.dmodal').modal('show');
 						$(document).on( "click", 'a[data-reload="false"]', function(e){
 							e.preventDefault();
 							$("#"+parent_id).val($(this).data('paycode'));
@@ -124,17 +123,17 @@ $validation = \Config\Services::validation();
 					}
 				});
 			});
-			
+
 			/*$('.fdatepicker').datepicker({
 				autoclose: true,
 				orientation: "bottom",
 				format: "yyyy",
 				startDate: '-1Y',
 				endDate: '+0Y',
-				viewMode: "years", 
+				viewMode: "years",
 				minViewMode: "years"
 			});*/
-			
+
 			$('.fdatepicker').datepicker({
 					format: "yyyy",
 					minViewMode: 2,
@@ -143,7 +142,7 @@ $validation = \Config\Services::validation();
 				$(".fdatepicker").val(date.target.value + "-" + (parseInt(date.target.value) + parseInt(1)));
 			});
 		});
-		
+
 //--></script>
 
 <?php js_end(); ?>

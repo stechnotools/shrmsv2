@@ -172,6 +172,12 @@ class LeaveOpeningModel extends Model
         }
     }
 
+    public function getLeaveOpeningValues($id){
+        $builder=$this->db->table("leave_opening_value");
+		$builder->where("leave_opening_id",$id);
+		$res = $builder->get()->getResult();
+		return $res;
+	}
 
 
 
