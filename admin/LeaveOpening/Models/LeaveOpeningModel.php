@@ -114,15 +114,19 @@ class LeaveOpeningModel extends Model
 	}
 
     public function getAll($data = array()){
-        $builder=$this->db->table($this->table);
+        $builder=$this->db->table("{$this->table} lo");
         $this->filter($builder,$data);
 
-        $builder->select("*");
+        $builder->select("lo.*,CASE
+        WHEN lo.type = 'branch' THEN b.name
+        WHEN lo.type = 'department' THEN d.name
+        WHEN lo.type = 'user' THEN u.name
+        ELSE '' END AS type_name");
 
         if (isset($data['sort']) && $data['sort']) {
             $sort = $data['sort'];
         } else {
-            $sort = "type";
+            $sort = "lo.type";
         }
 
         if (isset($data['order']) && ($data['order'] == 'desc')) {
@@ -149,19 +153,21 @@ class LeaveOpeningModel extends Model
     }
 
     public function getTotal($data = array()) {
-        $builder=$this->db->table($this->table);
+        $builder=$this->db->table("{$this->table} lo");
         $this->filter($builder,$data);
         $count = $builder->countAllResults();
         return $count;
     }
 
     private function filter($builder,$data){
-        $builder->where($this->deletedField, null);
+        $builder->join("branch b","b.id = lo.branch_id","left");
+        $builder->join("user u","u.id = lo.user_id","left");
+        $builder->join("department d","d.id = lo.department_id","left");
+
+        $builder->where("lo.{$this->deletedField}", null);
         if (!empty($data['filter_search'])) {
             $builder->where("
-				type LIKE '%{$data['filter_search']}%'
-				OR code LIKE '%{$data['filter_search']}%'
-				OR short LIKE '%{$data['filter_search']}%')"
+				lo.type LIKE '%{$data['filter_search']}%'"
             );
         }
     }

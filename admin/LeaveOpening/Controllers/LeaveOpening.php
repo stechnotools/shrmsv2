@@ -34,8 +34,7 @@ class LeaveOpening extends AdminController {
 		$totalFiltered = $this->leaveOpeningModel->getTotal($filter_data);
 
 		$filteredData = $this->leaveOpeningModel->getAll($filter_data);
-		printr($filteredData);
-		exit;
+		
 		$datatable=array();
 		foreach($filteredData as $result) {
 			$action  = '<div class="btn-group btn-group-sm pull-right">';
@@ -48,13 +47,10 @@ class LeaveOpening extends AdminController {
 					<input type="checkbox" name="selected[]" value="'.$result->id.'" />
 					<label></label>
 				</div>',
-				$result->leaveopening_field,
-				$result->leaveopening_code,
-				$result->leaveopening_description,
-				$result->week_exclude,
-				$result->holiday_exclude,
-				$result->leaveopening_type,
-				$result->insuff_leaveopening_post,
+				$result->type,
+				$result->type_name,
+				date("Y",strtotime($result->year_from)).'-'.date("Y",strtotime($result->year_to)),
+				0,
 				$action
 			);
 
