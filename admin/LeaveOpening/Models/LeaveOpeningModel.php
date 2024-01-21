@@ -52,15 +52,14 @@ class LeaveOpeningModel extends Model
 	}
 
     public function addLeaveOpening($data) {
-        $builder = $this->db->table("leave_opening");
+        $builder = $this->db->table($this->table);
 		$fyear=$data['fyear'];
 		$fyear=explode("-",$fyear);
 		$leave_openingdata=array(
 			"type"=>$data['type'],
 			"year_from"=>$fyear[0].'-04-01',
 			"year_to"=>$fyear[1].'-03-31',
-			"paycode_from"=>isset($data['paycode_from']) ?  $data['paycode_from']:'',
-			"paycode_to"=>isset($data['paycode_to']) ? $data['paycode_to']:'',
+			"user_id"=>isset($data['user_id']) ?  $data['user_id']:'',
 			"department_id"=>isset($data['department_id']) ? $data['department_id']:0,
 			"branch_id"=>isset($data['branch_id']) ? $data['branch_id']:0,
 			"created_at"=>date('Y-m-d'),
@@ -81,7 +80,7 @@ class LeaveOpeningModel extends Model
 		return $leave_opening_id;
 	}
 	public function editLeaveOpening($leave_opening_id, $data) {
-        $builder = $this->db->table("leave_opening");
+        $builder = $this->db->table($this->table);
 
 		$fyear=$data['fyear'];
 		$fyear=explode("-",$fyear);
@@ -89,8 +88,7 @@ class LeaveOpeningModel extends Model
 			"type"=>$data['type'],
 			"year_from"=>$fyear[0].'-04-01',
 			"year_to"=>$fyear[1].'-03-31',
-			"paycode_from"=>isset($data['paycode_from']) ?  $data['paycode_from']:'',
-			"paycode_to"=>isset($data['paycode_to']) ? $data['paycode_to']:'',
+			"user_id"=>isset($data['user_id']) ?  $data['user_id']:'',
 			"department_id"=>isset($data['department_id']) ? $data['department_id']:0,
 			"branch_id"=>isset($data['branch_id']) ? $data['branch_id']:0,
 			"updated_at"=>date('Y-m-d'),

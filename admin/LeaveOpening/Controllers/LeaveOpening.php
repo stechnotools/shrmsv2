@@ -35,7 +35,7 @@ class LeaveOpening extends AdminController {
 		$totalFiltered = $this->leaveOpeningModel->getTotal($filter_data);
 
 		$filteredData = $this->leaveOpeningModel->getAll($filter_data);
-
+		//printr($filteredData);
 		$datatable=array();
 		foreach($filteredData as $result) {
 			$action  = '<div class="btn-group btn-group-sm pull-right">';
@@ -88,7 +88,8 @@ class LeaveOpening extends AdminController {
 
 		if ($this->request->getMethod('REQUEST_METHOD') === 'POST' && $this->validateForm()){
 			$leaveopening_id=$this->uri->getSegment(4);
-			$this->leaveOpeningModel->update($leaveopening_id,$this->request->getPost());
+
+			$this->leaveOpeningModel->editLeaveOpening($leaveopening_id,$this->request->getPost());
 
 			$this->session->setFlashdata('message', 'LeaveOpening Updated Successfully.');
 			return redirect()->to(admin_url('leaveopening'));
@@ -209,7 +210,7 @@ class LeaveOpening extends AdminController {
 
 		$data['types']=array(
 			0=>'Select Type',
-			'paycode'=>'Paycode',
+			'user'=>'Employee',
 			'department'=>'Department',
 			'branch'=>'Branch'
 		);

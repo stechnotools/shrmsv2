@@ -14,6 +14,7 @@ use Admin\Section\Models\SectionModel;
 use Admin\Shift\Models\ShiftModel;
 use Admin\Workorder\Models\WorkorderModel;
 use App\Controllers\AdminController;
+use DateTime;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class Employee extends AdminController {
@@ -57,24 +58,39 @@ class Employee extends AdminController {
 			} else {
 				$image = resize('no_image.png', 40, 40);
 			}
+			if($requestData['popup']=="true"){
+				$action  = '<div class="btn-group btn-group-sm pull-right">';
+				$action = 	'<a class="btn btn-sm btn-primary" href="'.previous_url().'?user_id='.$result->user_id.'" data-reload="false" data-id="'.$result->user_id.'" data-name="'.$result->employee_name.'">Select</a>';
+				$action .= '</div>';
+			}else{
+				$action  = '<div class="btn-group btn-group-sm pull-right">';
+				$action .= 		'<a class="btn btn-sm btn-primary" href="'.admin_url('employee/edit/'.$result->user_id).'"><i class="fas fa-pencil-alt"></i></a>';
+				$action .=		'<a class="btn-sm btn btn-danger btn-remove" href="'.admin_url('employee/delete/'.$result->user_id).'" onclick="return confirm(\'Are you sure?\') ? true : false;"><i class="fas fa-trash"></i></a>';
+				$action .= '</div>';
+			}
 
-			$action  = '<div class="btn-group btn-group-sm pull-right">';
-			$action .= 		'<a class="btn btn-sm btn-primary" href="'.admin_url('employee/edit/'.$result->user_id).'"><i class="fas fa-pencil-alt"></i></a>';
-			$action .=		'<a class="btn-sm btn btn-danger btn-remove" href="'.admin_url('employee/delete/'.$result->user_id).'" onclick="return confirm(\'Are you sure?\') ? true : false;"><i class="fas fa-trash"></i></a>';
-			$action .= '</div>';
 
-			$datatable[]=array(
-				'<div class="checkbox checkbox-primary checkbox-single">
-					<input type="checkbox" name="selected[]" value="'.$result->user_id.'" />
-					<label></label>
-				</div>',
-				'<img src="'.$image.'" alt="'.$result->employee_name.'" class="img-fluid" />',
-				$result->employee_name,
-				$result->card_no,
-				$result->mobile,
-				$result->enabled ? 'Enable':'Disable',
-				$action
-			);
+			if ($requestData['popup'] == "true") {
+				$datatable[] = array(
+					'<img src="'.$image.'" alt="'.$result->employee_name.'" class="img-fluid" />',
+					$result->employee_name,
+					$result->card_no,
+					$action
+				);
+			}else{
+				$datatable[]=array(
+					'<div class="checkbox checkbox-primary checkbox-single">
+						<input type="checkbox" name="selected[]" value="'.$result->user_id.'" />
+						<label></label>
+					</div>',
+					'<img src="'.$image.'" alt="'.$result->employee_name.'" class="img-fluid" />',
+					$result->employee_name,
+					$result->card_no,
+					$result->mobile,
+					$result->enabled ? 'Enable':'Disable',
+					$action
+				);
+			}
 
 		}
 		//printr($datatable);
@@ -174,6 +190,7 @@ class Employee extends AdminController {
 
 		$data['emp_sample']=upload_url('files/samples/employee-sample.xlsx');
 
+		$data['popup']=$this->request->getGet('popup');
 
 		return $this->template->view('Admin\Employee\Views\employee', $data);
 	}
@@ -653,8 +670,7 @@ class Employee extends AdminController {
 			foreach($employetimedata as $key=>$emp){
 				$empdata[$key]=array_merge($empdata[$key],$emp);
 			}
-			printr($empdata);
-			exit;
+
 
 			foreach($empdata as $row=>$edata){
 				$user=$this->employeeModel->where( 'card_no', $edata['card_no'])->first();
@@ -669,7 +685,7 @@ class Employee extends AdminController {
 
 
 
-			/*usleep(50000); // For example, sleep for 0.05 seconds
+			usleep(50000); // For example, sleep for 0.05 seconds
 
 			// Calculate progress
 			$progress = min(100, intval(($row - $startRow + $chunkSize) / ($highestRow - $startRow + $chunkSize) * 100));
@@ -679,14 +695,14 @@ class Employee extends AdminController {
 			$jsonResponse = json_encode($progressData);
 			header('Content-Type: application/json');
 			echo $jsonResponse;
-			ob_end_flush();*/
+			ob_end_flush();
 		}
 
 
-		/*$sheetData = $sheet->toArray(null, true, true, true);
+		$sheetData = $sheet->toArray(null, true, true, true);
 		array_shift($sheetData);
 
-		/*foreach($sheetData as $sheet){
+		foreach($sheetData as $sheet){
 
 				$department_name=trim($sheet['I']);
 				$department_id=0;
@@ -795,10 +811,10 @@ class Employee extends AdminController {
 
 
 
-		}*/
+		}
 
-		//$sheetData = $spreadsheet->getActiveSheet()->toArray();
-		/*foreach($employeeofficedata as $key=>$emp){
+		$sheetData = $spreadsheet->getActiveSheet()->toArray();
+		foreach($employeeofficedata as $key=>$emp){
 			$empdata[$key]=$emp;
 		}
 		foreach($employeedata as $key=>$emp){
@@ -833,7 +849,7 @@ class Employee extends AdminController {
 			// Flush the output buffer to send immediately
 			ob_flush();
 			flush();
-		}*/
+		}
 		//echo "ok";
 		$json= array(
 			'success'=>'Employee Upload successfully',
@@ -844,31 +860,6 @@ class Employee extends AdminController {
     	exit;
 	}
 
-
-	private function readChunk($file, $startRow, $chunkSize)
-    {
-		$reader = IOFactory::createReader('Xlsx');
-        $spreadsheet = $reader->load($file);
-		$sheet = $spreadsheet->getActiveSheet();
-        $data = [];
-
-        $highestRow = min($sheet->getHighestRow(), $startRow + $chunkSize - 1);
-
-		for ($row = $startRow; $row <= $highestRow; ++$row) {
-            // Read data from Excel and store in an array
-            $rowData = [];
-
-            for ($col = 0; $col < $sheet->getHighestDataColumn(); ++$col) {
-				$rowData[] = $sheet->getCellByColumnAndRow($col, $row)->getValue();
-
-			}
-            $data[] = $rowData;
-        }
-		//printr($data);
-		//exit;
-        return $data;
-
-	}
 
 	protected function validateForm() {
         $validation =  \Config\Services::validation();

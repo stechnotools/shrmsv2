@@ -32,15 +32,16 @@ $validation = \Config\Services::validation();
 						</div>
 					</div>
 				</div>
-				<div class="row paycode action d-none">
+				<div class="row user action d-none">
 					<div class="col-md-6">
 						<div class="form-group row required">
 							<label class="col-md-4 control-label" for="input-firstname">Employee</label>
 							<div class="col-md-8">
 								<div class="input-group">
-									<?php echo form_input(array('class'=>'form-control','name' => 'user_id', 'id' => 'user_id', 'placeholder'=>"Employee",'readonly'=>'true','value' => set_value('user_id', $user_id))); ?>
+									<?php echo form_input(array('class'=>'form-control', 'id' => 'username', 'placeholder'=>"Employee",'readonly'=>'true')); ?>
+									<input type="hidden" name="user_id" id="user_id" value="<?php echo $user_id; ?>">
 									<span class="input-group-prepend">
-										<button type="button" class="btn waves-effect waves-light btn-primary employee_list" data-parent="user_id"><i class="fa fa-search"></i></button>
+										<button type="button" class="btn waves-effect waves-light btn-primary employee_list" data-userId="user_id" data-userName="username"><i class="fa fa-search"></i></button>
 									</span>
 								</div>
 							</div>
@@ -101,24 +102,29 @@ $validation = \Config\Services::validation();
 		});
 		$('#type').trigger('change');
 		$(".employee_list").click(function(){
-				parent_id=$(this).data('parent');
+				user_id=$(this).data('userid');
+				user_name=$(this).data('username');
 				$.ajax({
 					url: '<?php echo admin_url("employee"); ?>',
 					dataType: 'html',
-					data:{refresh:false},
+					data:{
+						popup:true
+					},
 					beforeSend: function() {
 					},
 					complete: function() {
 					},
 					success: function(html) {
-						$('.dmodal .modal-body').html(html);
+						$('.employeemodal .modal-body').html(html);
 
 						// Display Modal
-						$('.dmodal').modal('show');
+						$('.employeemodal').modal('show');
 						$(document).on( "click", 'a[data-reload="false"]', function(e){
 							e.preventDefault();
-							$("#"+parent_id).val($(this).data('paycode'));
-							$('.dmodal').modal('hide');
+							$("#" + user_id).val($(this).data('id'));
+							$("#" + user_name).val($(this).data('name'));
+
+							$('.employeemodal').modal('hide');
 						});
 					}
 				});

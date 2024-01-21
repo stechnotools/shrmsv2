@@ -47,6 +47,7 @@
 		<div class="card">
 			<div class="card-header py-2 text-white">
 				<h3 class="card-title float-left my-2"><?php echo $heading_title; ?></h3>
+				<?php if(!$popup){?>
 				<div class="panel-tools float-right">
 				<?php echo form_open_multipart('admin/employee/upload','class="upload-form"');?>
 					<a href="<?=$emp_sample?>" data-toggle="tooltip"  class="btn btn-primary btn-sm" target="_self" download>Download Sample</a>
@@ -57,6 +58,7 @@
 					<button type="button" data-toggle="tooltip" title="<?php echo $button_delete; ?>" class="btn btn-danger btn-sm" onclick="confirm('<?php echo $text_confirm; ?>') ? $('#form-datatable').submit() : false;"><i class="fa fa-trash"></i></button>
 					<?php echo form_close(); ?>
 				</div>
+				<?}?>
 			</div>
 			<div class="card-body">
 				<div class="progress progress-lg">
@@ -71,17 +73,22 @@
 							<table id="datatable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
 								<thead>
 									<tr>
+										<?php if(!$popup){?>
 										<th style="width: 1px;" class="text-center no-sort">
 											<div class="checkbox checkbox-primary checkbox-single">
 												<input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" />
 												<label></label>
 											</div>
 										</th>
+										<?}?>
 										<th>Image</th>
 										<th>Name</th>
 										<th>Card No</th>
+
+										<?php if(!$popup){?>
 										<th>Mobile</th>
 										<th>Status</th>
+										<?}?>
 										<th class="no-sort">Action</th>
 									</tr>
 								</thead>
@@ -112,6 +119,7 @@ $(function(){
 			url :"<?=$datatable_url?>", // json datasource
 			type: "post",  // method  , by default get
 			data: function ( data ) {
+				data.popup = '<?=$popup?>';
 				data.branch_id = $('#branch_id').val();
 				data.department_id = $('#department_id').val();
 				data.status = $('#status').val();

@@ -128,13 +128,13 @@ class EmployeeModel extends Model
         $builder->join('employee_office eo','e.user_id = eo.user_id','left');
 
 		if(!empty($data['branch_id'])){
-			$builder->whereIn("eo.branch_id",$data['branch_id']);
+			$builder->where("eo.branch_id",$data['branch_id']);
 		}
 		if(!empty($data['department_id'])){
-			$builder->whereIn("eo.department_id",$data['department_id']);
+			$builder->where("eo.department_id",$data['department_id']);
 		}
 		if(!empty($data['designation_id'])){
-			$builder->whereIn("eo.designation_id",$data['designation_id']);
+			$builder->where("eo.designation_id",$data['designation_id']);
 		}
 		if(isset($data['status'])){
 			$builder->where("u.enabled",$data['status']);
