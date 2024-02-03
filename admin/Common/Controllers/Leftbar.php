@@ -200,45 +200,23 @@ class Leftbar extends AdminController{
             );
         }
 
-        if ($this->user->hasPermission('shift/range')) {
+        if ($this->user->hasPermission('shift/override')) {
             $operations[] = array(
-                'name'	  => lang('Leftbar.text_shiftbyrange'),
-                'href'     => admin_url('shift/range'),
+                'name'	  => lang('Leftbar.text_override'),
+                'href'     => admin_url('shift/override'),
                 'children' => array()
             );
         }
 
-        if ($this->user->hasPermission('shift/month')) {
+        if ($this->user->hasPermission('shift/roster')) {
             $operations[] = array(
-                'name'	  => lang('Leftbar.text_shiftbymonth'),
-                'href'     => admin_url('shift/month'),
+                'name'	  => lang('Leftbar.text_shiftbyroster'),
+                'href'     => admin_url('shift/roster'),
                 'children' => array()
             );
         }
 
-        if ($this->user->hasPermission('shift/dept')) {
-            $operations[] = array(
-                'name'	  => lang('Leftbar.text_shiftbydept'),
-                'href'     => admin_url('shift/dept'),
-                'children' => array()
-            );
-        }
 
-        if ($this->user->hasPermission('shift/csv')) {
-            $operations[] = array(
-                'name'	  => lang('Leftbar.text_shiftbycsv'),
-                'href'     => admin_url('shift/csv'),
-                'children' => array()
-            );
-        }
-
-        if ($this->user->hasPermission('cardreplacement')) {
-            $operations[] = array(
-                'name'	  => lang('Leftbar.text_cardreplacement'),
-                'href'     => admin_url('cardreplacement'),
-                'children' => array()
-            );
-        }
 
         if ($this->user->hasPermission('leaveapplication')) {
             $operations[] = array(
@@ -315,46 +293,31 @@ class Leftbar extends AdminController{
         }
 
 
-        $dutyroster = array();
+        $punchroster = array();
 
-        if ($this->user->hasPermission('duty/creation')) {
-            $dutyroster[] = array(
-                'name'	  => lang('Leftbar.text_duty_creation'),
-                'href'     => admin_url('duty/creation'),
-                'children' => array()
-            );
-        }
-
-        if ($this->user->hasPermission('duty/updation')) {
-            $dutyroster[] = array(
-                'name'	  => lang('Leftbar.text_duty_updation'),
-                'href'     => admin_url('duty/updation'),
+        if ($this->user->hasPermission('attendance')) {
+            $punchroster[] = array(
+                'name'	  => lang('Leftbar.text_attendance'),
+                'href'     => admin_url('attendance'),
                 'children' => array()
             );
         }
 
 
-
-        if ($dutyroster) {
+        if ($punchroster) {
             $data['menus'][] = array(
-                'id'       => 'menu-dutyroster',
+                'id'       => 'menu-punchroster',
                 'icon'	   => 'mdi-folder-key-outline',
-                'name'	   => lang('Leftbar.text_dutyroster'),
+                'name'	   => lang('Leftbar.text_punchroster'),
                 'href'     => '',
-                'children' => $dutyroster
+                'children' => $punchroster
             );
         }
 
 
         $payroll = array();
 
-        if ($this->user->hasPermission('attendance')) {
-            $payroll[] = array(
-                'name'	  => 'Month Attendance',
-                'href'     => admin_url('attendance'),
-                'children' => array()
-            );
-        }
+
         if ($this->user->hasPermission('salary/field')) {
             $payroll[] = array(
                 'name'	  => 'Salary Field',
@@ -510,7 +473,7 @@ class Leftbar extends AdminController{
             );
         }
         */
-        if ($this->user->hasPermission('report/attendancereport')) {
+        if ($this->user->hasPermission('report/attendance')) {
             $reports[] = array(
                 'name'	  => 'Attendance Report',
                 'href'     => admin_url('report/attendancereport'),
@@ -518,7 +481,7 @@ class Leftbar extends AdminController{
             );
         }
 
-        if ($this->user->hasPermission('report/payrollreport')) {
+        if ($this->user->hasPermission('report/payroll')) {
             $reports[] = array(
                 'name'	  => 'Payroll Report',
                 'href'     => admin_url('report/payrollreport'),
@@ -529,7 +492,7 @@ class Leftbar extends AdminController{
 
 
 
-        if ($this->user->hasPermission('report/canteenspot')) {
+        if ($this->user->hasPermission('report/canteen')) {
             $reports[] = array(
                 'name'	  => lang('Leftbar.text_canteenreport'),
                 'href'     => admin_url('report/canteenspot'),

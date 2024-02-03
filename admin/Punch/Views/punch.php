@@ -44,8 +44,14 @@
 			<div class="card-header py-2 text-white">
 				<h3 class="card-title float-left my-2"><?php echo $heading_title; ?></h3>
 				<div class="panel-tools float-right">
+					<?php echo form_open_multipart('admin/employee/upload','class="upload-form"');?>
+					<a href="" data-toggle="tooltip"  class="btn btn-primary btn-sm" target="_self" download>Download Sample</a>
+					<input type="file" name="bemployee" id="bemployee" style="display:none">
+					<button type="button" data-toggle="tooltip" title="Upload Bulk Attendance" class="btn btn-info btn-sm" onclick="thisFileUpload();">Bulk Month Attendance Upload</i></button>
+
 					<a href="<?php echo $add; ?>" data-toggle="tooltip" title="<?php echo $button_add; ?>" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i></a>
 					<button type="button" data-toggle="tooltip" title="<?php echo $button_delete; ?>" class="btn btn-danger btn-sm" onclick="confirm('<?php echo $text_confirm; ?>') ? $('#form-datatable').submit() : false;"><i class="fa fa-trash"></i></button>
+					<?php echo form_close(); ?>
 				</div>
 			</div>
 			<div class="card-body">

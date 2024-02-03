@@ -11,7 +11,7 @@ class UserRole extends AdminController {
 	public function __construct(){
         $this->userRoleModel=new UserRoleModel();
 	}
-	
+
 	public function index(){
         $this->template->set_meta_title(lang('Users.heading_title'));
         return $this->getList();
@@ -22,7 +22,7 @@ class UserRole extends AdminController {
         $this->template->set_meta_title(lang('UserRole.heading_title'));
 
         if ($this->request->getMethod(1) === 'POST' && $this->validateForm()){
-        
+
             $this->userRoleModel->insert($this->request->getPost());
             $this->session->setFlashdata('message', 'Role Saved Successfully.');
 
@@ -118,7 +118,7 @@ class UserRole extends AdminController {
 			$action .= 		'<a class="btn btn-sm btn-info" href="'.admin_url('roles/edit/'.$result->id).'"><i class="fas fa-pencil-alt"></i></a>';
 			$action .=		'<a class="btn-sm btn btn-danger btn-remove" href="'.admin_url('roles/delete/'.$result->id).'" onclick="return confirm(\'Are you sure?\') ? true : false;"><i class="fas fa-trash"></i></a>';
 			$action .= '</div>';
-			
+
 
             $datatable[]=array(
                 '<div class="checkbox checkbox-primary checkbox-single">
@@ -189,13 +189,13 @@ class UserRole extends AdminController {
             'monitor'=>'Only Monitor',
             'approval'=>'Monitor/Approval'
         ];
-        
+
         echo $this->template->view('Admin\Users\Views\userRoleForm',$data);
     }
 
     public function permission(){
         $id = $this->uri->getSegment(4);
-        $data['user_group_id']=$id;
+        $data['user_role_id']=$id;
 
         if ($this->request->getMethod(1) === 'POST'){
 
@@ -244,7 +244,7 @@ class UserRole extends AdminController {
             $userrole_info = $this->userRoleModel->find($this->uri->getSegment(4));
         }
 
-        foreach($this->userRoleModel->getFieldNames('user_group') as $field) {
+        foreach($this->userRoleModel->getFieldNames('user_role') as $field) {
             if($this->request->getPost($field)) {
                 $data[$field] = $this->request->getPost($field);
             } else if(isset($userrole_info->{$field}) && $userrole_info->{$field}) {

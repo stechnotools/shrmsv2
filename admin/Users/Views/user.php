@@ -9,7 +9,7 @@
 				</div>
 			</div>
 			<div class="card-body">
-				<form action="<?php echo $delete; ?>" method="post" enctype="multipart/form-data" id="form-user">
+				<form action="<?php echo $delete; ?>" method="post" enctype="multipart/form-data" id="form-user">          
 					<div class="row">
 						<div class="col-md-12 col-sm-12 col-12">
 							<table id="datatable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
@@ -59,13 +59,13 @@ $(function(){
 				$(".datatable_error").html("");
 				$("#datatable").append('<tbody class="datatable_error"><tr><th colspan="3">No data found.</th></tr></tbody>');
 				$("#datatable_processing").css("display","none");
-
+				
 			},
 			dataType:'json'
 		},
 	});
 
-
+	
 });
 //--></script>
 <?php js_end(); ?>

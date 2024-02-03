@@ -26,6 +26,12 @@ $validation = \Config\Services::validation();
                             <span class="d-none d-sm-block">Account</span>
                         </a>
                     </li>
+                    <li class="nav-item tab">
+                        <a class="nav-link" id="form-tab" data-toggle="tab" href="#form" role="tab" aria-controls="form" aria-selected="false">
+                            <span class="d-block d-sm-none"><i class="fa fa-dashboard fa-lg"></i></span>
+                            <span class="d-none d-sm-block">Forms</span>
+                        </a>
+                    </li>
 				</ul>
                 <div class="tab-content">
 					<div class="tab-pane show active" id="general" role="tabpanel" aria-labelledby="general-tab">
@@ -43,8 +49,8 @@ $validation = \Config\Services::validation();
                                 <div class="form-group row required">
                                     <label class="col-md-3 control-label" for="input-user-group">User Role *</label>
                                     <div class="col-md-9">
-                                        <?php echo form_dropdown('user_group_id', option_array_value($user_groups, 'id', 'name'), set_value('user_group_id', $user_group_id),"id='input-user-group' class='form-control select2'"); ?>
-                                        <?php echo $validation->showerror('user_group_id', 'aio_error'); ?>
+                                        <?php echo form_dropdown('user_role_id', option_array_value($user_roles, 'id', 'name'), set_value('user_role_id', $user_role_id),"id='input-user-group' class='form-control select2'"); ?>
+                                        <?php echo $validation->showerror('user_role_id', 'aio_error'); ?>
                                     </div>
                                 </div>
                                 <div class="form-group row required">
@@ -61,24 +67,9 @@ $validation = \Config\Services::validation();
                                     </div>
                                 </div>
                                 <div class="form-group row required">
-                                    <label class="col-md-3 control-label" for="input-meta-keywords">Country *</label>
+                                    <label class="col-md-3 control-label" for="input-address">Address</label>
                                     <div class="col-md-9">
-                                        <?php echo form_dropdown('country_id', option_array_value($countries, 'id', 'name'), set_value('country_id', $country_id),"id='country_id' class='form-control select2'"); ?>
-                                        <?php echo $validation->showerror('country_id', 'aio_error'); ?>
-                                    </div>
-                                </div>
-                                <div class="form-group row required">
-                                    <label class="col-md-3 control-label" for="input-meta-keywords">State *</label>
-                                    <div class="col-md-9">
-                                        <?php echo form_dropdown('state_id', array(), set_value('state_id', $state_id),"id='state_id' class='form-control select2'"); ?>
-                                        <?php echo $validation->showerror('state_id', 'aio_error'); ?>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-md-3 control-label" for="input-meta-keywords">City *</label>
-                                    <div class="col-md-9">
-                                        <?php echo form_dropdown('city_id', array(), set_value('city_id', $city_id),"id='city_id' class='form-control select2'"); ?>
-                                        <?php echo $validation->showerror('city_id', 'aio_error'); ?>
+                                        <textarea name="address" id="input-address" class="form-control" placeholder="Address"><?=$address?></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -96,18 +87,8 @@ $validation = \Config\Services::validation();
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group row required">
-                                    <label class="col-md-3 control-label" for="input-address">Address</label>
-                                    <div class="col-md-9">
-                                        <textarea name="address" id="input-address" class="form-control" placeholder="Address"><?=$address?></textarea>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-md-3 control-label" for="input-meta-keywords">Postcode</label>
-                                    <div class="col-md-9">
-                                        <?php echo form_input(array('class'=>'form-control','name' => 'zip', 'id' => 'zip', 'placeholder'=>'postcode','value' => set_value('zip', $zip))); ?>
-                                    </div>
-                                </div>
+
+
                             </div>
                         </div>
 					</div>
@@ -129,21 +110,36 @@ $validation = \Config\Services::validation();
                                     </div>
                                 </div>
                             </div>
+
+                        </div>
+
+
+					</div>
+                    <div class="tab-pane" id="form" role="tabpanel" aria-labelledby="form-tab">
+						<div class="row">
                             <div class="col-md-6">
                                 <div class="form-group row required">
-                                    <label class="col-md-3 control-label" for="input-password">Branch *</label>
+                                    <label class="col-md-3 control-label" for="input-username">Form Assign *</label>
                                     <div class="col-md-9">
-                                        <?php echo form_dropdown('branch_id[]', option_array_value($branches, 'id', 'name'), set_value('branch_id', $branch_id),"id='branch_id' class='form-control select2' multiple"); ?>
-                                        <?php echo $validation->showerror('branch_id[]', 'aio_error'); ?>
+                                    <div class="card">
+                                        <div class="card-body overflow-auto bg-gray-200" style="height:300px;">
+                                            <?php
+                                            foreach($forms as $form): ?>
+                                                <div class="">
+                                                    <label><input type="checkbox" value="<?php echo $form['id']; ?>" name="form_assign[]" <?php echo set_checkbox('form_assign[]', $form['id'], (in_array($form['id'], $form_assign) ? TRUE : FALSE)); ?> /> <?php echo $form['name']; ?></label>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
+                                        <div class="card-footer">
+                                            <button onclick="$(this).parents('.card').find(':checkbox').prop('checked', true); return false;" class="btn btn-info btn-sm">Select All</button>
+                                            <button onclick="$(this).parents('.card').find(':checkbox').prop('checked', false); return false;" class="btn btn-info btn-sm">Unselect All</button>
+                                        </div>
+                                    </div>
                                     </div>
                                 </div>
-                                <div class="form-group row">
-                                    <label class="col-md-3 control-label" for="input-status">Status</label>
-                                    <div class="col-md-9">
-                                        <?php  echo form_dropdown('enabled', array('1'=>'Enable','0'=>'Disable'), set_value('enabled',$enabled),array('class'=>'form-control','id' => 'input-status')); ?>
-                                    </div>
-                                </div>
+
                             </div>
+
                         </div>
 
 
@@ -158,86 +154,7 @@ $validation = \Config\Services::validation();
 
 <?php js_start(); ?>
 <script type="text/javascript"><!--
-    $(document).ready(function() {
-		$('select[name=\'country_id\']').bind('change', function() {
-			$.ajax({
-				url: '<?php echo admin_url("localisation/country/state"); ?>/' + this.value,
-				dataType: 'json',
-				beforeSend: function() {
-					//$('select[name=\'country_id\']').after('<span class="wait">&nbsp;<img src="view/image/loading.gif" alt="" /></span>');
-				},
-				complete: function() {
-					//$('.wait').remove();
-				},
-				success: function(json) {
 
-					html="";
-					if (json['state'] != '') {
-						html += '<option value="0" selected="selected" >Select State</option>';
-						for (i = 0; i < json['state'].length; i++) {
-							html += '<option value="' + json['state'][i]['id'] + '"';
-
-							if (json['state'][i]['id'] == '<?php echo $state_id; ?>') {
-								html += ' selected="selected"';
-							}
-
-							html += '>' + json['state'][i]['name'] + '</option>';
-						}
-					} else {
-						html += '<option value="0" selected="selected">Select State</option>';
-					}
-
-					$('select[name=\'state_id\']').html(html);
-					$('select[name=\'state_id\']').select2();
-					$('select[name=\'state_id\']').trigger('change');
-				},
-				error: function(xhr, ajaxOptions, thrownError) {
-					alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-				}
-			});
-		});
-		$('select[name=\'country_id\']').trigger('change');
-
-		$('select[name=\'state_id\']').bind('change', function() {
-
-			$.ajax({
-				url: '<?php echo admin_url("localisation/state/city"); ?>/' + this.value,
-				dataType: 'json',
-				beforeSend: function() {
-					//$('select[name=\'country_id\']').after('<span class="wait">&nbsp;<img src="view/image/loading.gif" alt="" /></span>');
-				},
-				complete: function() {
-					//$('.wait').remove();
-				},
-				success: function(json) {
-
-					html="";
-					if (json['city'] != '') {
-						html = '<option value="0">Select City</option>';
-						for (i = 0; i < json['city'].length; i++) {
-							html += '<option value="' + json['city'][i]['id'] + '"';
-
-							if (json['city'][i]['id'] == '<?php echo $city_id; ?>') {
-								html += ' selected="selected"';
-							}
-
-							html += '>' + json['city'][i]['name'] + '</option>';
-						}
-					} else {
-						html += '<option value="0" selected="selected">Select City</option>';
-					}
-
-					$('select[name=\'city_id\']').html(html);
-					$('select[name=\'city_id\']').select2();
-				},
-				error: function(xhr, ajaxOptions, thrownError) {
-					alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-				}
-			});
-		});
-		//$('select[name=\'state_id\']').trigger('change');
-
-    });
 	function image_upload(field, thumb) {
 		CKFinder.modal( {
 			chooseFiles: true,

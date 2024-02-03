@@ -118,7 +118,7 @@ class SettingModel extends Model
 			'gp.name',
 			'u.last_login'
 		);
-		
+
 		if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
 			//echo "ok";
 			$sort = $data['sort'];
@@ -131,8 +131,8 @@ class SettingModel extends Model
 		} else {
 			$order = "asc";
 		}
-		$this->db->order_by($sort, $order); 
-		
+		$this->db->order_by($sort, $order);
+
 		if (isset($data['start']) || isset($data['limit'])) {
 			if ($data['start'] < 0) {
 				$data['start'] = 0;
@@ -179,7 +179,7 @@ class SettingModel extends Model
 		$sort_data = array(
 			'name'
 		);
-		
+
 		if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
 			//echo "ok";
 			$sort = $data['sort'];
@@ -192,8 +192,8 @@ class SettingModel extends Model
 		} else {
 			$order = "asc";
 		}
-		$this->db->order_by($sort, $order); 
-		
+		$this->db->order_by($sort, $order);
+
 		if (isset($data['start']) || isset($data['limit'])) {
 			if ($data['start'] < 0) {
 				$data['start'] = 0;
@@ -220,11 +220,11 @@ class SettingModel extends Model
 
 		return $count;
 	}
-	public function getUserGroup($user_group_id) {
+	public function getUserGroup($user_role_id) {
 		$this->db->distinct();
-		$this->db->where("id",$user_group_id);
+		$this->db->where("id",$user_role_id);
 		$query=$this->db->get('groups')->row();
-		
+
 		$user_group = array(
 			'name'      	=> $query->name,
 			'type'			=> $query->type,
@@ -240,16 +240,16 @@ class SettingModel extends Model
 		$Group=$query->row();
 		return $Group;
 	}
-	public function editUserGroup($user_group_id, $data) {
-		$this->db->where("id",$user_group_id);
+	public function editUserGroup($user_role_id, $data) {
+		$this->db->where("id",$user_role_id);
         $status=$this->db->update("groups", $data);
-        
-        if($status) 
+
+        if($status)
         return "success";
 	}
 	public function getCountries($data = array()) {
 		$this->db->from("country");
-			
+
 		$sort_data = array(
 			'country_name',
 			'country_code',
@@ -265,7 +265,7 @@ class SettingModel extends Model
 		} else {
 			$order = "asc";
 		}
-		$this->db->order_by($sort, $order); 	
+		$this->db->order_by($sort, $order);
 		if (isset($data['start']) || isset($data['limit'])) {
 			if ($data['start'] < 0) {
 				$data['start'] = 0;
@@ -278,11 +278,11 @@ class SettingModel extends Model
 		}
 
 		$res = $this->db->get()->result();
-	
+
 		return $res;
-		 
+
 	}
-	
+
 	public function getCityByStateId($state_id) {
 		$this->db->from("city");
 		$this->db->where("city_state_id",$state_id);
@@ -315,7 +315,7 @@ class SettingModel extends Model
 		foreach ($data as $key => $value) {
 			//echo substr($key, 0, strlen($module));
 			if (substr($key, 0, strlen($module)) == $module) {
-				
+
 				if (!is_array($value)) {
 					$builder->insert(array("key"=>$key,"value"=>$value,"module"=>$module));
 				} else {
@@ -323,7 +323,7 @@ class SettingModel extends Model
 				}
 			}
 		}
-		//exit;	
+		//exit;
 	}
     public function getDashboardReports($dashboard=1) {
         $builder=$this->db->table("dashboard_report");

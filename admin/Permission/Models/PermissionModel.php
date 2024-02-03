@@ -25,10 +25,12 @@ class PermissionModel extends Model
 
     // Validation
     protected $validationRules      = [
-        'name' => array(
-            'label' => 'Subject',
-            'rules' => 'trim|required|max_length[100]'
+        'id'    => 'permit_empty|integer|greater_than[0]',
+        'route' => array(
+            'label' => 'route',
+            'rules' => 'trim|required|max_length[100]|is_unique[permission.route,id,{id}]'
         ),
+
 
     ];
     protected $validationMessages   = [];
@@ -57,7 +59,7 @@ class PermissionModel extends Model
         if (isset($data['sort']) && $data['sort']) {
             $sort = $data['sort'];
         } else {
-            $sort = "name";
+            $sort = "route";
         }
 
         if (isset($data['order']) && ($data['order'] == 'desc')) {
@@ -95,13 +97,54 @@ class PermissionModel extends Model
 
         if (!empty($data['filter_search'])) {
             $builder->where("
-				name LIKE '%{$data['filter_search']}%'"
+                route LIKE '%{$data['filter_search']}%'"
             );
         }
     }
 
     public function get_modules_with_permission($id=null){
-        $query = "Select p1.id,p1.name,p1.description, (case when p2.user_group_id = $id then 'yes' else 'no' end) as active From permission p1 left join user_group_permission p2 ON p1.id = p2.permission_id and p2.user_group_id =$id";
+        $query = "Select p1.id,p1.route,p1.module,p1.action,p1.description, (case when p2.user_role_id = $id then 'yes' else 'no' end) as active From permission p1 left join user_role_permission p2 ON p1.id = p2.permission_id and p2.user_role_id =$id";
         return $this->db->query($query)->getResult();
+    }
+
+    public function get_modules_with_permission_old($id=null){
+        $query = "Select p1.id,p1.name,p1.description, (case when p2.user_role_id = $id then 'yes' else 'no' end) as active From permission p1 left join user_role_permission p2 ON p1.id = p2.permission_id and p2.user_role_id =$id";
+        return $this->db->query($query)->getResult();
+    }
+
+    public function addUserGroupPermission($id,$data){
+
+        $builder=$this->db->table("user_role_permission");
+        $builder->where("user_role_id",$id);
+        $builder->delete();
+
+        if (isset($data)) {
+            foreach ($data as $key => $value) {
+                $array = array(
+                    'permission_id'=>$value,
+                    'user_role_id'=>$id
+                );
+                $builder->insert($array);
+            }
+        }
+
+
+        return "success";
+    }
+
+    public function addUserPermission($user_id,$data){
+        $builder=$this->db->table("user_permission");
+        $builder->where("user_id",$user_id);
+        $builder->delete();
+
+        if (isset($data)) {
+            foreach ($data as $key => $value) {
+                $array = array(
+                    'permission_id'=>$value,
+                    'user_id'=>$user_id
+                );
+                $builder->insert($array);
+            }
+        }
     }
 }

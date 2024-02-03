@@ -5,6 +5,7 @@ use Admin\Branch\Models\BranchModel;
 use Admin\Localisation\Models\CountryModel;
 use App\Controllers\AdminController;
 use Admin\Localisation\Models\DistrictModel;
+use Admin\Survey\Models\SurveyModel;
 use Admin\Users\Models\UserGroupModel;
 use Admin\Users\Models\UserModel;
 use Admin\Users\Models\UserRoleModel;
@@ -30,6 +31,8 @@ class Users extends AdminController{
 		if ($this->request->getMethod(1) === 'POST' && $this->validateForm()){
 
             $userid=$this->userModel->insert($this->request->getPost());
+			$assigndata=(array)$this->request->getPost('form_assign');
+			$this->userModel->assignForm($userid,$assigndata);
 
 			$this->session->setFlashdata('message', 'User Saved Successfully.');
 
@@ -45,17 +48,10 @@ class Users extends AdminController{
 
 		if ($this->request->getMethod(1) === 'POST' && $this->validateForm()){
 			$id=$this->uri->getSegment(4);
-			$udata=array(
-				'firstname'=>$this->request->getPost('firstname'),
-				'user_group_id'=>$this->request->getPost('user_group_id'),
-				'email'=>$this->request->getPost('email'),
-				'phone'=>$this->request->getPost('email')
-
-			);
-
 
 			$this->userModel->update($id,$this->request->getPost());
-
+			$assigndata=(array)$this->request->getPost('form_assign');
+			$this->userModel->assignForm($id,$assigndata);
 			$this->session->setFlashdata('message', 'User Updated Successfully.');
 
 			return redirect()->to(base_url('admin/users'));
@@ -239,11 +235,29 @@ class Users extends AdminController{
 		}
 
 
-		$data['user_groups'] =  (new UserGroupModel())->findAll();
+		$data['user_roles'] =  (new UserRoleModel())->findAll();
 
-		$data['countries']=(new CountryModel())->getAll();
-		$data['branches']=(new BranchModel())->getAll();
+		$allforms =  (new SurveyModel())->getALL();
 
+        $data['forms']=[];
+        foreach($allforms as $form) {
+			//$assign=$this->userModel->getFormAssign($form['xmlFormId']);
+			$data['forms'][] = array(
+				'id' => $form->id,
+				'name' => $form->name,
+			);
+
+        }
+
+		
+
+        if ($this->request->getPost('form_assign')) {
+            $data['form_assign'] = $this->request->getPost('form_assign');
+        } elseif ($this->uri->getSegment(4)) {
+            $data['form_assign'] = $this->userModel->getAssignForm($this->uri->getSegment(4));
+        } else {
+            $data['form_assign'] = array();
+        }
 
 		echo $this->template->view('Admin\Users\Views\userForm',$data);
 	}

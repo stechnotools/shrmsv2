@@ -27,11 +27,8 @@ return [
 
     'text_operation'=> 'Operations',
     'text_mpunch'                 	=> 'Manual Time Entry',
-    'text_shiftbyrange'              => 'Shift update by Range',
-    'text_shiftbymonth'              => 'Shift update by Monthly',
-    'text_shiftbydept'               => 'Shift update by Dept',
-    'text_shiftbycsv'                => 'Shift Upload by csv',
-    'text_cardreplacement'           => 'Card Changing',
+    'text_override'                 => 'Shift Override',
+    'text_shiftbyroster'            => 'Shift by Roster',
     'text_tourapplication'           => 'Leave and Tour Entry',
     'text_holiday'               	=> 'Holiday',
     'text_leaveapproval'             => 'Leave Approval',
@@ -39,10 +36,10 @@ return [
     'text_mispunchrequest'           => 'Mis Attendance Request',
     'text_mispunchapproval'          => 'Mis Attendance Approval',
     'text_leaveencashment'           => 'Leave Encashment',
-    'text_otapproval'              	=> 'OT Approval',
+    'text_otapproval'              	 => 'OT Approval',
 
-    'text_dutyroster'                => 'Duty Roster',
-    'text_duty_creation'             => 'Creation',
+    'text_punchroster'                => 'Punch Roster',
+    'text_attendance'             => 'Attendance Process',
     'text_duty_updation'             => 'Updation',
 
     'text_administration'            => 'Administration',

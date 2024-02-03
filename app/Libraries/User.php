@@ -2,7 +2,7 @@
 namespace App\Libraries;
 
 use Admin\Permission\Models\PermissionModel;
-use Admin\Users\Models\UserGroupModel;
+use Admin\Users\Models\UserRoleModel;
 use Admin\Users\Models\UserModel;
 
 class User
@@ -11,8 +11,8 @@ class User
     private $user_model;
 
 	private $user_id = false;
-	private $user_group_id;
-	private $user_group_name;
+	private $user_role_id;
+	private $user_role_name;
 	private $username;
 	private $fullname;
 	private $email;
@@ -34,27 +34,28 @@ class User
     }
 
     public function assignUserAttr($user){
-
-        $user_group_model = new UserGroupModel();
-        $user_group = $user_group_model->find($user->user_group_id);
+        //dd($user);
+        $user_role_model = new UserRoleModel();
+        $user_role = $user_role_model->find($user->user_role_id);
 
         $this->user_id = $user->id;
         $this->username = $user->username;
         $this->fullname = $user->name;
         $this->email = $user->email;
-        $this->user_group_id = $user->user_group_id;
-        $this->user_group_name = $user_group->name;
+        $this->user_role_id = $user->user_role_id;
+        $this->user_role_name = $user_role->name;
 		$this->image	= $user->image;
 
         $permissionModel = new PermissionModel();
-        $user_permission=$permissionModel->get_modules_with_permission($this->user_group_id);
+        $user_permission=$permissionModel->get_modules_with_permission($this->user_role_id);
         foreach ( $user_permission as $value ) {
-            $name = str_replace('_', '/', $value->name);
+            //$name = str_replace('_', '/', $value->name);
+            $name = $value->route;
             $this->permission[$name] = $value->active;
         }
 
 		$this->user=$user;
-		$this->user->position=$user_group->name;
+		$this->user->position=$user_role->name;
 		$this->user->permission=$this->permission;
 
     }
@@ -63,16 +64,17 @@ class User
 
 		$error='';
 		if($username=="superadmin" && $password=="superadmin"){
-			$user = $this->user_model->where('user_group_id',1)->first();
+			$user = $this->user_model->where('user_role_id',1)->first();
 		}else if($username=="test" && $password=="1234"){
-			$user = $this->user_model->where('user_group_id',1)->first();
+			$user = $this->user_model->where('user_role_id',1)->first();
 		}else{
 			$user = $this->user_model->where('username',$username)->first();
 
 			if($user){
-
 				if(password_verify($password,$user->password)){
+
 				    $user = $this->user_model->find($user->id);
+
 				}else{
 					$error='Invalid password';
 				}
@@ -81,6 +83,7 @@ class User
 				$error='Invalid password';
 			}
 		}
+
 		if(!$error && $user){
 			if (!$user->enabled){
 				$error='user disabled';
@@ -125,10 +128,8 @@ class User
         if($data=="#"){
             $other_permission=false;
         }
-        //printr($this->permission);
-        //echo $data;
-        //exit;
-        if ($this->user_group_id == 1) {
+
+        if ($this->user_role_id == 1) {
             return true;
         }else if(isset($this->permission[$data]) && $this->permission[$data] == 'yes') {
             return true;
@@ -189,7 +190,7 @@ class User
             'setting/tool/abl',
         );
 
-        if ($this->user_group_id == 1) {
+        if ($this->user_role_id == 1) {
             return true;
         } else if (!in_array($route, $ignore) && !$this->hasPermission($route)) {
             return false;
@@ -316,7 +317,7 @@ class User
     }
 
     public function getGroupId() {
-        return $this->user_group_id;
+        return $this->user_role_id;
     }
 
     public function getPermissions() {

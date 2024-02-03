@@ -119,7 +119,7 @@ class PunchModel extends Model
 		//printr($_POST);
 		//exit;
 		$userdata=array(
-			"user_group_id"=>4,
+			"user_role_id"=>4,
 			"firstname"=>$data['punch_name'],
 			"lastname"=>'',
 			"image"=>$data['image'],

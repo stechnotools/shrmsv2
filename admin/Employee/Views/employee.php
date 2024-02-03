@@ -49,7 +49,7 @@
 				<h3 class="card-title float-left my-2"><?php echo $heading_title; ?></h3>
 				<?php if(!$popup){?>
 				<div class="panel-tools float-right">
-				<?php echo form_open_multipart('admin/employee/upload','class="upload-form"');?>
+					<?php echo form_open_multipart('admin/employee/upload','class="upload-form"');?>
 					<a href="<?=$emp_sample?>" data-toggle="tooltip"  class="btn btn-primary btn-sm" target="_self" download>Download Sample</a>
 					<input type="file" name="bemployee" id="bemployee" style="display:none">
 					<button type="button" data-toggle="tooltip" title="Upload Bulk Employee" class="btn btn-info btn-sm" onclick="thisFileUpload();">Bulk Employee Upload</i></button>

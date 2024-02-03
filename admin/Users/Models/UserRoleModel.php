@@ -4,10 +4,10 @@ namespace Admin\Users\Models;
 
 use CodeIgniter\Model;
 
-class UserGroupModel extends Model
+class UserRoleModel extends Model
 {
 	protected $DBGroup              = 'default';
-	protected $table                = 'user_group';
+	protected $table                = 'user_role';
 	protected $primaryKey           = 'id';
 	protected $useAutoIncrement     = true;
 	protected $insertID             = 0;

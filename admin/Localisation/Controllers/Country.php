@@ -3,6 +3,7 @@ namespace Admin\Localisation\Controllers;
 use App\Controllers\AdminController;
 use Admin\Localisation\Models\BlockModel;
 use Admin\Localisation\Models\CountryModel;
+use Admin\Localisation\Models\StateModel;
 
 class Country extends AdminController{
     private $error = array();
@@ -252,17 +253,17 @@ class Country extends AdminController{
         //return !$this->error;
     }
 
-    public function block($country=''){
+    public function state($country=''){
         if (is_ajax()){
-            $blockModel=new BlockModel();
+            $stateModel=new StateModel();
             if(!is_numeric($country)){
                 $countryrow=$this->countryModel->where('code', $country)->first();
 
                 $country=$countryrow->id;
             }
             $json = array(
-                'country'  	=> $country,
-                'block'        => $blockModel->getBlocksByCountry($country)
+                'country'  	    => $country,
+                'state'         => $stateModel->getStatesByCountry($country)
             );
             echo json_encode($json);
         }else{

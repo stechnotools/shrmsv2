@@ -1,9 +1,9 @@
 <?php
 if(!isset($routes))
-{
+{ 
     $routes = \Config\Services::routes(true);
 }
-$routes->group(env('app.adminROUTE'), ['namespace' => 'Admin','filter' => 'login'], function($routes)
+$routes->group('admin', ['namespace' => 'Admin','filter' => 'login'], function($routes)
 {
     $routes->add('permission', 'Permission\Controllers\Permission::index');
     $routes->post('permission/search','Permission\Controllers\Permission::search');
@@ -11,5 +11,6 @@ $routes->group(env('app.adminROUTE'), ['namespace' => 'Admin','filter' => 'login
     $routes->match(['get','post'],'permission/edit/(:segment)', 'Permission\Controllers\Permission::edit/$1');
     $routes->get('permission/delete/(:segment)',   'Permission\Controllers\Permission::delete/$1');
     $routes->post('permission/delete','Permission\Controllers\Permission::delete');
-
+    $routes->add('permission/assign/(:segment)',   'Permission\Controllers\Permission::assign/$1');
+    
 });

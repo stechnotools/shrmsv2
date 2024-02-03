@@ -152,7 +152,7 @@ class EmployeeModel extends Model
     public function addEmployee($data) {
 		$builder = $this->db->table("user");
 		$userdata = array(
-			"user_group_id" => 4,
+			"user_role_id" => 4,
 			"branch_id" => isset($data['branch_id']) ? $data['branch_id'] : '',
 			"name" => isset($data['employee_name']) ? $data['employee_name'] : '',
 			"image" => isset($data['image']) ? $data['image'] : '',
@@ -294,7 +294,7 @@ class EmployeeModel extends Model
 
 
 		$userdata = array(
-			"user_group_id" => 4,
+			"user_role_id" => 4,
 			"branch_id" => isset($data['branch_id']) ? $data['branch_id'] : '',
 			"name" => isset($data['employee_name']) ? $data['employee_name'] : '',
 			"image" => isset($data['image']) ? $data['image'] : '',
