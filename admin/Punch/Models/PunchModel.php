@@ -24,7 +24,24 @@ class PunchModel extends Model
 
     // Validation
     protected $validationRules      = [
-        
+
+		'user_id' => array(
+			'field' => 'user_id',
+			'label' => 'Paycode',
+			'rules' => 'trim|required|max_length[100]'
+		),
+
+		'punch_date' => array(
+			'field' => 'punch_date',
+			'label' => 'Punch Date',
+			'rules' => "trim|required"
+		),
+		'punch_time' => array(
+			'field' => 'punch_time',
+			'label' => 'Punch Time',
+			'rules' => "trim|required"
+		),
+
 
     ];
     protected $validationMessages   = [];
@@ -204,7 +221,7 @@ class PunchModel extends Model
 			"half_early"=>$data['half_early'],
 		);
         $this->db->table('punch_time')->insert($employetimedata);
-			
+
 		$shift_apply_date=date('Y-m-d', strtotime('+' . $data['shift_remain'] . ' day'));
 
 		$employeshiftdata=array(
@@ -227,8 +244,41 @@ class PunchModel extends Model
 		return $user_id;
 	}
 
-   
+	public function getShiftCount($user_id,$duration){
+		$bulider=$this->db->table("{$this->table} p");
+		$bulider->select("p.shift_id");
+		$bulider->where("user_id",$user_id);
+		$bulider->where("punch_date>=DATE_SUB(CURDATE(), INTERVAL ".$duration." DAY");
+		$bulider->groupBy("shift_id");
+		$res=$bulider->get();
+		return $res;
+	}
 
+	public function getPunchHistory($user_id,$punch_date){
+		$bulider=$this->db->table("punch_history ph");
+		$bulider->select("ph.*");
+		$bulider->where("DATE_FORMAT(punch_date, '%d-%m-%Y')='".$punch_date."'");
+		$bulider->where("user_id",$user_id);
+		$res=$bulider->get()->getResultArray();
+		return $res;
+	}
 
+	public function getTotalPunchByPunchId($punch_id){
+		// using ci4 builder for count
+		$bulider=$this->db->table("punch_history ph");
+		$bulider->where("punch_id",$punch_id);
+		$count = $bulider->countAllResults();
+		return $count+1;
+
+	}
+
+	public function savePunchHistory($punch_history){
+		$this->db->table('punch_history')->insert($punch_history);
+		return $this->db->insertID();
+	}
+
+	public function deletePunchHistory($id){
+		$this->db->table('punch_history')->where('id', $id)->delete();
+	}
 
 }

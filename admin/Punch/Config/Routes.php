@@ -1,6 +1,6 @@
 <?php
 if(!isset($routes))
-{ 
+{
     $routes = \Config\Services::routes(true);
 }
 
@@ -12,6 +12,7 @@ $routes->group('admin', ['namespace' => 'Admin','filter' => 'login'], function($
     $routes->match(['get','post'],'punch/edit/(:segment)', 'Punch\Controllers\Punch::edit/$1');
     $routes->get('punch/delete/(:segment)',   'Punch\Controllers\Punch::delete/$1');
     $routes->post('punch/delete','Punch\Controllers\Punch::delete');
+    $routes->get('punch/history',   'Punch\Controllers\Punch::history');
+    $routes->get('punch/deletehistory/(:segment)',   'Punch\Controllers\Punch::deleteHistory/$1');
 });
 
-    

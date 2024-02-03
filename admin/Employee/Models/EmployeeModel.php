@@ -458,8 +458,12 @@ class EmployeeModel extends Model
         $builder->join('branch b', 'eo.branch_id = b.id','left');
         $builder->join('department d', 'eo.department_id = d.id','left');
         $builder->join('designation ds', 'eo.designation_id = ds.id','left');
+		$builder->join('category ca', 'eo.category_id = ca.id','left');
+		$builder->join('section s', 'eo.section_id = s.id','left');
+		$builder->join('grade g', 'eo.grade_id = g.id','left');
 
-        $builder->select("*,b.name as branch,d.name as department,ds.name as designation");
+
+        $builder->select("*,b.name as branch_name,d.name as department_name,ds.name as designation_name,ca.name as category_name,s.name as section_name,g.name as grade_name");
 		$builder->where("e.user_id",$user_id);
         $res = $builder->get()->getRow();
 		//echo $this->db->getLastQuery();
@@ -470,6 +474,39 @@ class EmployeeModel extends Model
 		$builder = $this->db->table("{$this->table}");
 		$builder->whereIn("user_id", $user_id);
 		$builder->delete();
+	}
+
+	public function getEmployeeShift($user_id) {
+		$builder=$this->db->table("employee_shift es");
+		$builder->select("es.*,s.code as shift_name,s.shift_start_time,s.shift_end_time");
+		$builder->join('shift s', 'es.shift_id = s.id','left');
+		$builder->where("es.user_id",$user_id);
+		$res = $builder->get()->getRow();
+		//echo $this->db->getLastQuery();
+		return $res;
+	}
+
+	public function getEmployeeOffice($user_id){
+		$builder=$this->db->table("employee_office eo");
+		$builder->select("eo.*,b.name as branch_name,d.name as department_name,ca.name as category_name,s.name as section_name,g.name as grade_name,des.name as designation_name");
+		$builder->join('branch b', 'eo.branch_id = b.id','left');
+		$builder->join('department d', 'eo.department_id = d.id','left');
+		$builder->join('category ca', 'eo.category_id = ca.id','left');
+		$builder->join('section s', 'eo.section_id = s.id','left');
+		$builder->join('grade g', 'eo.grade_id = g.id','left');
+		$builder->join('designation des', 'eo.designation_id = des.id','left');
+		$builder->where("eo.user_id",$user_id);
+		$res = $builder->get()->getRow();
+		return $res;
+
+	}
+
+	public function getEmployeeTime($user_id){
+		$builder=$this->db->table("employee_time et");
+		$builder->select("et.*");
+		$builder->where("et.user_id",$user_id);
+		$res = $builder->get()->getRow();
+		return $res;
 	}
 
 

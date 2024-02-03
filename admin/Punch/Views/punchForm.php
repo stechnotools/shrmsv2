@@ -12,26 +12,45 @@ $validation = \Config\Services::validation();
 				</div>
 			</div>
 			<div class="card-body">
-				<?php echo form_open_multipart('',array('class' => 'form-horizontal', 'id' => 'form-punch','role'=>'form')); ?>
-					<?=$employee_details?>
-				
-					
-					<div class="form-group row required ">
-						<label class="col-md-3 control-label" for="input-firstname">Punch date</label>
-						<div class="col-md-9">
-							<?php echo form_input(array('class'=>'form-control datepicker','name' => 'punch_date', 'id' => 'punch-punchdate', 'placeholder'=>"punch date",'value' => set_value('punch_date', date("d-m-Y",strtotime($punch_date))))); ?>
+				<div class="row">
+					<div class="col-md-6">
+						<?php echo form_open_multipart('',array('class' => 'form-horizontal', 'id' => 'form-punch','role'=>'form')); ?>
+
+						<div class="form-group row required">
+							<label class="col-md-3 control-label" for="input-firstname">Employee</label>
+							<div class="col-md-9">
+								<div class="input-group">
+									<?php echo form_input(array('class'=>'form-control', 'id' => 'username', 'placeholder'=>"Employee",'value'=>$employee_name,'readonly'=>'true')); ?>
+									<input type="hidden" name="user_id" id="user_id" value="<?php echo $punch_user_id; ?>">
+									<?php if(!$edit){?>
+									<span class="input-group-prepend">
+										<button type="button" class="btn waves-effect waves-light btn-primary employee_list" data-userId="user_id" data-userName="username"><i class="fa fa-search"></i></button>
+									</span>
+									<?}?>
+								</div>
+							</div>
 						</div>
-					</div>
-					<div class="form-group row required">
-						<label class="col-md-3 control-label" for="input-firstname">Punch Time</label>
-						<div class="col-md-9">
-							<?php echo form_input(array('class'=>'form-control timepicker','name' => 'punch_time', 'id' => 'punch-punchtime', 'placeholder'=>"punch time",'value' => set_value('punch_time', date("H:m:s")))); ?>
+
+						<div class="form-group row required ">
+							<label class="col-md-3 control-label" for="input-firstname">Punch date</label>
+							<div class="col-md-9">
+								<?php echo form_input(array('class'=>'form-control datepicker','name' => 'punch_date', 'id' => 'punch-punchdate', 'placeholder'=>"punch date",'value' => set_value('punch_date', date("d-m-Y",strtotime($punch_date))))); ?>
+							</div>
 						</div>
+						<div class="form-group row required">
+							<label class="col-md-3 control-label" for="input-firstname">Punch Time</label>
+							<div class="col-md-9">
+								<?php echo form_input(array('class'=>'form-control timepicker','name' => 'punch_time', 'id' => 'punch-punchtime', 'placeholder'=>"punch time",'value' => set_value('punch_time', date("H:m:s")))); ?>
+							</div>
+						</div>
+						<button class="btn btn-primary" type="submit" id="punch-submit">Add Punch</button>
+						<?php echo form_close(); ?>
 					</div>
-						
-				<?php echo form_close(); ?>
-				<hr />
-				<div id="punchhistory"></div>
+					<div class="col-md-6">
+						<div id="punchhistory"></div>
+					</div>
+				</div>
+
 			</div> <!-- panel-body -->
 		</div> <!-- panel -->
 	</div> <!-- col -->
@@ -44,26 +63,26 @@ $(function(){
 			url: '<?php echo admin_url("employee"); ?>',
 			dataType: 'html',
 			beforeSend: function() {
-			},		
+			},
 			complete: function() {
-			},			
+			},
 			success: function(html) {
 				$('.employeemodal .modal-body').html(html);
 				// Display Modal
-				$('.employeemodal').modal('show'); 
+				$('.employeemodal').modal('show');
 			}
 		});
 	});
-	
+
 	punchhistory();
-	
+
 	function punchhistory(){
-		var user_id=$('#punch_userid').val(); 
-		var punch_date=$('#punch-punchdate').val(); 
-		
-		$('#punchhistory').load('<?php echo admin_url("punch/history?user_id='+user_id+'&punch_date='+punch_date+'");?>');
+		user_id=$('#user_id').val();
+		punch_date=$('#punch-punchdate').val();
+
+		$('#punchhistory').load('<?php echo admin_url("punch/history")?>' + "?user_id=" + user_id + "&punch_date=" + punch_date);
 	}
-	
+
 	$(document).on('submit','#form-punch',function() {
 		var url = $(this).attr('action');
 		//alert(url);
@@ -73,7 +92,7 @@ $(function(){
 			dataType: 'json',
 			type: 'post',
 			data:{
-				'user_id':$("#punch_userid").val(),
+				'user_id':$("#user_id").val(),
 				'punch_date':$("#punch-punchdate").val(),
 				'punch_time':$("#punch-punchtime").val(),
 			},
@@ -82,9 +101,9 @@ $(function(){
 				$('.form-group').removeClass('has-error');
 
 				if (json['type']=="error") {
-					
+
 					$('.punch-row').before('<div class="alert alert-danger alert-dismissible">' + json['message'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
-					
+
 
 					for (i in json['errors']) {
 						var element = $('#punch-' + i.replace('_', '-'));
@@ -108,8 +127,8 @@ $(function(){
 		});
        return false;
     });
-	//punchhistory();
-	
+	punchhistory();
+
 	$('.datepicker').datepicker()
 	.on('changeDate', function(e) {
 		//$(this).datepicker('hide');

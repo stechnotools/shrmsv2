@@ -51,7 +51,7 @@ class LeaveOpening extends AdminController {
 				$result->type,
 				$result->type_name,
 				date("Y",strtotime($result->year_from)).'-'.date("Y",strtotime($result->year_to)),
-				0,
+				$result->leave_total,
 				$action
 			);
 

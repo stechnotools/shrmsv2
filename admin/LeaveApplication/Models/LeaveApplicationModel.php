@@ -1,12 +1,12 @@
 <?php
-namespace Admin\LeaveOpening\Models;
+namespace Admin\LeaveApplication\Models;
 use CodeIgniter\Model;
 
-class LeaveOpeningModel extends Model
+class LeaveApplicationModel extends Model
 {
 
     protected $DBGroup              = 'default';
-    protected $table                = 'leave_opening';
+    protected $table                = 'leave_application';
     protected $primaryKey           = 'id';
     protected $useAutoIncrement     = true;
     protected $insertID             = 0;
@@ -51,7 +51,7 @@ class LeaveOpeningModel extends Model
 		parent::__construct();
 	}
 
-    public function addLeaveOpening($data) {
+    public function addLeaveApplication($data) {
         $builder = $this->db->table($this->table);
 		$fyear=$data['fyear'];
 		$fyear=explode("-",$fyear);
@@ -79,7 +79,7 @@ class LeaveOpeningModel extends Model
 
 		return $leave_opening_id;
 	}
-	public function editLeaveOpening($leave_opening_id, $data) {
+	public function editLeaveApplication($leave_opening_id, $data) {
         $builder = $this->db->table($this->table);
 
 		$fyear=$data['fyear'];
@@ -172,7 +172,7 @@ class LeaveOpeningModel extends Model
         }
     }
 
-    public function getLeaveOpeningValues($id){
+    public function getLeaveApplicationValues($id){
         $builder=$this->db->table("leave_opening_value");
 		$builder->where("leave_opening_id",$id);
 		$res = $builder->get()->getResult();

@@ -24,8 +24,8 @@ class SiteModel extends Model
 
     // Validation
     protected $validationRules      = [
-        'site_field' => array(
-            'label' => 'site_field',
+        'name' => array(
+            'label' => 'name',
             'rules' => 'trim|required|max_length[100]'
         ),
 
@@ -60,7 +60,7 @@ class SiteModel extends Model
         if (isset($data['sort']) && $data['sort']) {
             $sort = $data['sort'];
         } else {
-            $sort = "site_field";
+            $sort = "id";
         }
 
         if (isset($data['order']) && ($data['order'] == 'desc')) {
@@ -104,7 +104,73 @@ class SiteModel extends Model
         }
     }
 
-   
+    public function addSite($data){
+        $sitedata=array(
+			"name"=>$data['name'],
+			"code"=>$data['code'],
+			"address"=>$data['address'],
+			"status"=>$data['status']
+		);
+        $builder=$this->db->table($this->table);
+        $builder->insert($sitedata);
+
+        $site_id=$this->db->insertID();
+        if (isset($data['site_salary'])) {
+            $builder=$this->db->table("site_salaries");
+			foreach ($data['site_salary'] as $site_salary) {
+				$site_salary_data=array(
+					"site_id"=>$site_id,
+					"designation_id"=>$site_salary['designation_id'],
+					"type"=>$site_salary['type'],
+					"salary"=>$site_salary['salary'],
+				);
+                $builder->insert($site_salary_data);
+			}
+		}
+
+    }
+
+    public function editSite($id,$data){
+        $sitedata=array(
+            "name"=>$data['name'],
+            "code"=>$data['code'],
+            "address"=>$data['address'],
+            "status"=>$data['status']
+        );
+
+        $builder=$this->db->table($this->table);
+        $builder->where("id",$id);
+        $builder->update($sitedata);
+
+        $builder=$this->db->table("site_salaries");
+        $builder->where("site_id",$id);
+        $builder->delete();
+
+        if (isset($data['site_salaries'])) {
+            $builder=$this->db->table("site_salaries");
+            foreach ($data['site_salaries'] as $site_salary) {
+                $site_salary_data=array(
+                    "site_id"=>$id,
+                    "designation_id"=>$site_salary['designation_id'],
+                    "type"=>$site_salary['type'],
+                    "salary"=>$site_salary['salary'],
+                );
+                $builder->insert($site_salary_data);
+
+            }
+        }
+    }
+
+    public function getSiteSalaries($id) {
+        $builder=$this->db->table("site_salaries");
+        $builder->select("*");
+        $builder->where("site_id",$id);
+        $res = $builder->get()->getResultArray();
+        return $res;
+    }
+
+
+
 
 
 }

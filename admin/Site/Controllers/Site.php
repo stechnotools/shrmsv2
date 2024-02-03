@@ -11,18 +11,18 @@ class Site extends AdminController {
 	public function __construct(){
         $this->siteModel=new SiteModel();
 	}
-	
+
 	public function index(){
 		$this->template->set_meta_title(lang('Site.heading_title'));
         return $this->getList();
 	}
-	
+
 	public function search() {
 		$requestData= $_REQUEST;
 		$totalData = $this->siteModel->getTotal();
-		
+
 		$totalFiltered = $totalData;
-		
+
 		$filter_data = array(
 			'filter_search' => $requestData['search']['value'],
 			'order'  		=> $requestData['order'][0]['dir'],
@@ -31,10 +31,10 @@ class Site extends AdminController {
 			'limit' 		=> $requestData['length']
 		);
 		$totalFiltered = $this->siteModel->getTotal($filter_data);
-			
+
 		$filteredData = $this->siteModel->getAll($filter_data);
 		//printr($filteredData);
-		
+
 		$datatable=array();
 		foreach($filteredData as $result) {
 			$action  = '<div class="btn-group btn-group-sm pull-right">';
@@ -47,16 +47,11 @@ class Site extends AdminController {
 					<input type="checkbox" name="selected[]" value="'.$result->id.'" />
 					<label></label>
 				</div>',
-				$result->site_field,
-				$result->site_code,
-				$result->site_description,
-				$result->week_exclude,
-				$result->holiday_exclude,
-				$result->site_type,
-				$result->insuff_site_post,
+				$result->code,
+				$result->name,
 				$action
 			);
-	
+
 		}
 		//printr($datatable);
 		$json_data = array(
@@ -69,35 +64,35 @@ class Site extends AdminController {
 		return $this->response->setContentType('application/json')
             ->setJSON($json_data);  // send data as json format
 	}
-	
+
 	public function add(){
 		$this->template->set_meta_title(lang('Site.heading_title'));
-		
-		if ($this->request->getMethod('REQUEST_METHOD') === 'POST' && $this->validateForm()){	
-			
-			$this->siteModel->insert($this->request->getPost());
-			
+
+		if ($this->request->getMethod('REQUEST_METHOD') === 'POST' && $this->validateForm()){
+
+			$this->siteModel->addSite($this->request->getPost());
+
 			$this->session->setFlashdata('message', 'Site Saved Successfully.');
 			return redirect()->to(admin_url('site'));
-		
+
 		}
 		$this->getForm();
 	}
-	
+
 	public function edit(){
-		
+
 		$this->template->set_meta_title(lang('Site.heading_title'));
-		
-		if ($this->request->getMethod('REQUEST_METHOD') === 'POST' && $this->validateForm()){	
+
+		if ($this->request->getMethod('REQUEST_METHOD') === 'POST' && $this->validateForm()){
 			$site_id=$this->uri->getSegment(4);
-			$this->siteModel->update($site_id,$this->request->getPost());
-			
+			$this->siteModel->editSite($site_id,$this->request->getPost());
+
 			$this->session->setFlashdata('message', 'Site Updated Successfully.');
 			return redirect()->to(admin_url('site'));
 		}
 		$this->getForm();
 	}
-	
+
 	public function delete(){
 		if ($this->request->getPost('selected')){
          $selected = $this->request->getPost('selected');
@@ -108,24 +103,24 @@ class Site extends AdminController {
 		$this->session->setFlashdata('message', 'Site deleted Successfully.');
 		return redirect()->to(admin_url('site'));
 	}
-	
+
 	protected function getList() {
-		
+
 		$data['breadcrumbs'] = array();
 		$data['breadcrumbs'][] = array(
 			'text' => lang('Site.heading_title'),
 			'href' => admin_url('site')
 		);
-		
+
 		$this->template->add_package(array('datatable'),true);
-      
+
 
 		$data['add'] = admin_url('site/add');
 		$data['delete'] = admin_url('site/delete');
 		$data['datatable_url'] = admin_url('site/search');
 
 		$data['heading_title'] = lang('Site.heading_title');
-		
+
 		$data['text_list'] = lang('Site.text_list');
 		$data['text_no_results'] = lang('Site.text_no_results');
 		$data['text_confirm'] = lang('Site.text_confirm');
@@ -151,11 +146,11 @@ class Site extends AdminController {
 
 		return $this->template->view('Admin\Site\Views\site', $data);
 	}
-	
+
 	protected function getForm(){
-		
+
 		$this->template->add_package(array('ckeditor','ckfinder','colorbox','select2'),true);
-		
+
 		$data['breadcrumbs'] = array();
 		$data['breadcrumbs'][] = array(
 			'text' => lang('Site.heading_title'),
@@ -168,19 +163,19 @@ class Site extends AdminController {
 		);
 
 		$_SESSION['isLoggedIn'] = true;
-		
+
 		$data['heading_title'] 	= lang('Site.heading_title');
-		
+
 		$data['text_form'] = $this->uri->getSegment(4) ? lang('Site.text_edit') : lang('Site.text_add');
 		$data['button_save'] = lang('Site.button_save');
 		$data['button_cancel'] = lang('Site.button_cancel');
 		$data['cancel'] = admin_url('site');
-		
+
 		if(isset($this->error['warning']))
 		{
 			$data['error'] 	= $this->error['warning'];
 		}
-		
+
 		if ($this->uri->getSegment(4) && ($this->request->getMethod('REQUEST_METHOD') != 'POST')) {
 			$site_info = $this->siteModel->find($this->uri->getSegment(4));
 		}
@@ -194,7 +189,7 @@ class Site extends AdminController {
 				$data[$field] = '';
 			}
 		}
-		
+
 		// Salaries
 		if ($this->request->getPost('site_salary')) {
 			$site_salaries = $this->request->getPost('site_salary');
@@ -205,17 +200,17 @@ class Site extends AdminController {
 		}
 
 		$data['site_salaries'] = array();
-		//printr($site_images);
+
 		foreach ($site_salaries as $site_salary) {
 			$data['site_salaries'][] = array(
-				'designation_id'=> $site_salary->designation_id,
-				'type' => $site_salary->type,
-				'salary' => $site_salary->salary
+				'designation_id'=> $site_salary['designation_id'],
+				'type' => $site_salary['type'],
+				'salary' => $site_salary['salary']
 			);
 		}
 		$data['designations']=(new DesignationModel())->getAll();
-		
-	
+
+
 		echo $this->template->view('Admin\Site\Views\siteForm',$data);
 	}
 
@@ -236,7 +231,7 @@ class Site extends AdminController {
 	}
 
 
-	
+
 }
 /* End of file hmvc.php */
 /* Location: ./application/widgets/hmvc/controllers/hmvc.php */

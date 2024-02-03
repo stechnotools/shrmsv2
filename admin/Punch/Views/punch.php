@@ -12,24 +12,21 @@
 							<div class="col-lg-4">
 								<div class="form-group mg-b-10-force">
 									<label class="form-control-label">Branch: <span class="tx-danger">*</span></label>
-									<?php echo form_dropdown('branch_id', option_array_value($branches, 'id', 'name',array(''=>'Select Branch')), set_value('branch_id', ''),"id='branch_id' class='form-control select2'"); ?>	
+									<?php echo form_dropdown('branch_id', option_array_value($branches, 'id', 'name',array(''=>'Select Branch')), set_value('branch_id', ''),"id='branch_id' class='form-control select2'"); ?>
 								</div>
 							</div>
-							
+
 							<div class="col-lg-4">
 								<div class="form-group mg-b-10-force">
 									<label for="inputEmail3" class="control-label">Emp Name/Paycode</label>
-									<?php echo form_dropdown('user_id', array(),set_value('user_id', ''),"id='user_id' class='form-control select2' multiple"); ?>
+									<?php echo form_dropdown('user_id', array(),set_value('user_id', ''),"id='user_id' class='form-control select2'"); ?>
 								</div>
 							</div>
 							<div class="col-lg-4">
 								<div class="form-group mg-b-10-force">
 									<label for="inputEmail3" class="control-label">Date Range</label>
-									<div id="reportrange" class="form-control" style="cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
-										<i class="fa fa-calendar"></i>&nbsp;
-										<span></span> <i class="fa fa-caret-down"></i>
-									</div>
-									<input type="hidden" id="selectedDateRange" name="selectedDateRange">
+									<?php echo form_input(array('name'=>'daterange','id'=>'daterange', 'class'=>'form-control daterange','placeholder'=>'From','value' => set_value('daterange', ''))) ?>
+
 								</div>
 							</div>
 							<div class="col-lg-3">
@@ -52,7 +49,7 @@
 				</div>
 			</div>
 			<div class="card-body">
-				<form action="<?php echo $delete; ?>" method="post" enctype="multipart/form-data" id="form-datatable">          
+				<form action="<?php echo $delete; ?>" method="post" enctype="multipart/form-data" id="form-datatable">
 					<div class="row">
 						<div class="col-md-12 col-sm-12 col-12">
 							<table id="datatable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
@@ -64,9 +61,10 @@
 												<label></label>
 											</div>
 										</th>
-										<th>Punch Date</th>
 										<th>Branch</th>
+										<th>Employee</th>
 										<th>Paycode</th>
+										<th>Punch Date</th>
 										<th>Shift</th>
 										<th>In Time</th>
 										<th>Out Time</th>
@@ -88,7 +86,7 @@
 <?php js_start(); ?>
 <script type="text/javascript"><!--
 $(function(){
-	$('#datatable').DataTable({
+	table=$('#datatable').DataTable({
 		"processing": true,
 		"serverSide": true,
 		"columnDefs": [
@@ -99,15 +97,35 @@ $(function(){
 		],
 		"ajax":{
 			url :"<?=$datatable_url?>", // json datasource
-			type: "post",  // method  , by default get
+			type: "post",  // metpunch  , by default get
+			data: function ( data ) {
+				data.branch_id = $('#branch_id').val();
+				data.user_id = $('#user_id').val();
+				data.daterange = $('#daterange').val() || getDefaultDateRange();
+			},
+			beforeSend: function(){
+				$('.alert-dismissible, .text-danger').remove();
+				$("#datatable_wrapper").LoadingOverlay("show");
+			},
+			complete: function(){
+				$("#datatable_wrapper").LoadingOverlay("hide");
+			},
 			error: function(){  // error handling
-				$(".datatable_error").html("");
-				$("#datatable").append('<tbody class="datatable_error"><tr><th colspan="3">No data found.</th></tr></tbody>');
-				$("#datatable_processing").css("display","none");
-				
+				$(".punch_list_error").html("");
+				$("#punch_list").append('<tbody class="punch_list_error"><tr><th colspan="3">No data found.</th></tr></tbody>');
+				$("#punch_list_processing").css("display","none");
+
 			},
 			dataType:'json'
 		},
+	});
+
+	$('#btn-filter').click(function(){ //button filter event click
+		table.ajax.reload();  //just reload table
+	});
+	$('#btn-reset').click(function(){ //button reset event click
+		$('#form-filter')[0].reset();
+		table.ajax.reload();  //just reload table
 	});
 
 });
@@ -119,12 +137,10 @@ var start = moment().subtract(29, 'days');
 var end = moment();
 
 function cb(start, end) {
-	$('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-	$('#selectedDateRange').val(start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
-     
+	$(".daterange").html(start.format("MMMM D, YYYY") + " - " + end.format("MMMM D, YYYY"));
 }
 
-$('#reportrange').daterangepicker({
+$('.daterange').daterangepicker({
 	startDate: start,
 	endDate: end,
 	ranges: {
@@ -140,5 +156,12 @@ $('#reportrange').daterangepicker({
 cb(start, end);
 
 });
+function getDefaultDateRange() {
+   // Customize the default date range as needed
+   var defaultStartDate = moment().subtract(29, 'days'); // Default start date is 7 days ago
+   var defaultEndDate = moment(); // Default end date is today
+
+   return defaultStartDate.format('MMMM D, YYYY') + ' - ' + defaultEndDate.format('MMMM D, YYYY');
+}
 </script>
 <?php js_end(); ?>
