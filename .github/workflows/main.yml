@@ -1,0 +1,23 @@
+name: SHRMSV2 Deploy
+on: 
+  push:
+    branches:
+      - main
+jobs:
+  FTP-Deploy-Action:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: 🚚 Get latest code From Github
+      uses: actions/checkout@v3
+      with: 
+        fetch-depth: 2
+    
+    - name: 📂 FTP Deploy Cpanel
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        server-dir: '/public_html/shrmsv2/'
+        local-dir: './'
