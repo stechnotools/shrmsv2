@@ -128,35 +128,5 @@ class UserModel extends Model
         return $data;
     }
 
-    protected function resetAssign(array $data){
-        unset($data['data']['form_assign']);
-        return $data;
-    }
 
-    public function assignForm($id,$data){
-        $builder=$this->db->table("user_survey");
-        $builder->where("user_id",$id);
-        $builder->delete();
-
-        if (isset($data)) {
-            foreach ($data as $survey_id) {
-                $array = array(
-                    'survey_id'=>$survey_id,
-                    'user_id'=>$id
-                );
-                $builder->insert($array);
-            }
-        }
-
-    }
-
-    public function getAssignForm($user_id){
-        $builder=$this->db->table("user_survey");
-        $builder->where("user_id",$user_id);
-        $res = $builder->get()->getResultArray();
-        $singleColumnArray = array_column($res, 'survey_id');
-        return $singleColumnArray;
-    }
-
-    
 }

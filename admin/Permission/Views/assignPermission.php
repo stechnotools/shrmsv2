@@ -45,12 +45,14 @@ $validation = \Config\Services::validation();
                                             <?php
                                                 if(isset($permissions[$action])) {
                                                     foreach($permissions[$action] as $menu){?>
-                                                        <div class="custom-control-inline">
-                                                            <label class="css-control css-control-primary css-checkbox">
-                                                            <input class="css-control-input" type="checkbox" name='<?=$menu->route?>' value="<?=$menu->id?>" <?=$menu->active=="yes"?"checked='checked'":""?>>
-                                                            <span class="css-control-indicator" for="example-inline-checkbox1"></span> <?=$menu->description?>
+                                                        
+                                                        <div class="checkbox checkbox-success form-check-inline">
+                                                            <input type="checkbox" name='<?=$menu->route?>' value="<?=$menu->id?>" <?=$menu->active=="yes"?"checked='checked'":""?>>
+                                                            <label>
+                                                                <?=$menu->description?>
                                                             </label>
                                                         </div>
+
                                                     <?}
                                                 }
                                                 ?>

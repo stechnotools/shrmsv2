@@ -7,4 +7,5 @@ use CodeIgniter\Router\RouteCollection;
  */
 //$routes->get('/', 'Home::index');
 $routes->add('/', 'Common\Controllers\Dashboard::index', ['namespace' => 'Admin','filter' => 'login']);
+$routes->get('api','Api::index');
 

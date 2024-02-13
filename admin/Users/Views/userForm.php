@@ -26,12 +26,7 @@ $validation = \Config\Services::validation();
                             <span class="d-none d-sm-block">Account</span>
                         </a>
                     </li>
-                    <li class="nav-item tab">
-                        <a class="nav-link" id="form-tab" data-toggle="tab" href="#form" role="tab" aria-controls="form" aria-selected="false">
-                            <span class="d-block d-sm-none"><i class="fa fa-dashboard fa-lg"></i></span>
-                            <span class="d-none d-sm-block">Forms</span>
-                        </a>
-                    </li>
+
 				</ul>
                 <div class="tab-content">
 					<div class="tab-pane show active" id="general" role="tabpanel" aria-labelledby="general-tab">
@@ -115,35 +110,7 @@ $validation = \Config\Services::validation();
 
 
 					</div>
-                    <div class="tab-pane" id="form" role="tabpanel" aria-labelledby="form-tab">
-						<div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group row required">
-                                    <label class="col-md-3 control-label" for="input-username">Form Assign *</label>
-                                    <div class="col-md-9">
-                                    <div class="card">
-                                        <div class="card-body overflow-auto bg-gray-200" style="height:300px;">
-                                            <?php
-                                            foreach($forms as $form): ?>
-                                                <div class="">
-                                                    <label><input type="checkbox" value="<?php echo $form['id']; ?>" name="form_assign[]" <?php echo set_checkbox('form_assign[]', $form['id'], (in_array($form['id'], $form_assign) ? TRUE : FALSE)); ?> /> <?php echo $form['name']; ?></label>
-                                                </div>
-                                            <?php endforeach; ?>
-                                        </div>
-                                        <div class="card-footer">
-                                            <button onclick="$(this).parents('.card').find(':checkbox').prop('checked', true); return false;" class="btn btn-info btn-sm">Select All</button>
-                                            <button onclick="$(this).parents('.card').find(':checkbox').prop('checked', false); return false;" class="btn btn-info btn-sm">Unselect All</button>
-                                        </div>
-                                    </div>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-					</div>
+                    
 				</div>
 
                 <?php echo form_close(); ?>
