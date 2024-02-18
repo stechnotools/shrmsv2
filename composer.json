@@ -12,8 +12,10 @@
     "require": {
         "php": "^7.4 || ^8.0",
         "codeigniter4/framework": "^4.0",
+        "codeigniter4/queue": "dev-develop",
         "phpoffice/phpspreadsheet": "^1.29"
     },
+    "minimum-stability": "dev",
     "require-dev": {
         "fakerphp/faker": "^1.9",
         "mikey179/vfsstream": "^1.6",
@@ -36,5 +38,6 @@
     },
     "scripts": {
         "test": "phpunit"
-    }
+    },
+    "prefer-stable": true
 }

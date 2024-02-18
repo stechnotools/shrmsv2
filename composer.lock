@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "48902cef7b44cb64f33934739baa1a28",
+    "content-hash": "8deff9b606f91ae9642338e295ec77ad",
     "packages": [
         {
             "name": "codeigniter4/framework",
@@ -80,6 +80,67 @@
                 "source": "https://github.com/codeigniter4/CodeIgniter4"
             },
             "time": "2024-01-27T03:57:48+00:00"
+        },
+        {
+            "name": "codeigniter4/queue",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/codeigniter4/queue.git",
+                "reference": "6659fbc877d0e17d6fe0528830cf3d34c5e998dd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/codeigniter4/queue/zipball/6659fbc877d0e17d6fe0528830cf3d34c5e998dd",
+                "reference": "6659fbc877d0e17d6fe0528830cf3d34c5e998dd",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "codeigniter4/devkit": "^1.0",
+                "codeigniter4/framework": "^4.3",
+                "phpstan/phpstan-strict-rules": "^1.5",
+                "predis/predis": "^2.0"
+            },
+            "suggest": {
+                "ext-redis": "If you want to use RedisHandler",
+                "predis/predis": "If you want to use PredisHandler"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "CodeIgniter\\Queue\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "michalsn",
+                    "homepage": "https://github.com/michalsn",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Queues for CodeIgniter 4 framework",
+            "homepage": "https://github.com/codeigniter4/queue",
+            "keywords": [
+                "codeigniter",
+                "codeigniter4",
+                "database",
+                "predis",
+                "queue",
+                "redis"
+            ],
+            "support": {
+                "issues": "https://github.com/codeigniter4/queue/issues",
+                "source": "https://github.com/codeigniter4/queue/tree/develop"
+            },
+            "time": "2024-02-03T10:06:07+00:00"
         },
         {
             "name": "ezyang/htmlpurifier",
@@ -2730,9 +2791,11 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": [],
-    "prefer-stable": false,
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "codeigniter4/queue": 20
+    },
+    "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^7.4 || ^8.0"
