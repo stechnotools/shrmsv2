@@ -82,6 +82,7 @@ class Api extends ResourceController
 
 	private function processBatch($batch)
 	{
+		log_message('punchjson', json_encode($batch));
 		$rawpunchModel = new RawPunchModel();
 		$employeeModel = new EmployeeModel();
 		$punchModel = new PunchModel();
