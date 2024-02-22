@@ -43,6 +43,7 @@ class Api extends ResourceController
             foreach ($chunks as $chunk) {
                 // Enqueue a job for each batch
 				service('queue')->push('punch_data', new ProcessPunchDataJob($chunk));
+				service('queue')->push('queueName', 'jobName', ['array' => 'parameters']);
 
             }
 
@@ -80,8 +81,7 @@ class Api extends ResourceController
 		return $this->respond($json);
 	}
 
-	private function processBatch($batch)
-	{
+	private function processBatch($batch){
 		log_message('info', 'pucnchdata:'.json_encode($batch));
 		$rawpunchModel = new RawPunchModel();
 		$employeeModel = new EmployeeModel();
@@ -100,7 +100,7 @@ class Api extends ResourceController
 			$punch_date = $recordTime->format('Y-m-d');
 			$punch_time = $recordTime->format('H:i:s');
 
-			$machine = $machineModel->where('id', $machine_id)->first();
+			$machine = $machineModel->where('code', $machine_id)->first();
 
 			if ($machine) {
 				$branch_id = $machine->branch_id;
