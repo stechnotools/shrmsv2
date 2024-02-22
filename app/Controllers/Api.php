@@ -100,7 +100,7 @@ class Api extends ResourceController
 			$punch_date = $recordTime->format('Y-m-d');
 			$punch_time = $recordTime->format('H:i:s');
 
-			$machine = $machineModel->where('code', $machine_id)->first();
+			$machine = $machineModel->where('code', (int)$machine_id)->first();
 
 			if ($machine) {
 				$branch_id = $machine->branch_id;
