@@ -173,8 +173,10 @@ class Api extends ResourceController
 					log_message('error', $errorMessage);
 				}
 			} else {
+				$dbquery=$machineModel->getLatQuery();
 				$errorMessage = "Sync failed due to branch not assigned to device for machine id: " . $machine_id;
 				log_message('error', $errorMessage);
+				log_message('error', $dbquery);
 			}
 		}
 	}
