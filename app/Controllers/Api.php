@@ -118,6 +118,7 @@ class Api extends ResourceController
 				if (empty($checkdata)) {
 					$rawpunchModel->insert($rawdata);
 				} else {
+					$rawpunchModel->update($checkdata->id, $rawdata);
 					$errorMessage = 'Raw punch data already exists: ' . var_export($checkdata, true);
 					log_message('error', $errorMessage);
 				}
