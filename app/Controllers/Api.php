@@ -114,11 +114,14 @@ class Api extends ResourceController
 				];
 
 				$checkdata = $rawpunchModel->where($rawdata)->first();
+				$lastquery= $rawpunchModel->getLatQuery();
+				$errorMessage = 'Raw punch last query: ' . $lastquery;
 
 				if (empty($checkdata)) {
 					$rawpunchModel->insert($rawdata);
 				} else {
 					$rawpunchModel->update($checkdata->id, $rawdata);
+
 					$errorMessage = 'Raw punch data already exists: ' . var_export($checkdata, true);
 					log_message('error', $errorMessage);
 				}
