@@ -114,9 +114,9 @@ class Api extends ResourceController
 				];
 
 				$checkdata = $rawpunchModel->where($rawdata)->first();
-				$lastquery= $rawpunchModel->getLatQuery();
+				$lastquery= $rawpunchModel->getLastQuery();
 				$errorMessage = 'Raw punch last query: ' . $lastquery;
-
+				log_message('error', $errorMessage);
 				if (empty($checkdata)) {
 					$rawpunchModel->insert($rawdata);
 				} else {
