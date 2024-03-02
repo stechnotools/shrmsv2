@@ -26,7 +26,8 @@ return [
     'text_bank'              		=> 'Bank',
 
     'text_operation'=> 'Operations',
-    'text_mpunch'                 	=> 'Manual Time Entry',
+    'text_mainpunch'                => 'CLM Punch',
+    'text_punch'                 	=> 'Manual Time Entry',
     'text_override'                 => 'Shift Override',
     'text_shiftbyroster'            => 'Shift by Roster',
     'text_tourapplication'           => 'Leave and Tour Entry',
@@ -39,7 +40,7 @@ return [
     'text_otapproval'              	 => 'OT Approval',
 
     'text_punchroster'                => 'Punch Roster',
-    'text_attendance'             => 'Attendance Process',
+    'text_attendance'                   => 'Attendance Process',
     'text_duty_updation'             => 'Updation',
 
     'text_administration'            => 'Administration',

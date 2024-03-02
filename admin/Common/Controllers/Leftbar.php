@@ -192,9 +192,17 @@ class Leftbar extends AdminController{
         // Pages
         $operations = array();
 
+        if ($this->user->hasPermission('mainpunch')) {
+            $operations[] = array(
+                'name'	  => lang('Leftbar.text_mainpunch'),
+                'href'     => admin_url('mainpunch'),
+                'children' => array()
+            );
+        }
+
         if ($this->user->hasPermission('punch')) {
             $operations[] = array(
-                'name'	  => lang('Leftbar.text_mpunch'),
+                'name'	  => lang('Leftbar.text_punch'),
                 'href'     => admin_url('punch'),
                 'children' => array()
             );
