@@ -1136,4 +1136,36 @@ if ( ! function_exists('generatePattern')){
         return $outputArray;
     }
 }
-  
+
+if ( ! function_exists('getMonthDays')){
+    function getMonthDays($filter){
+        $days=[];
+        if(isset($filter['fromdate']) and isset($filter['todate'])){
+            $startdate=isset($filter['fromdate'])?$filter['fromdate']:'';
+            $enddate=isset($filter['todate'])?$filter['todate']:'';
+            $lastday=date('t',strtotime($filter['fromdate']));
+            $fromdate=date_create($startdate);
+            $todate=date_create($enddate);
+            $interval = date_diff($fromdate, $todate);
+            $totaldays=$interval->format('%a');
+            if($totaldays>$lastday){
+                $enddate=date("Y-m-t", strtotime($startdate));
+            }
+            $enddate=new DateTime($enddate);
+            $enddate = $enddate->modify('+1 day');
+            $period = new DatePeriod(
+                new DateTime($startdate),
+                new DateInterval('P1D'),
+                $enddate
+            );
+            foreach ($period as $date) {
+                $days[]=array(
+                    'day'=>$date->format("d"),
+                    'dayname'=>$date->format("D"),
+                    'date'=>$date->format("Y-m-d")
+                );
+            }
+        }
+        return $days;
+    }
+}

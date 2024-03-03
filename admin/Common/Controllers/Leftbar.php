@@ -484,7 +484,7 @@ class Leftbar extends AdminController{
         if ($this->user->hasPermission('report/attendance')) {
             $reports[] = array(
                 'name'	  => 'Attendance Report',
-                'href'     => admin_url('report/attendancereport'),
+                'href'     => admin_url('report/attendance'),
                 'children' => array()
             );
         }
@@ -492,7 +492,7 @@ class Leftbar extends AdminController{
         if ($this->user->hasPermission('report/payroll')) {
             $reports[] = array(
                 'name'	  => 'Payroll Report',
-                'href'     => admin_url('report/payrollreport'),
+                'href'     => admin_url('report/payroll'),
                 'children' => array()
             );
         }
