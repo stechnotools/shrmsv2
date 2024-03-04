@@ -187,116 +187,6 @@ class Api extends ResourceController
 		}
 	}
 
-	public function rawpunch_old(){
-		$json=[];
-		$rawdata = $this->request->getBody();
-		log_message('info', var_export($rawdata, true));
-		$punch_data = json_decode($rawdata, true);
-
-		if($punch_data){
-			$rawpunchModel = new RawPunchModel();
-			$employeeModel = new EmployeeModel();
-			$punchModel = new PunchModel();
-			$punchHistoryModel = new PunchHistoryModel();
-			$machineModel = new MachineModel();
-			foreach($punch_data as $punch){
-				$slno=trim($punch['SlNo']);
-				$machine_id=trim($punch['MachineNo']);
-				$device_user_id=trim($punch['CardNo']);
-				$recordTime=trim($punch['PunchDateTime']);
-				$recordTime = DateTime::createFromFormat('d/m/Y H:i:s', $recordTime);
-				$punchDateTime=$recordTime->format('Y-m-d H:i:s');
-
-				$punch_date=$recordTime->format('Y-m-d');
-				$punch_time=$recordTime->format('H:i:s');
-
-				$machine=$machineModel->where('id', $machine_id)->first();
-
-				if($machine){
-
-					$branch_id=$machine->branch_id;
-					$rawdata=array(
-						'slno'=>$slno,
-						'device_user_id'=>$device_user_id,
-						'punchtime'=>$punchDateTime,
-						'machine_id'=>$machine_id,
-						'branch_id'=>$branch_id
-					);
-					$checkdata=$rawpunchModel->where($rawdata)->first();
-					if(empty($checkdata)){
-						$rawpunchModel->insert($rawdata);
-					}else{
-						$errorMessage = 'Raw punch data already exits: ' . var_export($checkdata, true);
-						log_message('error', $errorMessage);
-					}
-
-					$employee=$employeeModel->where(['paycode'=>$device_user_id,'branch_id'=>$branch_id])->first();
-
-					if(!$employee){
-						$errorMessage="device_user_id is: ".$device_user_id. " for branch id: ".$branch_id. "  not assign to any user ";
-						log_message('error', $errorMessage);
-
-						$employee=$employeeModel->where('paycode', $device_user_id)->first();
-
-						if($employee && count($employee)==1){
-							$user_id=$employee->user_id;
-							$errorMessage = "Other Branch User with user_id".$user_id;
-							log_message('error', $errorMessage);
-						}else{
-							$user_id=0;
-						}
-					}else{
-						$user_id=$employee->user_id;
-					}
-
-					if($user_id){
-
-						$pdata=array(
-							'user_id'=>$user_id,
-							'paycode'=>$device_user_id,
-							'machine_id'=>$machine_id,
-							'branch_id' => $branch_id,
-							'punch_date'=>$punch_date,
-							'punch_time'=>$punch_time,
-							'punch_type'=>'A'
-						);
-						$singledata=$punchModel->where(['user_id'=>$user_id,'punch_date'=>$punch_date,'branch_id'=>$branch_id])->first();
-
-						if(empty($singledata)){
-							$punch_id=$this->savePunch($pdata);
-						}else{
-							$punch_id=$singledata->id;
-							$this->savePunch($pdata,$punch_id);
-						}
-
-						$singlepdata=$punchHistoryModel->where(['punch_id'=>$punch_id,'punch_date'=>$punch_date,'punch_time'=>$punch_time,'branch_id'=>$branch_id])->first();
-						if(empty($singlepdata)){
-							$this->savePunchHistory($pdata,$punch_id);
-						}else{
-							$this->savePunchHistory($pdata,$punch_id,$singlepdata->id);
-						}
-					}else{
-						$errorMessage = "No Userr: No user found for this device_user_id: ".$device_user_id;
-						log_message('error', $errorMessage);
-					}
-
-				}else{
-
-					$errorMessage = "Sync fail due to branch not assign to device for machine id: ".$machine_id;
-					log_message('error', $errorMessage);
-
-				}
-
-			}
-
-			$json['success']="success";
-		}else{
-			$json['success']="No data";
-		}
-
-		return $this->respond($json);
-	}
-
 	public function savePunch($data,$punch_id=0){
 		$punchModel=new PunchModel();
 
@@ -376,7 +266,7 @@ class Api extends ResourceController
 			'mdevice_id'=>(int)isset($data['mdevice_id'])?$data['mdevice_id']:"",
 			'longitude'=>isset($data['longitude'])?$data['longitude']:"",
 			'latitude'=>isset($data['latitude'])?$data['latitude']:"",
-			'no_of_punch'=>$no_of_punch,
+			'no_of_punch'=>$no_of_punch+1,
 			'punch_status'=>$punch_status
 		);
 		if($punch_history_id){

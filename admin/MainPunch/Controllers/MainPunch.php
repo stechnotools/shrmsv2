@@ -458,7 +458,7 @@ class MainPunch extends AdminController {
 		$no_of_punch=$mainpunchHistoryModel->where(['punch_id'=>$punch_id])-> countAllResults();
 		if($timedata->punches==-1){
 			$punch_status=1;
-		}else if($no_of_punch<=$timedata->punches){
+		}else if($no_of_punch<=($timedata->punches)){
 			$punch_status=1;
 		}else{
 			$punch_status=0;
@@ -472,7 +472,7 @@ class MainPunch extends AdminController {
 			'punch_time'=>$data['punch_time'],
 			'punch_type'=>$data['punch_type'],
 			'branch_id'=>$data['branch_id'],
-			'no_of_punch'=>$no_of_punch,
+			'no_of_punch'=>$no_of_punch+1,
 			'punch_status'=>$punch_status
 		);
 		if($punch_history_id){

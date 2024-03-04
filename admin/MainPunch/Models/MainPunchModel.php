@@ -255,7 +255,7 @@ class MainPunchModel extends Model
 	}
 
 	public function getPunchHistory($user_id,$punch_date){
-		$bulider=$this->db->table("punch_history ph");
+		$bulider=$this->db->table("mainpunch_history ph");
 		$bulider->select("ph.*");
 		$bulider->where("DATE_FORMAT(punch_date, '%d-%m-%Y')='".$punch_date."'");
 		$bulider->where("user_id",$user_id);
@@ -265,7 +265,7 @@ class MainPunchModel extends Model
 
 	public function getTotalPunchByPunchId($punch_id){
 		// using ci4 builder for count
-		$bulider=$this->db->table("punch_history ph");
+		$bulider=$this->db->table("mainpunch_history ph");
 		$bulider->where("punch_id",$punch_id);
 		$count = $bulider->countAllResults();
 		return $count+1;
@@ -273,12 +273,12 @@ class MainPunchModel extends Model
 	}
 
 	public function savePunchHistory($punch_history){
-		$this->db->table('punch_history')->insert($punch_history);
+		$this->db->table('mainpunch_history')->insert($punch_history);
 		return $this->db->insertID();
 	}
 
 	public function deletePunchHistory($id){
-		$this->db->table('punch_history')->where('id', $id)->delete();
+		$this->db->table('mainpunch_history')->where('id', $id)->delete();
 	}
 
 }
