@@ -141,6 +141,12 @@ $validation = \Config\Services::validation();
 									</div>
 								</div>
 								<div class="form-group row required">
+									<label class="col-md-4 control-label" for="input-email">Site Location</label>
+									<div class="col-md-8">
+										<?php echo form_dropdown('location_id', option_array_value($locations, 'id', 'name',array(''=>'Select site location')), set_value('location_id', $location_id),"id='location_id' class='form-control select2'"); ?>
+									</div>
+								</div>
+								<div class="form-group row required">
 									<label class="col-md-4 control-label" for="input-email">Designation</label>
 									<div class="col-md-8">
 										<?php echo form_dropdown('designation_id', option_array_value($designations, 'id', 'name',array(''=>'Select Designation')), set_value('designation_id', $designation_id),"id='designation_id' class='form-control select2'"); ?>

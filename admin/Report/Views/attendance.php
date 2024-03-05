@@ -5,6 +5,15 @@
 	<div class="card-body">
 		<div class="row">
 			<div class="col-lg-3">
+				<a href="<?=admin_url("report/attendance/clmattendance")?>">
+				<div class="card card-fill bg-primary shake">
+					<div class="card-body text-center">
+						<h5 class="text-white">Attendance Dally</h5>
+					</div>
+				</div>
+				</a>
+			</div>
+			<div class="col-lg-3">
 				<a href="<?=admin_url("report/attendance/earlyarrival")?>">
 				<div class="card card-fill bg-primary shake">
 					<div class="card-body text-center">
@@ -31,7 +40,7 @@
 				</div>
 				</a>
 			</div>
-			<div class="col-lg-3">
+			<!--<div class="col-lg-3">
 				<a href="<?=admin_url("report/attendance/dattendance")?>">
 				<div class="card card-fill bg-warning shake">
 					<div class="card-body text-center">
@@ -39,7 +48,7 @@
 					</div>
 				</div>
 				</a>
-			</div>
+			</div>-->
 			<div class="col-lg-3">
 				<a href="<?=admin_url("report/attendance/dperformance")?>">
 				<div class="card card-fill bg-warning shake">

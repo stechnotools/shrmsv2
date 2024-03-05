@@ -115,102 +115,157 @@ class AttendanceReportModel extends Model
 					ON ph.punch_id = p.id
 				WHERE p.punch_date BETWEEN '".$data['fromdate']."' AND '".$data['todate']."'
 				GROUP BY p.user_id,p.punch_date
-) p1 ON e.user_id = p1.user_id AND ds.punch_date = p1.punch_date
-		LEFT JOIN (SELECT
-			sr.user_id,
-			sr.shift_id,
-			s.code shift_name,
-			sr.shift_apply_date
-			FROM shift_roster sr
-			LEFT JOIN shift s
-				ON sr.shift_id = s.id
-			WHERE CAST(sr.shift_apply_date AS date) >= '".$data['fromdate']."'
-			AND CAST(sr.shift_apply_date AS date) <= '".$data['todate']."') sr
-			ON e.user_id = sr.user_id  AND sr.shift_apply_date=ds.punch_date
-		LEFT JOIN employee_office eo ON e.user_id = eo.user_id
-		LEFT JOIN employee_time et ON e.user_id = et.user_id
-		LEFT JOIN employee_shift es ON e.user_id = es.user_id
-		LEFT JOIN department d ON eo.department_id = d.id
-		LEFT JOIN designation d1 ON eo.designation_id = d1.id
-		LEFT JOIN shift s1 ON (
-			(sr.shift_id IS NOT NULL AND sr.shift_id=s1.id) OR
-			(sr.shift_id IS NULL AND es.shift_id = s1.id)
-		)  where 1=1";
-		if(isset($data['branch_id']) && !empty($data['branch_id'])){
-			if(is_array($data['branch_id'])){
-				$sql.=" and eo.branch_id  in(".implode(',',$data['branch_id']).")";
-			}else{
-				$sql.=" and eo.branch_id  = " .$data['branch_id'];
+			) p1 ON e.user_id = p1.user_id AND ds.punch_date = p1.punch_date
+			LEFT JOIN (SELECT
+				sr.user_id,
+				sr.shift_id,
+				s.code shift_name,
+				sr.shift_apply_date
+				FROM shift_roster sr
+				LEFT JOIN shift s
+					ON sr.shift_id = s.id
+				WHERE CAST(sr.shift_apply_date AS date) >= '".$data['fromdate']."'
+				AND CAST(sr.shift_apply_date AS date) <= '".$data['todate']."') sr
+				ON e.user_id = sr.user_id  AND sr.shift_apply_date=ds.punch_date
+			LEFT JOIN employee_office eo ON e.user_id = eo.user_id
+			LEFT JOIN employee_time et ON e.user_id = et.user_id
+			LEFT JOIN employee_shift es ON e.user_id = es.user_id
+			LEFT JOIN department d ON eo.department_id = d.id
+			LEFT JOIN designation d1 ON eo.designation_id = d1.id
+			LEFT JOIN shift s1 ON (
+				(sr.shift_id IS NOT NULL AND sr.shift_id=s1.id) OR
+				(sr.shift_id IS NULL AND es.shift_id = s1.id)
+			)  where 1=1";
+			if(isset($data['branch_id']) && !empty($data['branch_id'])){
+				if(is_array($data['branch_id'])){
+					$sql.=" and eo.branch_id  in(".implode(',',$data['branch_id']).")";
+				}else{
+					$sql.=" and eo.branch_id  = " .$data['branch_id'];
+				}
 			}
-		}
-		if(isset($data['user_id'])){
-            if(is_array($data['user_id'])){
-                $sql.=" and e.user_id in(".implode(',',$data['user_id']).")";
-            }else if(!empty($data['user_id'])){
-                $sql.=" and e.user_id = " .$data['user_id'];
-            }
+			if(isset($data['user_id'])){
+				if(is_array($data['user_id'])){
+					$sql.=" and e.user_id in(".implode(',',$data['user_id']).")";
+				}else if(!empty($data['user_id'])){
+					$sql.=" and e.user_id = " .$data['user_id'];
+				}
 
-		}
-		if(isset($data['department_id'])){
-            if(is_array($data['department_id'])){
-                $sql.=" and eo.department_id in(".implode(',',$data['department_id']).")";
-            }else{
-                $sql.=" and eo.department_id = " .$data['department_id'];
-            }
-		}
-		if(isset($data['category_id'])){
-            if(is_array($data['category_id'])){
-                $sql.=" and eo.category_id in(".implode(',',$data['category_id']).")";
-            }else{
-                $sql.=" and eo.category_id = " .$data['category_id'];
-            }
+			}
+			if(isset($data['department_id'])){
+				if(is_array($data['department_id'])){
+					$sql.=" and eo.department_id in(".implode(',',$data['department_id']).")";
+				}else{
+					$sql.=" and eo.department_id = " .$data['department_id'];
+				}
+			}
+			if(isset($data['category_id'])){
+				if(is_array($data['category_id'])){
+					$sql.=" and eo.category_id in(".implode(',',$data['category_id']).")";
+				}else{
+					$sql.=" and eo.category_id = " .$data['category_id'];
+				}
 
-		}
-		if(isset($data['section_id'])){
-            if(is_array($data['section_id'])){
-                $sql.=" and eo.section_id in(".implode(',',$data['section_id']).")";
-            }else{
-                $sql.=" and eo.section_id = " .$data['section_id'];
-            }
+			}
+			if(isset($data['section_id'])){
+				if(is_array($data['section_id'])){
+					$sql.=" and eo.section_id in(".implode(',',$data['section_id']).")";
+				}else{
+					$sql.=" and eo.section_id = " .$data['section_id'];
+				}
 
-		}
-		if(isset($data['grade_id'])){
-            if (is_array($data['grade_id'])){
-                $sql.=" and eo.grade_id in(".implode(',',$data['grade_id']).")";
-            }else{
-                $sql.=" and eo.grade_id = " .$data['grade_id'];
-            }
+			}
+			if(isset($data['grade_id'])){
+				if (is_array($data['grade_id'])){
+					$sql.=" and eo.grade_id in(".implode(',',$data['grade_id']).")";
+				}else{
+					$sql.=" and eo.grade_id = " .$data['grade_id'];
+				}
 
-		}
-		if(isset($data['designation_id'])){
-            if(is_array($data['designation_id'])){
-                $sql.=" and eo.designation_id in(".implode(',',$data['designation_id']).")";
-            }else{
-                $sql.=" and eo.designation_id = " .$data['designation_id'];
-            }
+			}
+			if(isset($data['designation_id'])){
+				if(is_array($data['designation_id'])){
+					$sql.=" and eo.designation_id in(".implode(',',$data['designation_id']).")";
+				}else{
+					$sql.=" and eo.designation_id = " .$data['designation_id'];
+				}
 
-		}
-		if(isset($data['shift_id'])){
-            if(is_array($data['shift_id'])){
-                $sql.=" and sr.shift_id in(".implode(',',$data['shift_id']).")";
-            }else{
-                $sql.=" and sr.shift_id = " .$data['shift_id'];
-            }
+			}
+			if(isset($data['shift_id'])){
+				if(is_array($data['shift_id'])){
+					$sql.=" and sr.shift_id in(".implode(',',$data['shift_id']).")";
+				}else{
+					$sql.=" and sr.shift_id = " .$data['shift_id'];
+				}
 
-		}
+			}
 
-		if(isset($data['status'])){
-			$sql.=" having status = ".$data['status'];
-		}
-		$sql.=" ORDER BY user_id, ds.punch_date ASC";
+			if(isset($data['status'])){
+				$sql.=" having status = ".$data['status'];
+			}
+			$sql.=" ORDER BY user_id, ds.punch_date ASC";
 
-		return $this->db->query($sql)->getResultArray();
+			return $this->db->query($sql)->getResultArray();
 		}
 		else{
 			return array();
 		}
 	}
 
+	public function getCLMAttendance($data=array()){
+		$sql="SELECT
+		e.user_id,
+		e.card_no,
+		e.employee_name,
+		e.branch_name,
+		e.designation_name,
+		e.department_name,
+		e.safety_pass_no,
+		clm.clm_in,
+		clm.clm_out,
+		savior.savior_in,
+		savior.savior_out
+	  FROM (SELECT
+		  e.user_id,
+		  eo.employee_name,
+		  e.branch_id,
+		  b.name AS branch_name,
+		  eo.designation_id,
+		  d.name AS designation_name,
+		  eo.department_id,
+		  d1.name AS department_name,
+		  e.card_no,
+		  e.safety_pass_no
+		FROM employee e
+		  LEFT JOIN branch b
+			ON e.branch_id = b.id
+		  LEFT JOIN employee_office eo
+			ON e.user_id = eo.user_id
+		  LEFT JOIN designation d
+			ON eo.designation_id = d.id
+		  LEFT JOIN department d1
+			ON eo.department_id = d1.id
+		WHERE e.branch_id = '".$data['branch_id']."') e
+		LEFT JOIN (SELECT
+			mh.user_id,
+			MIN(mh.punch_time) AS clm_in,
+			MAX(mh.punch_time) AS clm_out
+		  FROM mainpunch_history mh
+		  WHERE date(mh.punch_date) BETWEEN '".$data['fromdate']."' AND '".$data['todate']."'
+		  AND mh.branch_id = '".$data['branch_id']."'
+		  GROUP BY mh.user_id
+		  ORDER BY mh.punch_time ASC) clm
+		  ON clm.user_id = e.user_id
+		LEFT JOIN (SELECT
+			mh.user_id,
+			MIN(mh.punch_time) AS savior_in,
+			MAX(mh.punch_time) AS savior_out
+		  FROM punch_history mh
+		  WHERE date(mh.punch_date) BETWEEN '".$data['fromdate']."' AND '".$data['todate']."'
+		  AND mh.branch_id = '".$data['branch_id']."'
+		  GROUP BY mh.user_id
+		  ORDER BY mh.punch_time ASC) savior
+		  ON savior.user_id = e.user_id";
+		  return $this->db->query($sql)->getResultArray();
 
-
+	}
 }

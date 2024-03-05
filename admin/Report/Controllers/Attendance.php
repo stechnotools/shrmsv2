@@ -668,7 +668,75 @@ class Attendance extends AdminController{
 
 	}
 
+	public function clmattendance(){
+		$this->template->add_package(array('datatable','datepicker','select2','daterangepicker'),true);
+        $data['breadcrumbs'] = array();
+		$data['breadcrumbs'][] = array(
+			'text' => lang('Attendance.heading_title'),
+			'href' => admin_url('report/attendance')
+		);
+        $data['heading_title'] = lang('Attendance.heading_title');
 
+        if($this->request->getGet('fromdate')){
+            $data['fromdate'] = $data['todate'] = $this->request->getGet('fromdate');
+        }else{
+            $data['fromdate'] = $data['todate'] = date('Y-m-d');
+        }
+
+        if($this->request->getGet('branch_id')){
+            $data['branch_id'] = $this->request->getGet('branch_id');
+        }else{
+            $data['branch_id'] = '';
+        }
+
+        if($this->request->getGet('user_id')){
+            $data['user_id'] = $this->request->getGet('user_id');
+        }else{
+            $data['user_id'] = '';
+        }
+
+        $filter_data=[
+            'fromdate'=>$data['fromdate'],
+            'todate'=>$data['todate'],
+            'branch_id'=>$data['branch_id'],
+            'user_id'=>$data['user_id']
+        ];
+
+        $data['clmattendance']=array();
+		$dailydata=$this->attendanceReportModel->getCLMAttendance($filter_data);
+		foreach($dailydata as $key=>$spot){
+			$clmstarttime = date_create($spot['clm_in']);
+			$clmendtime = date_create($spot['clm_out']);
+			$clminterval = date_diff($clmstarttime, $clmendtime);
+			$clm_whr=$clminterval->format('%H:%I:%S');
+
+			$saviorstarttime = date_create($spot['savior_in']);
+			$saviorendtime = date_create($spot['savior_out']);
+			$saviorinterval = date_diff($saviorstarttime, $saviorendtime);
+			$savior_whr=$saviorinterval->format('%H:%I:%S');
+
+			$data['clmattendance'][]=array(
+				'slno'=>$key+1,
+				'card_no'=>$spot['card_no'],
+				'safety_pass_no'=>$spot['safety_pass_no'],
+				'employee_name'=>$spot['employee_name'],
+				'department_name'=>$spot['department_name'],
+				'designation_name'=>$spot['designation_name'],
+				'branch_name'=>$spot['branch_name'],
+				'clm_in'=>$spot['clm_in'],
+				'clm_out'=>$spot['clm_out'],
+				'clm_working_hr'=>$clm_whr,
+				'savior_in'=>$spot['savior_in'],
+				'savior_out'=>$spot['savior_out'],
+				'savior_working_hr'=>$savior_whr,
+				'status'=>$spot['clm_in']?'P':'A',
+			);
+
+		}
+		$data['branches'] = (new BranchModel())->getAll();
+
+		return $this->template->view('Admin\Report\Views\clmattendance', $data);
+	}
 
 
     public function getResultData($attendancedata){

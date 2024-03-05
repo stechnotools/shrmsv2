@@ -9,6 +9,7 @@ use Admin\Designation\Models\DesignationModel;
 use Admin\Employee\Models\EmployeeModel;
 use Admin\Grade\Models\GradeModel;
 use Admin\Hod\Models\HodModel;
+use Admin\Location\Models\LocationModel;
 use Admin\Section\Controllers\Section;
 use Admin\Section\Models\SectionModel;
 use Admin\Shift\Models\ShiftModel;
@@ -289,6 +290,7 @@ class Employee extends AdminController {
 		$data['hods']=(new HodModel())->getAll();
 		$data['shifts']=(new ShiftModel())->getAll();
 		$data['banks']=(new BankModel())->getAll();
+		$data['locations']=(new LocationModel())->getAll();
 
 		$data['shift_patterns']=array_merge([''=>'Select Pattern'],generatePattern($data['shifts']));
 		$data['weeks']=array(

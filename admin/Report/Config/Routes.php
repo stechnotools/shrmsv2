@@ -3,6 +3,7 @@ $routes->group(env('app.adminROUTE'), ['namespace' => 'Admin','filter' => 'login
 {
     $routes->group('report', function($routes){
         $routes->add('attendance', 'Report\Controllers\Attendance::index');
+        $routes->add('attendance/clmattendance', 'Report\Controllers\Attendance::clmattendance');
         $routes->add('attendance/earlyarrival', 'Report\Controllers\Attendance::earlyarrival');
         $routes->add('attendance/latearrival', 'Report\Controllers\Attendance::latearrival');
         $routes->add('attendance/absenteesism', 'Report\Controllers\Attendance::absenteesism');
