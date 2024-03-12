@@ -1,6 +1,5 @@
 <?php
 namespace Admin\Employee\Controllers;
-
 use Admin\Bank\Models\BankModel;
 use Admin\Branch\Models\BranchModel;
 use Admin\Category\Models\CategoryModel;
