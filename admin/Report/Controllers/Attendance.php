@@ -719,8 +719,10 @@ class Attendance extends AdminController{
 			$status = '';
 			if ($spot['device_access'] == 'savior') {
 				$status = ($spot['savior_in'] != '' && $spot['savior_out'] != '') ? 'P' : (($spot['savior_in'] == '' && $spot['savior_out'] == '') ? 'A' : (($spot['savior_in'] != '' || $spot['savior_out'] != '') ? 'MM' : 'P'));
+				$spot['clm_in']=$spot['clm_out']='';
 			} elseif ($spot['device_access'] == 'clm') {
-				$status = ($spot['clm_in'] == '' && $spot['clm_out'] == '') ? 'A' : (($spot['clm_in'] != '' || $spot['clm_out'] != '') ? 'MM' : 'P');
+				$status = ($spot['clm_in'] != '' && $spot['clm_out'] != '') ? 'P' : (($spot['clm_in'] == '' && $spot['clm_out'] == '') ? 'A' : (($spot['clm_in'] != '' || $spot['clm_out'] != '') ? 'MM' : 'P'));
+				$spot['savior_in']=$spot['savior_out']='';
 			} elseif ($spot['device_access'] == 'both') {
 				$status = (
 					($spot['savior_in'] != '' && $spot['savior_out'] != '') &&
