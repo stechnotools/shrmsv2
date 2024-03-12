@@ -723,13 +723,19 @@ class Attendance extends AdminController{
 				$status = ($spot['clm_in'] == '' && $spot['clm_out'] == '') ? 'A' : (($spot['clm_in'] != '' || $spot['clm_out'] != '') ? 'MM' : 'P');
 			} elseif ($spot['device_access'] == 'both') {
 				$status = (
-					($spot['savior_in'] == '' && $spot['savior_out'] == '') &&
-					($spot['clm_in'] == '' && $spot['clm_out'] == '')
-				) ? 'A' : (
+					($spot['savior_in'] != '' && $spot['savior_out'] != '') &&
+					($spot['clm_in'] != '' && $spot['clm_out'] != '')
+				) ? 'P' : (
 					(
-						($spot['savior_in'] != '' || $spot['savior_out'] != '') ||
-						($spot['clm_in'] != '' || $spot['clm_out'] != '')
-					) ? 'MM' : 'P');
+						($spot['savior_in'] == '' && $spot['savior_out'] == '') &&
+						($spot['clm_in'] == '' && $spot['clm_out'] == '')
+					) ? 'A' : (
+						(
+							($spot['savior_in'] != '' || $spot['savior_out'] != '') ||
+							($spot['clm_in'] != '' || $spot['clm_out'] != '')
+						) ? 'MM' : 'P'
+					)
+				);
 			}
 
 			$data['clmattendance'][]=array(
