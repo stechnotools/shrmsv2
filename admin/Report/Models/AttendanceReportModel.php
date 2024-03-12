@@ -220,10 +220,12 @@ class AttendanceReportModel extends Model
 		e.designation_name,
 		e.department_name,
 		e.safety_pass_no,
+		e.device_access,
 		clm.clm_in,
 		clm.clm_out,
 		savior.savior_in,
 		savior.savior_out
+
 	  FROM (SELECT
 		  e.user_id,
 		  eo.employee_name,
@@ -234,12 +236,15 @@ class AttendanceReportModel extends Model
 		  eo.department_id,
 		  d1.name AS department_name,
 		  e.card_no,
-		  e.safety_pass_no
+		  e.safety_pass_no,
+		  et.device_access
 		FROM employee e
 		  LEFT JOIN branch b
 			ON e.branch_id = b.id
 		  LEFT JOIN employee_office eo
 			ON e.user_id = eo.user_id
+		  LEFT JOIN employee_time et
+      		ON e.user_id=et.user_id
 		  LEFT JOIN designation d
 			ON eo.designation_id = d.id
 		  LEFT JOIN department d1
@@ -265,6 +270,8 @@ class AttendanceReportModel extends Model
 		  GROUP BY mh.user_id
 		  ORDER BY mh.punch_time ASC) savior
 		  ON savior.user_id = e.user_id";
+		  //echo $sql;
+		  //exit;
 		  return $this->db->query($sql)->getResultArray();
 
 	}

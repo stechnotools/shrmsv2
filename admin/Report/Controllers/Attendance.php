@@ -704,6 +704,7 @@ class Attendance extends AdminController{
 
         $data['clmattendance']=array();
 		$dailydata=$this->attendanceReportModel->getCLMAttendance($filter_data);
+		//printr($dailydata);
 		foreach($dailydata as $key=>$spot){
 			$clmstarttime = date_create($spot['clm_in']);
 			$clmendtime = date_create($spot['clm_out']);
@@ -716,19 +717,19 @@ class Attendance extends AdminController{
 			$savior_whr=$saviorinterval->format('%H:%I:%S');
 
 			$status = '';
-			if ($spot['device_access'] === 'savior') {
-				$status = ($spot['savior_in'] === '' && $spot['savior_out'] === '') ? 'absent' : (($spot['savior_in'] !== '' || $spot['savior_out'] !== '') ? 'miss' : 'present');
-			} elseif ($spot['device_access'] === 'clm') {
-				$status = ($spot['clm_in'] === '' && $spot['clm_out'] === '') ? 'absent' : (($spot['clm_in'] !== '' || $spot['clm_out'] !== '') ? 'miss' : 'present');
-			} elseif ($spot['device_access'] === 'both') {
+			if ($spot['device_access'] == 'savior') {
+				$status = ($spot['savior_in'] == '' && $spot['savior_out'] == '') ? 'A' : (($spot['savior_in'] != '' || $spot['savior_out'] != '') ? 'MM' : 'P');
+			} elseif ($spot['device_access'] == 'clm') {
+				$status = ($spot['clm_in'] == '' && $spot['clm_out'] == '') ? 'A' : (($spot['clm_in'] != '' || $spot['clm_out'] != '') ? 'MM' : 'P');
+			} elseif ($spot['device_access'] == 'both') {
 				$status = (
-					($spot['savior_in'] === '' && $spot['savior_out'] === '') &&
-					($spot['clm_in'] === '' && $spot['clm_out'] === '')
-				) ? 'absent' : (
+					($spot['savior_in'] == '' && $spot['savior_out'] == '') &&
+					($spot['clm_in'] == '' && $spot['clm_out'] == '')
+				) ? 'A' : (
 					(
-						($spot['savior_in'] !== '' || $spot['savior_out'] !== '') ||
-						($spot['clm_in'] !== '' || $spot['clm_out'] !== '')
-					) ? 'miss' : 'present');
+						($spot['savior_in'] != '' || $spot['savior_out'] != '') ||
+						($spot['clm_in'] != '' || $spot['clm_out'] != '')
+					) ? 'MM' : 'P');
 			}
 
 			$data['clmattendance'][]=array(
