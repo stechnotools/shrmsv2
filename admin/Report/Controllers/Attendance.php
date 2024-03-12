@@ -715,6 +715,22 @@ class Attendance extends AdminController{
 			$saviorinterval = date_diff($saviorstarttime, $saviorendtime);
 			$savior_whr=$saviorinterval->format('%H:%I:%S');
 
+			$status = '';
+			if ($spot['device_access'] === 'savior') {
+				$status = ($spot['savior_in'] === '' && $spot['savior_out'] === '') ? 'absent' : (($spot['savior_in'] !== '' || $spot['savior_out'] !== '') ? 'miss' : 'present');
+			} elseif ($spot['device_access'] === 'clm') {
+				$status = ($spot['clm_in'] === '' && $spot['clm_out'] === '') ? 'absent' : (($spot['clm_in'] !== '' || $spot['clm_out'] !== '') ? 'miss' : 'present');
+			} elseif ($spot['device_access'] === 'both') {
+				$status = (
+					($spot['savior_in'] === '' && $spot['savior_out'] === '') &&
+					($spot['clm_in'] === '' && $spot['clm_out'] === '')
+				) ? 'absent' : (
+					(
+						($spot['savior_in'] !== '' || $spot['savior_out'] !== '') ||
+						($spot['clm_in'] !== '' || $spot['clm_out'] !== '')
+					) ? 'miss' : 'present');
+			}
+
 			$data['clmattendance'][]=array(
 				'slno'=>$key+1,
 				'card_no'=>$spot['card_no'],
@@ -729,7 +745,7 @@ class Attendance extends AdminController{
 				'savior_in'=>$spot['savior_in'],
 				'savior_out'=>$spot['savior_out'],
 				'savior_working_hr'=>$savior_whr,
-				'status'=>$spot['clm_in']?'P':'A',
+				'status'=>$status
 			);
 
 		}

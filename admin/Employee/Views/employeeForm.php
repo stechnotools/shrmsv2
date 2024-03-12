@@ -462,6 +462,12 @@ $validation = \Config\Services::validation();
                                         </div>
 									</div>
 								</div>
+								<div class="form-group row required">
+									<label class="col-md-6 control-label" for="input-email">Device Access</label>
+									<div class="col-md-6">
+										<?php echo form_dropdown('device_access', array("clm"=>"CLM","savior"=>"Savior",'both'=>'Both'), set_value('device_access', $device_access),"id='device_access' class='form-control select2'"); ?>
+									</div>
+								</div>
 							</div>
 							<div class="col-md-7">
 								<div class="form-group row">
