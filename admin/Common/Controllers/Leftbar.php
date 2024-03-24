@@ -266,10 +266,10 @@ class Leftbar extends AdminController{
             );
         }
 
-        if ($this->user->hasPermission('mispunch/request')) {
+        if ($this->user->hasPermission('mispunch')) {
             $operations[] = array(
                 'name'	  => lang('Leftbar.text_mispunchrequest'),
-                'href'     => admin_url('mispunch/request'),
+                'href'     => admin_url('mispunch'),
                 'children' => array()
             );
         }
