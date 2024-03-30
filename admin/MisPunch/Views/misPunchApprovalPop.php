@@ -50,13 +50,28 @@
 					<div class="col-md-6">
 						<div class="form-group">
 							<label for="exampleInputEmail1">Reason</label>
-							<?php echo form_dropdown('reason_id', option_array_value($reasons, 'id', 'code',array(''=>'Select Reason')), set_value('reason_id', ''),"id='reason_id' class='form-control select2'"); ?>
+							<?php echo form_dropdown('reason_id', option_array_value($reasons, 'id', 'code',array(''=>'Select Reason')), set_value('reason_id', $reason_id),"id='reason_id' class='form-control select2'"); ?>
 						</div>
 					</div>
 					<div class="col-md-6">
 						<div class="form-group">
 							<label for="exampleInputEmail1">Remarks</label>
-							<?php echo form_input(array('class'=>'form-control','name' => 'remarks', 'id' => 'remarks', 'placeholder'=>"Remarks",'value' => set_value('remarks', ''))); ?>
+							<?php echo form_input(array('class'=>'form-control','name' => 'remarks', 'id' => 'remarks', 'placeholder'=>"Remarks",'value' => set_value('remarks', $remarks))); ?>
+						</div>
+					</div>
+				</div>
+				<hr />
+				<div class="row">
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="exampleInputEmail1">Status</label>
+							<?php echo form_dropdown('is_request', array( '0'=>'Pending','1'=>'Approved','2'=>'Rejected'), set_value('is_request', $is_request),"id='is_request' class='form-control select2'"); //option_array_value($reasons, 'id', 'code',array(''=>'Select Reason')), set_value('reason_id', ''),"id='reason_id' class='form-control select2'"); ?>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="exampleInputEmail1">Action Remarks</label>
+							<?php echo form_input(array('class'=>'form-control','name' => 'action_remarks', 'id' => 'action_remarks', 'placeholder'=>"Remarks",'value' => set_value('remarks', $action_remarks))); ?>
 						</div>
 					</div>
 				</div>

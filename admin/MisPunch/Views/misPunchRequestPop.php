@@ -26,25 +26,61 @@
 					<div class="col-md-6">
 						<div class="form-group">
 							<label for="exampleInputEmail1">CLM IN</label>
-							<?php echo form_input(array('class'=>'form-control timepicker','name' => 'clm_in', 'id' => 'punch-clm-in', 'placeholder'=>"CLM IN",'value' => set_value('clm_in', $clm_in))); ?>
+							<?php
+							$inputAttributes = [
+								'class'=>'form-control timepicker',
+								'name'  => 'clm_in',
+								'id'    => 'punch-clm-in',
+								'placeholder'=>"CLM IN",
+								'value' => set_value('clm_in', $clm_in)
+							];
+							if($clm_in_disable) $inputAttributes['readonly'] = 'readonly';
+							echo form_input($inputAttributes); ?>
 						</div>
 					</div>
 					<div class="col-md-6">
 						<div class="form-group">
 							<label for="exampleInputEmail1">CLM OUT</label>
-							<?php echo form_input(array('class'=>'form-control timepicker','name' => 'clm_out', 'id' => 'punch-clm-out', 'placeholder'=>"CLM OUT",'value' => set_value('clm_out', $clm_out))); ?>
+							<?php
+							$inputAttributes = [
+								'class'=>'form-control timepicker',
+								'name'  => 'clm_out',
+								'id'    => 'punch-clm-out',
+								'placeholder'=>"CLM OUT",
+								'value' => set_value('clm_out', $clm_out)
+							];
+							if($clm_out_disable) $inputAttributes['readonly'] = 'readonly';
+							echo form_input($inputAttributes); ?>
 						</div>
 					</div>
 					<div class="col-md-6">
 						<div class="form-group">
 							<label for="exampleInputEmail1">Savior IN</label>
-							<?php echo form_input(array('class'=>'form-control timepicker','name' => 'savior_in', 'id' => 'punch-savior-in', 'placeholder'=>"Savior OUT",'value' => set_value('savior_in', $savior_in))); ?>
+							<?php
+							$inputAttributes = [
+								'class'=>'form-control timepicker',
+								'name'  => 'savior_in',
+								'id'    => 'punch-savior-in',
+								'placeholder'=>"Savior IN",
+								'value' => set_value('savior_in', $savior_in)
+							];
+							if($savior_in_disable) $inputAttributes['readonly'] = 'readonly';
+							echo form_input($inputAttributes); ?>
 						</div>
 					</div>
 					<div class="col-md-6">
 						<div class="form-group">
 							<label for="exampleInputEmail1">Savior OUT</label>
-							<?php echo form_input(array('class'=>'form-control timepicker','name' => 'savior_out', 'id' => 'punch-savior-out', 'placeholder'=>"Savior OUT",'value' => set_value('savior_out', $savior_out))); ?>
+							<?php
+							$inputAttributes = [
+								'class'=>'form-control timepicker',
+								'name'  => 'savior_out',
+								'id'    => 'punch-savior-out',
+								'placeholder'=>"Savior OUT",
+								'value' => set_value('savior_out', $savior_out)
+							];
+							if($savior_out_disable) $inputAttributes['readonly'] = 'readonly';
+							echo form_input($inputAttributes); ?>
 						</div>
 					</div>
 					<div class="col-md-6">

@@ -7,7 +7,7 @@ $routes->group('admin', ['namespace' => 'Admin','filter' => 'login'], function($
 
 
     $routes->add('mispunch/approval', 'MisPunch\Controllers\MisPunch::approval');
-    $routes->post('mispunch/approve/(:segment)','MisPunch\Controllers\MisPunch::approve/$1');
+    $routes->add('mispunch/approvalpop/(:segment)','MisPunch\Controllers\MisPunch::approvalPop/$1');
 
 });
 

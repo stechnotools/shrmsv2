@@ -111,7 +111,7 @@
 												<?}?>
 											</td>
 											<td>
-											<a href="<?php echo admin_url('mispunch/approve/'.$mispunch['id']); ?>" class="btn btn-danger btn-sm ajaxaction">Action</a>
+											<a href="<?php echo admin_url('mispunch/approvalpop/'.$mispunch['id']); ?>" class="btn btn-danger btn-sm ajaxaction">Action</a>
 											</td>
 										</tr>
 									<?}}?>

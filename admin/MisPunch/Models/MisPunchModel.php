@@ -68,7 +68,21 @@ class MisPunchModel extends Model
 		$builder = $this->db->table('mispunch_request mr');
 		$builder->join('employee e', 'e.user_id = mr.user_id');
 		$builder->join('employee_office eo', 'eo.user_id = mr.user_id');
-		$builder->select('mr.id,mr.user_id,mr.punch_date,mr.clm_in,mr.clm_out,mr.savior_in,mr.savior_out,mr.is_request,e.card_no,eo.employee_name');
+		$builder->select('mr.id,
+		mr.user_id,
+		mr.punch_date,
+		mr.clm_in,
+		mr.clm_out,
+		mr.savior_in,
+		mr.savior_out,
+		mr.is_request,
+		e.card_no,
+		eo.employee_name,
+		e.branch_id');
+
+		if(isset($data['id']) && $data['id']){
+			$builder->where("mr.id", $data['id']);
+		}
 		if(isset($data['branch_id']) && $data['branch_id']){
 			$builder->where("mr.branch_id", $data['branch_id']);
 		}
