@@ -86,6 +86,7 @@ class ReasonModel extends Model
 
         return $res;
     }
+
     public function getTotal($data = array()) {
         $builder=$this->db->table("{$this->table} r");
         $this->filter($builder,$data);
