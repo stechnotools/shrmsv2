@@ -22,6 +22,7 @@ class ReasonModel extends Model
     protected $updatedField         = 'updated_at';
     protected $deletedField         = 'deleted_at';
 
+
     // Validation
     protected $validationRules      = [
         'name' => array(
@@ -103,7 +104,7 @@ class ReasonModel extends Model
         }
     }
 
-   
+
 
 
 }
