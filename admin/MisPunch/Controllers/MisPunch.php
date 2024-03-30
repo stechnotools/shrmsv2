@@ -15,6 +15,7 @@ use Admin\MainPunch\Models\MainPunchModel;
 use Admin\MainPunch\Models\MainRawPunchModel;
 use Admin\MisPunch\Models\MisPunchHistoryModel;
 use Admin\MisPunch\Models\MisPunchModel;
+use Admin\Reason\Models\ReasonModel;
 use Admin\Section\Controllers\Section;
 use Admin\Section\Models\SectionModel;
 use Admin\Shift\Controllers\Shift;
@@ -32,7 +33,7 @@ class MisPunch extends AdminController {
 	}
 
 
-	public function index(){
+	public function request(){
 		$this->template->set_meta_title(lang('MisPunch.heading_title'));
 		$this->template->add_package(array('datatable','select2','daterangepicker'),true);
 
@@ -78,15 +79,30 @@ class MisPunch extends AdminController {
 		$data['departments']=(new DepartmentModel())->getAll();
 		$data['designations']=(new DesignationModel())->getAll();
 
-		return $this->template->view('Admin\MisPunch\Views\misPunch', $data);
+		return $this->template->view('Admin\MisPunch\Views\misPunchRequest', $data);
 
 	}
 
-	public function request(){
+	public function requestPop(){
 		$data=[];
 		$this->template->add_package(array('datepicker','timepicker'),true);
 
 		if ($this->request->getMethod('REQUEST_METHOD') === 'POST'){
+			$punchrequest=$this->request->getPostGet();
+			$punchrequest['punch_date']=date('Y-m-d',strtotime($punchrequest['punch_date']));
+			$punchrequest['is_request']=0;
+
+			$this->misPunchModel->insert($punchrequest);
+
+			$this->session->setFlashdata('success','Request Submitted Successfully.');
+			//json
+			echo "1";
+			exit;
+
+
+		}
+
+		/*if ($this->request->getMethod('REQUEST_METHOD') === 'POST'){
 
 			$user_id=$this->request->getGet('user_id');
 			$punchdate=$this->request->getGet('punch_date');
@@ -97,7 +113,6 @@ class MisPunch extends AdminController {
 			$empdata=(new EmployeeModel())->getEmployee($user_id);
 			$shiftdata=(new EmployeeModel())->getEmployeeShift($user_id);
 			$timedata=(new EmployeeModel())->getEmployeeTime($user_id);
-			
 
 			$checkclm_in=(new MainRawPunchModel())->where('user_id',$user_id)
 											->where('punch_date',$punchdate)
@@ -120,7 +135,7 @@ class MisPunch extends AdminController {
 				$mainrawpunchdata['punch_time']=$clm_in;
 				$mainrawpunchdata['flag']='IN';
 				$mainrawpunchdata['rstatus']=1;
-				$this->misPunchModel->insert($mainrawpunchdata);
+				(new MainRawPunchModel())->insert($mainrawpunchdata);
 
 				//add main punch
 				$mainpunchdata=[
@@ -155,9 +170,9 @@ class MisPunch extends AdminController {
 					'punch_date'=>$punchdate,
 					'rstatus'=>1
 				];
-				$singledata =(new mainPunchModel())->where(['user_id' => $empdata->user_id, 'punch_date' => $punchdate, 'branch_id' => $empdata->branch_id])->first();
+				$singledata =(new MainPunchModel())->where(['user_id' => $empdata->user_id, 'punch_date' => $punchdate, 'branch_id' => $empdata->branch_id])->first();
 				if (empty($singledata)) {
-					$punch_id=(new mainPunchModel())->skipValidation()->insert($mainpunchdata);
+					$punch_id=(new MainPunchModel())->skipValidation()->insert($mainpunchdata);
 				}else{
 					$punch_id=$singledata->punch_id;
 				}
@@ -266,7 +281,7 @@ class MisPunch extends AdminController {
 			$this->session->setFlashdata('message', 'Punch Request Saved Successfully.');
 
 
-		}
+		}*/
 
 		$user_id=$this->request->getGet('user_id');
 		$punch_date=$data['punch_date']=$this->request->getGet('punch_date');
@@ -276,17 +291,20 @@ class MisPunch extends AdminController {
 			'todate'=>$punch_date
 		];
 		$punchdata=$this->misPunchModel->getCLMAttendance($punchflter);
+
 		$user=(new EmployeeModel())->getEmployee($user_id);
 
 		$shift=(new ShiftModel())->find($user->shift_id);
 
 		$data['heading_title']="Mis Punch Request for ".$user->employee_name;
 		$data['shift_id']=$user->shift_id;
+
 		if($punchdata[0]['clm_in']=="00:00:00" || $punchdata[0]['clm_in']==""){
 			$data['clm_in']=$shift->shift_start_time;
 		}else{
 			$data['clm_in']=$punchdata[0]['clm_in'];
 		}
+
 		if($punchdata[0]['clm_out']=="00:00:00" || $punchdata[0]['clm_out']==""){
 			$data['clm_out']=$shift->shift_end_time;
 		}else{
@@ -294,7 +312,6 @@ class MisPunch extends AdminController {
 		}
 
 		if ($punchdata[0]['savior_in'] == "00:00:00" || $punchdata[0]['savior_in'] == "") {
-			// Assuming $shift->shift_start_time is in HH:MM:SS format
 			$savior_in_timestamp = strtotime($shift->shift_start_time) + 15*60; // Adding 15 minutes
 			$data['savior_in'] = date('H:i:s', $savior_in_timestamp);
 		} else {
@@ -302,7 +319,6 @@ class MisPunch extends AdminController {
 		}
 
 		if ($punchdata[0]['savior_out'] == "00:00:00" || $punchdata[0]['savior_out'] == "") {
-			// Assuming $shift->shift_end_time is in HH:MM:SS format
 			$savior_out_timestamp = strtotime($shift->shift_end_time) + 15*60; // Adding 15 minutes
 			$data['savior_out'] = date('H:i:s', $savior_out_timestamp);
 		} else {
@@ -310,12 +326,82 @@ class MisPunch extends AdminController {
 		}
 
 		$data['shifts']=( new ShiftModel())->getAll();
+		$data['reasons']=(new ReasonModel())->getAll();
 
-		return  $this->template->view('Admin\MisPunch\Views\misPunchRequest',$data);
+		return  $this->template->view('Admin\MisPunch\Views\misPunchRequestPop',$data);
 	}
 
-	public function approve(){
+	public function approval(){
 		$this->template->set_meta_title(lang('MisPunch.heading_title'));
+		$this->template->add_package(array('datatable','select2','daterangepicker'),true);
+
+		$data['breadcrumbs'] = array();
+		$data['breadcrumbs'][] = array(
+			'text' => lang('MisPunch.heading_title'),
+			'href' => admin_url('mispunch')
+		);
+		$data['heading_title'] = "MIS Punch Approval";
+
+
+        if($this->request->getGet('branch_id')){
+            $data['branch_id'] = $this->request->getGet('branch_id');
+        }else{
+            $data['branch_id'] = '';
+        }
+
+        if($this->request->getGet('user_id')){
+            $data['user_id'] = $this->request->getGet('user_id');
+        }else{
+            $data['user_id'] = '';
+        }
+
+		if($this->request->getGet('status')){
+            $data['status'] = $this->request->getGet('status');
+        }else{
+            $data['status'] = 0;
+        }
+
+        $filter_data=[
+           	'branch_id'=>$data['branch_id'],
+            'user_id'=>$data['user_id'],
+			'status'=>$data['status']
+        ];
+
+		$data['mispunches']=$this->misPunchModel->getMisPunch($filter_data);
+
+		$data['branches']=(new BranchModel())->getAll();
+
+		return $this->template->view('Admin\MisPunch\Views\misPunchApproval', $data);
+
+	}
+
+	public function approvalPop(){
+		$this->template->set_meta_title(lang('MisPunch.heading_title'));
+		$mispinch_id=$this->uri->getSegment(3);
+
+
+		$mispunchdata=$this->misPunchModel->find($mispinch_id);
+		if($mispunchdata){
+
+			$user=(new EmployeeModel())->find($mispunchdata->user_id);
+			$shift=(new ShiftModel())->find($mispunchdata->shift_id);
+
+			$data['heading_title']="Mis Punch Approve for ".$user->employee_name;
+			$data['shift_id']=$user->shift_id;
+			$data['clm_in']=$mispunchdata->clm_in;
+			$data['clm_out']=$mispunchdata->clm_out;
+			$data['savior_in']=$mispunchdata->savior_in;
+			$data['savior_out']=$mispunchdata->savior_out;
+
+			$data['shifts']=( new ShiftModel())->getAll();
+			$data['reasons']=(new ReasonModel())->getAll();
+		}else{
+			$data['heading_title']="Mis Punch Request";
+		}
+
+
+		return  $this->template->view('Admin\MisPunch\Views\misPunchApprovePop',$data);
+
 	}
 
 	protected function getList() {

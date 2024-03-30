@@ -6,7 +6,7 @@ class MisPunchModel extends Model
 {
 
     protected $DBGroup              = 'default';
-    protected $table                = 'mainpunch';
+    protected $table                = 'mispunch_request';
     protected $primaryKey           = 'id';
     protected $useAutoIncrement     = true;
     protected $insertID             = 0;
@@ -64,7 +64,25 @@ class MisPunchModel extends Model
 		parent::__construct();
 	}
 
+	public function getMisPunch($data=array()){
+		$builder = $this->db->table('mispunch_request mr');
+		$builder->join('employee e', 'e.user_id = mr.user_id');
+		$builder->join('employee_office eo', 'eo.user_id = mr.user_id');
+		$builder->select('mr.id,mr.user_id,mr.punch_date,mr.clm_in,mr.clm_out,mr.savior_in,mr.savior_out,mr.is_request,e.card_no,eo.employee_name');
+		if(isset($data['branch_id']) && $data['branch_id']){
+			$builder->where("mr.branch_id", $data['branch_id']);
+		}
+		if(isset($data['user_id']) && $data['user_id']){
+			$builder->where("mr.user_id", $data['user_id']);
+		}
+		if(isset($data['status']) && $data['status']){
+			$builder->where("mr.is_request", $data['status']);
+		}
 
+		$query = $builder->get();
+		return $query->getResultArray();
+
+	}
 
 	public function getCLMAttendance($data=array()){
 		//printr($data);
@@ -85,6 +103,7 @@ class MisPunchModel extends Model
 			  clm.clm_out,
 			  savior.savior_in,
 			  savior.savior_out,
+			  mr.is_request,
 			  CASE
 				WHEN e.device_access = 'savior' THEN
 					CASE
@@ -155,6 +174,9 @@ class MisPunchModel extends Model
 				FROM punch_history mh
 				GROUP BY mh.user_id, mh.punch_date
 			  ) savior ON savior.user_id = e.user_id AND savior.punch_date = ds.date
+			  LEFT JOIN mispunch_request mr
+				ON mr.user_id = e.user_id
+				AND mr.punch_date = ds.date
 			WHERE 1=1";
 			if(isset($data['branch_id']) && $data['branch_id']){
 				$sql.=" AND e.branch_id = ".$data['branch_id'];
@@ -165,7 +187,7 @@ class MisPunchModel extends Model
 		$sql.=" ) AS subquery
 		WHERE
 		  status = 'MM'";
-
+		//echo $sql;
 		return $this->db->query($sql)->getResultArray();
 
 	}

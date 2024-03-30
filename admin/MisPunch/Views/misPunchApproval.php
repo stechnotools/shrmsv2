@@ -24,9 +24,8 @@
 							</div>
 							<div class="col-lg-4">
 								<div class="form-group mg-b-10-force">
-									<label for="inputEmail3" class="control-label">Date Range</label>
-									<?php echo form_input(array('name'=>'daterange','id'=>'daterange', 'class'=>'form-control daterange','placeholder'=>'From','value' => set_value('daterange', ''))) ?>
-
+									<label for="inputEmail3" class="control-label">Status</label>
+									<?php echo form_dropdown('status', array(0=>'Pending',1=>'Approved',2=>'Rejected'),set_value('status', ''),"id='status' class='form-control select2'"); ?>
 								</div>
 							</div>
 							<div class="col-lg-3">
@@ -67,6 +66,7 @@
 										<th>CLM OUT</th>
 										<th>Savior IN</th>
 										<th>Savior OUT</th>
+										<th>Status</th>
 										<th class="no-sort">Action</th>
 									</tr>
 								</thead>
@@ -102,7 +102,16 @@
 												<?php echo $mispunch['savior_out']; ?>
 											</td>
 											<td>
-												<a href="<?php echo admin_url('mispunch/request?user_id='.$mispunch['user_id'].'&punch_date='.$mispunch['punch_date']); ?>" class="btn btn-danger btn-sm ajaxaction">Request</a>
+												<?php if($mispunch['is_request'] == 0){?>
+												<span class="badge badge-warning">Pending</span>
+												<?}elseif($mispunch['is_request'] == 1){?>
+												<span class="badge badge-success">Approved</span>
+												<?}elseif($mispunch['is_request'] == 2){?>
+												<span class="badge badge-danger">Rejected</span>
+												<?}?>
+											</td>
+											<td>
+											<a href="<?php echo admin_url('mispunch/approve/'.$mispunch['id']); ?>" class="btn btn-danger btn-sm ajaxaction">Action</a>
 											</td>
 										</tr>
 									<?}}?>

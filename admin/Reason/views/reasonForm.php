@@ -4,7 +4,7 @@ $validation = \Config\Services::validation();
 <div class="row">
 	<div class="col-lg-12">
 		<div class="card">
-			
+
 			<div class="card-header py-2 text-white">
 				<h3 class="card-title float-left my-2"><?php echo $text_form; ?></h3>
 				<div class="panel-tools float-right">
@@ -31,34 +31,28 @@ $validation = \Config\Services::validation();
 				<div class="form-group row required">
 					<label class="col-md-2 control-label" for="input-code">Leave Field</label>
 					<div class="col-md-10">
-						<?php  echo form_dropdown('leave_field', array(''=>'Nill','cl' => 'Casual Leave','t'=>'Tour'), set_value('leave_field',$leave_field),array('class'=>'form-control select2','id' => 'leave_field')); ?>
+						<?php  echo form_dropdown('leave_id', option_array_value($leaves, 'id', 'leave_field',array(''=>'Nill')), set_value('leave_id',$leave_id),array('class'=>'form-control select2','id' => 'leave_id')); ?>
 					</div>
 				</div>
-				
+
 				<div class="form-group row required">
 					<label class="col-md-2 control-label" for="input-code">Leave Value</label>
 					<div class="col-md-10">
-						<?php  echo form_dropdown('leave_value', array('0.25'=>'00.25','0.50' => '00.50','0.75'=>'00.75','1'=>'01.00'), set_value('leave_value',$leave_value),array('class'=>'form-control select2','id' => 'leave_value')); ?>
+						<?php  echo form_dropdown('leave_value', $leave_values, set_value('leave_value',$leave_value),array('class'=>'form-control select2','id' => 'leave_value')); ?>
 					</div>
 				</div>
-				
+
 				<div class="form-group row required">
 					<label class="col-md-2 control-label" for="input-code">Leave Reason</label>
 					<div class="col-md-10">
-						<div class="form-check form-check-inline">
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-						<label class="form-check-label" for="inlineCheckbox1">1</label>
+						<?php foreach($reasons as $key=>$_reason){ ?>
+						<div class="radio radio-info form-check-inline">
+							<?php echo form_radio(array('class'=>'css-control-input','name' => 'leave_reason', 'id'=>'leave_reason' ,'value' => $key,'checked' => ($key == $leave_reason ? true : false) )); ?>
+							<label for="inlineRadio1"> <?=$_reason?> </label>
 						</div>
-						<div class="form-check form-check-inline">
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-						<label class="form-check-label" for="inlineCheckbox2">2</label>
-						</div>
-						<div class="form-check form-check-inline">
-						<input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option3" disabled>
-						<label class="form-check-label" for="inlineCheckbox3">3 (disabled)</label>
-						</div>
+						<?}?>
 					</div>
-				</div>	
+				</div>
 				<?php echo form_close(); ?>
 			</div> <!-- panel-body -->
 		</div> <!-- panel -->
@@ -66,6 +60,6 @@ $validation = \Config\Services::validation();
 </div>
 <?php js_start(); ?>
 <script type="text/javascript"><!--
-	
+
 //--></script>
 <?php js_end(); ?>

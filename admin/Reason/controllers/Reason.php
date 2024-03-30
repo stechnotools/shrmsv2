@@ -1,5 +1,7 @@
 <?php
 namespace Admin\Reason\Controllers;
+
+use Admin\Leave\Models\LeaveModel;
 use Admin\Reason\Models\ReasonModel;
 use App\Controllers\AdminController;
 
@@ -48,7 +50,7 @@ class Reason extends AdminController {
 				</div>',
 				$result->code,
 				$result->name,
-				$result->leave_field,
+				$result->leave_id,
 				$result->leave_value,
 				$result->leave_reason,
 				$action
@@ -202,8 +204,19 @@ class Reason extends AdminController {
 				$data[$field] = '';
 			}
 		}
-
-
+		$data['leaves']=(new LeaveModel())->getAll();
+		$data['reasons']=[
+			'late_arrival'=>'Late Arrival',
+			'early_departure'=>'Early Departure',
+			'excess_lunch'=>'Excess Lunch',
+			'hours_worked'=>'Hours Worked',
+		];
+		$data['leave_values']=[
+			'0.25'=>'00.25',
+			'0.50' => '00.50',
+			'0.75'=>'00.75',
+			'1'=>'01.00'
+		];
 		echo $this->template->view('Admin\Reason\Views\reasonForm',$data);
 	}
 
