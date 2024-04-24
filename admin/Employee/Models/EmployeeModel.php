@@ -120,6 +120,8 @@ class EmployeeModel extends Model
         $builder=$this->db->table("{$this->table} e");
         $this->filter($builder,$data);
         $count = $builder->countAllResults();
+		//echo $this->db->getLastQuery();
+		//exit;
         return $count;
     }
 
@@ -140,12 +142,9 @@ class EmployeeModel extends Model
 			$builder->where("u.enabled",$data['status']);
 		}
         $builder->where("u.{$this->deletedField}", null);
-        if (!empty($data['filter_search'])) {
-            $builder->where("
-				name LIKE '%{$data['filter_search']}%'
-				OR code LIKE '%{$data['filter_search']}%'
-				OR short LIKE '%{$data['filter_search']}%')"
-            );
+
+		if (!empty($data['filter_search'])) {
+            $builder->where("u.name LIKE '%{$data['filter_search']}%'");
         }
     }
 
@@ -251,7 +250,7 @@ class EmployeeModel extends Model
 			"time_loss" => isset($data['time_loss']) ? 1 : 0,
 			"half_markting" => isset($data['half_markting']) ? 1 : 0,
 			"short_markting" => isset($data['short_markting']) ? 1 : 0,
-			"device_access" => $data['device_access'],
+			"device_access" => isset($data['device_access']) ? $data['device_access']:'',
 			"punches" => isset($data['punches']) ? $data['punches'] : '',
 			"single_punch" => isset($data['single_punch']) ? $data['single_punch'] : 0,
 			"overtime_app" => isset($data['overtime_app']) ? 1 : 0,
@@ -292,8 +291,6 @@ class EmployeeModel extends Model
 
 	public function editEmployee($user_id, $data) {
 		$builder = $this->db->table("user");
-
-
 		$userdata = array(
 			"user_role_id" => 4,
 			"branch_id" => isset($data['branch_id']) ? $data['branch_id'] : '',
@@ -406,7 +403,7 @@ class EmployeeModel extends Model
 			"time_loss" => isset($data['time_loss']) ? 1 : 0,
 			"half_markting" => isset($data['half_markting']) ? 1 : 0,
 			"short_markting" => isset($data['short_markting']) ? 1 : 0,
-			"device_access"=>$data['device_access'],
+			"device_access"=>isset($data['device_access']) ? $data['device_access']:'',
 			"punches" => isset($data['punches']) ? $data['punches'] : '',
 			"single_punch" => isset($data['single_punch']) ? $data['single_punch'] : 0,
 			"overtime_app" => isset($data['overtime_app']) ? 1 : 0,

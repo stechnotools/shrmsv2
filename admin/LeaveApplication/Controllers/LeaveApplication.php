@@ -200,7 +200,8 @@ class LeaveApplication extends AdminController {
 
 		$data['branches']=(new BranchModel())->getAll();
 		$data['users']=(new UserModel())->getAll();
-	
+		printr($data['users']);
+		exit;
 
 
 		echo $this->template->view('Admin\LeaveApplication\Views\leaveApplicationForm',$data);

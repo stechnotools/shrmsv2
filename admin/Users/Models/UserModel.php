@@ -52,9 +52,9 @@ class UserModel extends Model
 
 	// Callbacks
 	protected $allowCallbacks       = true;
-    protected $beforeInsert         = ['setPassword','resetAssign'];
+    protected $beforeInsert         = ['setPassword'];
 	protected $afterInsert          = [];
-	protected $beforeUpdate         = ['setPassword','resetAssign'];
+	protected $beforeUpdate         = ['setPassword'];
 	protected $afterUpdate          = [];
 	protected $beforeFind           = [];
 	protected $afterFind            = [];
@@ -95,7 +95,7 @@ class UserModel extends Model
 
 
         $res = $builder->get()->getResult();
-
+       // echo $this->db->getLastQuery();
         return $res;
     }
 

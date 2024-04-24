@@ -160,7 +160,7 @@ $(function(){
 	$("#bemployee").change(function(evt) {
 		const [selectedFile] = evt.target.files;
 		const fileReader = new FileReader();
-		const batchSize = 100; // Define batchSize here
+		const batchSize = 10; // Define batchSize here
 
 		fileReader.onload = function(event) {
 			const data = new Uint8Array(event.target.result);

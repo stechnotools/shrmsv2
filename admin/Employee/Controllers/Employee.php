@@ -48,6 +48,7 @@ class Employee extends AdminController {
 		);
 		$totalFiltered = $this->employeeModel->getTotal($filter_data);
 
+
 		$filteredData = $this->employeeModel->getAll($filter_data);
 		//printr($filteredData);
 
@@ -324,6 +325,7 @@ class Employee extends AdminController {
 
         // Decode the JSON data into an array
         $sheets = json_decode($json, true);
+		
 		foreach($sheets as $sheet){
 
 			$department_name = trim($sheet[8]);
@@ -484,7 +486,8 @@ class Employee extends AdminController {
 
 	}
 
-	public function upload(){
+	/*not in used*/
+	/*public function upload(){
 		$json=array();
 		$validationRule = [
             'bemployee' => [
@@ -810,8 +813,6 @@ class Employee extends AdminController {
 					"punches"=>$sheet['AF']
 				);
 
-
-
 		}
 
 		$sheetData = $spreadsheet->getActiveSheet()->toArray();
@@ -859,7 +860,7 @@ class Employee extends AdminController {
 
 		echo json_encode($json);
     	exit;
-	}
+	}*/
 
 
 	protected function validateForm() {
