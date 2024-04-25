@@ -9,4 +9,5 @@ $routes->group('admin', ['namespace' => 'Admin','filter' => 'login'], function($
     $routes->post('employee/delete','Employee\Controllers\Employee::delete');
     $routes->post('employee/upload','Employee\Controllers\Employee::upload');
     $routes->post('employee/uploademp','Employee\Controllers\Employee::uploademp');
+    $routes->post('employee/getEmployeeByBranch',   'Employee\Controllers\Employee::getEmployeeByBranch');
 });

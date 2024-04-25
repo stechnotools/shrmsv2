@@ -179,6 +179,24 @@ class LeaveOpeningModel extends Model
 		return $res;
 	}
 
+    public function getOpeningLeaveBalance($filter=[]){
 
+
+        $query = $this->db->table('leave_opening lo')
+                  ->select('lov.leave_opening_id, lo.type, lo.year_from, lo.year_to, lo.user_id, lo.department_id, lo.branch_id, lov.leave_id, l.leave_field, l.leave_code, lov.value')
+                  ->join('leave_opening_value lov', 'lo.id = lov.leave_opening_id', 'left')
+                  ->join('leave l', 'l.id = lov.leave_id', 'left')
+                  ->where('year_from >=', $filter['from_date'])
+                  ->where('year_to <=', $filter['to_date'])
+                  ->groupStart()
+                    ->where('branch_id', $filter['branch_id'])
+                    ->orWhere('department_id', $filter['department_id'])
+                    ->orWhere('user_id', $filter['user_id'])
+                  ->groupEnd()
+                  ->get()
+                  ->getResultArray();
+
+        return $query;
+	}
 
 }

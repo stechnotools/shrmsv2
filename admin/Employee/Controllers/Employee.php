@@ -325,7 +325,7 @@ class Employee extends AdminController {
 
         // Decode the JSON data into an array
         $sheets = json_decode($json, true);
-		
+
 		foreach($sheets as $sheet){
 
 			$department_name = trim($sheet[8]);
@@ -483,6 +483,26 @@ class Employee extends AdminController {
 
 		echo json_encode(array("status"=>$status));
 		exit;
+
+	}
+
+	public function getEmployeeByBranch(){
+		$json = array();
+		if (is_ajax()){
+			$filter_data = array(
+				'branch_id'  => $this->request->getPost('branch_id'),
+			);
+			$filteredData = $this->employeeModel->getAll($filter_data);
+			foreach($filteredData as $result){
+				$json[] = array(
+					'id' => $result->id,
+					'empname'    => $result->employee_name,
+				);
+			}
+			echo json_encode($json);
+		}else{
+         	return show_404();
+      	}
 
 	}
 

@@ -1168,4 +1168,28 @@ if ( ! function_exists('getMonthDays')){
         }
         return $days;
     }
+
+
+}
+
+if(!function_exists('financial_year')) {
+    //get current financial year from date and to date
+    function financial_year($previous = false) {
+        $dateTimeZone = new DateTime(null, new DateTimeZone('Asia/Kolkata'));
+        $currentDate = $dateTimeZone->format('Y-m-d');
+        list($year, $month, $day) = explode('-', $currentDate);
+
+        if ($previous) {
+            $year = (int)$year - 1;
+        }
+
+        if ((int)$month < 4) {
+            $financialYearStart = $year - 1 . '-04-01';
+            $financialYearEnd = $year . '-03-31';
+        } else {
+            $financialYearStart = $year . '-04-01';
+            $financialYearEnd = $year + 1 . '-03-31';
+        }
+        return ['start' => $financialYearStart, 'end' => $financialYearEnd];
+    }
 }

@@ -3,8 +3,10 @@ namespace Admin\LeaveApplication\Controllers;
 
 use Admin\Branch\Models\BranchModel;
 use Admin\Department\Models\DepartmentModel;
+use Admin\Employee\Models\EmployeeModel;
 use Admin\Leave\Models\LeaveModel;
 use Admin\LeaveApplication\Models\LeaveApplicationModel;
+use Admin\LeaveOpening\Models\LeaveOpeningModel;
 use Admin\Users\Models\UserModel;
 use App\Controllers\AdminController;
 
@@ -200,11 +202,159 @@ class LeaveApplication extends AdminController {
 
 		$data['branches']=(new BranchModel())->getAll();
 		$data['users']=(new UserModel())->getAll();
-		printr($data['users']);
-		exit;
+		$data['leavecodes']=(new LeaveModel())->getAll();
+
+		$data['leavetypes']=array('f'=>'Full day','h'=>'HalfDay','tf'=>'Three Fourth','q'=>'Quarter');
 
 
 		echo $this->template->view('Admin\LeaveApplication\Views\leaveApplicationForm',$data);
+	}
+
+	public function getLeaveDetails(){
+		$data=$this->getEmployeeLeaveBalance();
+		echo view('Admin\LeaveApplication\Views\leaveBalance', $data);
+		exit;
+	}
+
+	protected function getEmployeeLeaveBalance(){
+		$user_id=$this->request->getPost('user_id');
+		$previous_balance=$this->getLeaveBalance($user_id,true);
+		$current_balance=$this->getLeaveBalance($user_id,false);
+
+
+		$data['leavebalance']=array();
+		$leavetypes=(new LeaveModel())->getAll();
+
+		$total_carried_leave = 0;
+		$total_leave_opening_total = 0;
+		$total_leave_taken_total = 0;
+		$total_leave_total = 0;
+		$total_balance_total = 0;
+
+
+		foreach($leavetypes as $leavetype){
+
+			$leave_opening_total=$current_balance[$leavetype->id]['leave_opening_total'];
+			$leave_taken_total=$current_balance[$leavetype->id]['leave_taken_total'];
+			$carried_leave=$previous_balance[$leavetype->id]['carried_leave'];
+			$leave_total=$carried_leave+$leave_opening_total;
+			$balance_total=$leave_total-$leave_taken_total;
+
+			$total_carried_leave += $carried_leave;
+			$total_leave_opening_total += $leave_opening_total;
+			$total_leave_taken_total += $leave_taken_total;
+			$total_leave_total += $leave_total;
+			$total_balance_total += $balance_total;
+
+			$data['leavebalance'][$leavetype->id]=[
+				'leave_id'=>$leavetype->id,
+				'leave_name'=>$leavetype->leave_field,
+				'carried_leave'=>$carried_leave,
+				'leave_opening_total'=>$leave_opening_total,
+				'leave_total'=>$leave_total,
+				'leave_taken_total'=>$leave_taken_total,
+				'leave_balance'=>$balance_total,
+			];
+		}
+
+		$data['total'] = [
+			'total_carried_leave' => $total_carried_leave,
+			'total_leave_opening_total' => $total_leave_opening_total,
+			'total_leave_taken_total' => $total_leave_taken_total,
+			'total_leave_total' => $total_leave_total,
+			'total_balance_total' => $total_balance_total,
+		];
+		return $data;
+
+	}
+
+	protected function getLeaveBalance($user_id,$previous){
+
+		$employee=(new EmployeeModel())->getEmployee($user_id);
+
+		$fyear=financial_year($previous);
+		if($previous){
+			$joiningDate = strtotime($employee->doj); // Start date in timestamp format (two years ago from the current date)
+			$financialEndDate=strtotime($fyear['end']);
+			$monthsWorked = (date('Y', $financialEndDate) - date('Y', $joiningDate)) * 12 + (date('m', $financialEndDate) - date('m', $joiningDate));
+			if($monthsWorked>12){
+				$monthsWorked=12;
+			}
+		}
+
+		$filter=array(
+			'user_id'=>$user_id,
+			'branch_id'=>$employee->branch_id,
+			'department_id'=>$employee->department_id,
+			'from_date'=>$fyear['start'],
+			'to_date'=>$fyear['end']
+		);
+
+		//calculate working day
+
+		//printr($filter);
+		$leavedatas=(new LeaveOpeningModel())->getOpeningLeaveBalance($filter);
+		//printr($leavedatas);
+		$leave_opening_balance=[];
+		foreach ($leavedatas as $leavedata) {
+			if ($leavedata['value'] != 0) {
+				if ($leavedata['type'] == 'user') {
+					$leave_opening_balance[$leavedata['leave_id']] = $leavedata['value'];
+				} elseif ($leavedata['type'] == 'gender' && !isset($leave_opening_balance[$leavedata['leave_id']])) {
+					$leave_opening_balance[$leavedata['leave_id']] = $leavedata['value'];
+				} elseif ($leavedata['type'] == 'department' && !isset($leave_opening_balance[$leavedata['leave_id']])) {
+					$leave_opening_balance[$leavedata['leave_id']] = $leavedata['value'];
+				} elseif ($leavedata['type'] == 'branch' && !isset($leave_opening_balance[$leavedata['leave_id']])) {
+					$leave_opening_balance[$leavedata['leave_id']] = $leavedata['value'];
+				}
+			}
+		}
+		//printr($leave_opening_balance);
+		$leaveopening = [];
+		foreach ($leave_opening_balance as $leave_id => $value) {
+			$leaveopening[$leave_id] =$value;
+		}
+
+
+
+		$leave_taken_balance=$this->leaveApplicationModel->getLeaveTakenByUser($filter);
+
+		$leavetaken = [];
+		foreach ($leave_taken_balance as  $value) {
+			$leavetaken[$value['leave_id']] =$value['leave_taken_total'];
+		}
+
+
+		$leavetypes=(new LeaveModel)->getAll();
+		$leave_opening_balance = [];
+		foreach($leavetypes as $leavetype){
+			$leave_opening_total = isset($leaveopening[$leavetype->id]) ? $leaveopening[$leavetype->id] : 0;
+			$leave_taken_total = isset($leavetaken[$leavetype->id]) ? $leavetaken[$leavetype->id] : 0;
+			$carriedLeave=0;
+			if($previous && $leavetype->saction_type=="carried"){
+				$accruedLeave = $leave_opening_total * ($monthsWorked / 12);
+				$remainingLeave = $accruedLeave - $leave_taken_total;
+				$maxAccumulationLimit = $leavetype->carried_leaves_limit;
+				$carriedLeave = min($remainingLeave, $maxAccumulationLimit);
+			}
+
+			$leave_opening_balance[$leavetype->id]=array(
+				'leave_id'=>$leavetype->id,
+				'leave_opening_total'=>$leave_opening_total,
+				'leave_taken_total'=>$leave_taken_total,
+				'leave_code'=>$leavetype->leave_code,
+				'week_exclude'=>$leavetype->week_exclude,
+				'holiday_exclude'=>$leavetype->holiday_exclude,
+				'leave_type'=>$leavetype->leave_type,
+				'sanction_limit_min'=>$leavetype->saction_limit_min,
+				'sanction_limit_max'=>$leavetype->saction_limit_max,
+				'sanction_type'=>$leavetype->saction_type,
+				'accural_type'=>$leavetype->accural_type,
+				'carried_leave'=>$carriedLeave
+			);
+		}
+
+		return $leave_opening_balance;
 	}
 
 	protected function validateForm() {

@@ -179,6 +179,18 @@ class LeaveApplicationModel extends Model
 		return $res;
 	}
 
+    public function getLeaveTakenByUser($filter=[]){
+		$query = $this->db->table('leave_application')
+                  ->select('leave_id')
+                  ->select("SUM(DATEDIFF(LEAST(leave_to, '" . $filter['to_date'] . "'), GREATEST(leave_from, '" . $filter['from_date'] . "')) + 1) AS leave_taken_total")
+                  ->where('user_id', $filter['user_id'])
+                  ->where('leave_from <=', $filter['to_date'])
+                  ->where('leave_to >=', $filter['from_date'])
+                  ->groupBy('leave_id')
+                  ->get()
+                  ->getResultArray();
 
+        return $query;
+	}
 
 }
