@@ -265,6 +265,8 @@ class LeaveApplication extends AdminController {
 	protected function getEmployeeLeaveBalance(){
 		$user_id=$this->request->getPost('user_id');
 		$previous_balance=$this->getLeaveBalance($user_id,true);
+
+		//printr($previous_balance);
 		$current_balance=$this->getLeaveBalance($user_id,false);
 
 
@@ -317,6 +319,7 @@ class LeaveApplication extends AdminController {
 	protected function getLeaveBalance($user_id,$previous){
 
 		$employee=(new EmployeeModel())->getEmployee($user_id);
+
 
 		$fyear=financial_year($previous);
 		if ($previous && $employee !== null && isset($employee->doj)) {

@@ -495,7 +495,7 @@ class Employee extends AdminController {
 			$filteredData = $this->employeeModel->getAll($filter_data);
 			foreach($filteredData as $result){
 				$json[] = array(
-					'id' => $result->id,
+					'user_id' => $result->user_id,
 					'empname'    => $result->employee_name,
 				);
 			}

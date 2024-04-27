@@ -158,9 +158,9 @@ $validation = \Config\Services::validation();
 
 						if (json != '') {
 							for (i = 0; i < json.length; i++) {
-								html += '<option value="' + json[i]['id'] + '"';
+								html += '<option value="' + json[i]['user_id'] + '"';
 
-								if (json[i]['id'] == '<?php echo $user_id; ?>') {
+								if (json[i]['user_id'] == '<?php echo $user_id; ?>') {
 									html += ' selected="selected"';
 								}
 
