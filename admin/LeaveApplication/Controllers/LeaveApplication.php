@@ -319,13 +319,15 @@ class LeaveApplication extends AdminController {
 		$employee=(new EmployeeModel())->getEmployee($user_id);
 
 		$fyear=financial_year($previous);
-		if($previous){
+		if ($previous && $employee->doj !== null) {
 			$joiningDate = strtotime($employee->doj); // Start date in timestamp format (two years ago from the current date)
-			$financialEndDate=strtotime($fyear['end']);
+			$financialEndDate = strtotime($fyear['end']);
 			$monthsWorked = (date('Y', $financialEndDate) - date('Y', $joiningDate)) * 12 + (date('m', $financialEndDate) - date('m', $joiningDate));
-			if($monthsWorked>12){
-				$monthsWorked=12;
+			if ($monthsWorked > 12) {
+				$monthsWorked = 12;
 			}
+		}else{
+			$monthsWorked = 12;
 		}
 
 		$filter=array(
