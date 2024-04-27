@@ -136,7 +136,6 @@ $validation = \Config\Services::validation();
 			viewMode: "years",
 			minViewMode: "years"
 		});*/
-
 		$('.fdatepicker').datepicker({
 				format: "yyyy",
 				minViewMode: 2,
