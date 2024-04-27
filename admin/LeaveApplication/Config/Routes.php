@@ -9,7 +9,7 @@ $routes->group(env('app.adminROUTE'), ['namespace' => 'Admin','filter' => 'login
     $routes->get('leaveapplication/delete/(:segment)',   'LeaveApplication\Controllers\LeaveApplication::delete/$1');
     $routes->post('leaveapplication/delete','LeaveApplication\Controllers\LeaveApplication::delete');
     $routes->post('leaveapplication/getLeaveDetails','LeaveApplication\Controllers\LeaveApplication::getLeaveDetails');
-
+    
 
 });
 

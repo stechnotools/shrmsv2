@@ -24,11 +24,14 @@ class LeaveApplicationModel extends Model
 
     // Validation
     protected $validationRules      = [
-        'leave_field.*' => array(
-            'label' => 'leave_field',
+        'branch_id' => array(
+            'label' => 'Branch',
             'rules' => 'trim|required|max_length[100]'
         ),
-
+        'user_id' => array(
+            'label' => 'User',
+            'rules' => 'trim|required|max_length[100]'
+        ),
 
     ];
     protected $validationMessages   = [];
@@ -51,34 +54,7 @@ class LeaveApplicationModel extends Model
 		parent::__construct();
 	}
 
-    public function addLeaveApplication($data) {
-        $builder = $this->db->table($this->table);
-		$fyear=$data['fyear'];
-		$fyear=explode("-",$fyear);
-		$leave_openingdata=array(
-			"type"=>$data['type'],
-			"year_from"=>$fyear[0].'-04-01',
-			"year_to"=>$fyear[1].'-03-31',
-			"user_id"=>isset($data['user_id']) ?  $data['user_id']:'',
-			"department_id"=>isset($data['department_id']) ? $data['department_id']:0,
-			"branch_id"=>isset($data['branch_id']) ? $data['branch_id']:0,
-			"created_at"=>date('Y-m-d'),
-		);
-        $builder->insert($leave_openingdata);
-        $leave_opening_id=$this->db->insertID() ;
 
-        $builder = $this->db->table("leave_opening_value");
-		foreach($data['leave_field'] as $leave_id=>$value){
-			$leave_field=array(
-				'leave_opening_id'=>$leave_opening_id,
-				'leave_id'=>$leave_id,
-				'value'=>$value
-			);
-			$builder->insert($leave_field);
-		}
-
-		return $leave_opening_id;
-	}
 	public function editLeaveApplication($leave_opening_id, $data) {
         $builder = $this->db->table($this->table);
 
@@ -112,21 +88,14 @@ class LeaveApplicationModel extends Model
 	}
 
     public function getAll($data = array()){
-        $builder=$this->db->table("{$this->table} lo");
+        $builder=$this->db->table("{$this->table} la");
         $this->filter($builder,$data);
 
-        $builder->select("lo.*,CASE
-        WHEN lo.type = 'branch' THEN b.name
-        WHEN lo.type = 'department' THEN d.name
-        WHEN lo.type = 'user' THEN u.name
-        ELSE '' END AS type_name");
-
-        $builder->select("(select sum(value) as leave_total from leave_opening_value where leave_opening_id = lo.id) as leave_total");
 
         if (isset($data['sort']) && $data['sort']) {
             $sort = $data['sort'];
         } else {
-            $sort = "lo.type";
+            $sort = "la.paycode";
         }
 
         if (isset($data['order']) && ($data['order'] == 'desc')) {
@@ -153,21 +122,19 @@ class LeaveApplicationModel extends Model
     }
 
     public function getTotal($data = array()) {
-        $builder=$this->db->table("{$this->table} lo");
+        $builder=$this->db->table("{$this->table} la");
         $this->filter($builder,$data);
         $count = $builder->countAllResults();
         return $count;
     }
 
     private function filter($builder,$data){
-        $builder->join("branch b","b.id = lo.branch_id","left");
-        $builder->join("user u","u.id = lo.user_id","left");
-        $builder->join("department d","d.id = lo.department_id","left");
 
-        $builder->where("lo.{$this->deletedField}", null);
+        $builder->where("la.{$this->deletedField}", null);
         if (!empty($data['filter_search'])) {
             $builder->where("
-				lo.type LIKE '%{$data['filter_search']}%'"
+				la.paycode LIKE '%{$data['filter_search']}%'
+                OR la.leave_code LIKE '%{$data['filter_search']}%'"
             );
         }
     }

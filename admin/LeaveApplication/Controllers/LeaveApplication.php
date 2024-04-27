@@ -51,10 +51,13 @@ class LeaveApplication extends AdminController {
 					<input type="checkbox" name="selected[]" value="'.$result->id.'" />
 					<label></label>
 				</div>',
-				$result->type,
-				$result->type_name,
-				date("Y",strtotime($result->year_from)).'-'.date("Y",strtotime($result->year_to)),
-				$result->leave_total,
+				$result->paycode,
+				$result->leave_from,
+				$result->leave_to,
+				$result->leave_id,
+				$result->leave_type,
+				$result->reason,
+				$result->leave_status,
 				$action
 			);
 
@@ -74,12 +77,43 @@ class LeaveApplication extends AdminController {
 	public function add(){
 		$this->template->set_meta_title(lang('LeaveApplication.heading_title'));
 
-		if ($this->request->getMethod('REQUEST_METHOD') === 'POST' && $this->validateForm()){
+		if (is_ajax() && $this->request->getMethod('REQUEST_METHOD') === 'POST'){
 
-			$this->leaveApplicationModel->addLeaveApplication($this->request->getPost());
+			if(!$this->validateForm()){
+				echo json_encode(array('status'=>false,'message'=>$this->error));
+				exit;
+			}else{
 
-			$this->session->setFlashdata('message', 'LeaveApplication Saved Successfully.');
-			return redirect()->to(admin_url('leaveapplication'));
+				$officedata=(new EmployeeModel)->getEmployee($this->request->getPost('user_id'));
+
+				$leave_data=array(
+					'user_id'=>$this->request->getPost('user_id'),
+					'employee_name'=>$officedata->employee_name,
+					'paycode'=>$officedata->paycode,
+					'branch_id'=>$officedata->branch_id,
+					'branch_name'=>$officedata->branch_name,
+					'department_id'=>$officedata->department_id,
+					'department_name'=>$officedata->department_name,
+					'category_id'=>$officedata->category_id,
+					'category_name'=>$officedata->category_name,
+					'designation_id'=>$officedata->designation_id,
+					'designation_name'=>$officedata->designation_name,
+					'leave_id'=>$this->request->getPost('leave_id'),
+					'leave_from'=>date("Y-m-d",strtotime((string)$this->request->getPost('leave_from'))),
+					'leave_to'=>date("Y-m-d",strtotime((string)$this->request->getPost('leave_to'))),
+					'reason'=>$this->request->getPost('reason'),
+					'chkLeavePost'=>$this->request->getPost('chkLeavePost'),
+					'leave_type'=>$this->request->getPost('leave_type'),
+					'leave_status'=>0,
+					'status'=>1
+				);
+
+				$leaveid=$this->leaveApplicationModel->insert($leave_data);
+				$this->session->setFlashdata('message', 'LeaveApplication Saved Successfully.');
+				echo json_encode(array('status'=>true,'message'=>'LeaveApplication Saved Successfully.'));
+				exit;
+			}
+			//return redirect()->to(admin_url('leaveapplication'));
 
 		}
 		$this->getForm();
@@ -196,6 +230,18 @@ class LeaveApplication extends AdminController {
 			} else {
 				$data[$field] = '';
 			}
+		}
+
+		if(isset($leaveapplication_info->leave_from)) {
+			$data['leave_from'] = $leaveapplication_info->leave_from;
+		} else {
+			$data['leave_from'] = date("d-m-Y");
+		}
+
+		if(isset($leaveapplication_info->leave_to)) {
+			$data['leave_to'] = $leaveapplication_info->leave_to;
+		} else {
+			$data['leave_to'] = date("d-m-Y");
 		}
 
 
@@ -367,6 +413,7 @@ class LeaveApplication extends AdminController {
         }
         else{
             //printr($validation->getErrors());
+			$this->error['errors']=$validation->getErrors();
             $this->error['warning']="Warning: Please check the form carefully for errors!";
             return false;
         }

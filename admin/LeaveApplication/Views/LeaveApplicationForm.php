@@ -11,8 +11,8 @@ $validation = \Config\Services::validation();
 					<a href="<?php echo $cancel; ?>" data-toggle="tooltip" title="<?php echo $button_cancel; ?>" class="btn btn-primary btn-sm"><i class="fa fa-reply"></i></a>
 				</div>
 			</div>
-			<div class="card-body">form-leaveapplication
-				<?php echo form_open_multipart("",array('class' => 'form-horizontal', 'id' => '','role'=>'form')); ?>
+			<div class="card-body">
+				<?php echo form_open_multipart("",array('class' => 'form-horizontal', 'id' => 'leaveapplicationForm','role'=>'form')); ?>
 
 				<div class="row">
 					<div class="col-md-6">
@@ -32,11 +32,11 @@ $validation = \Config\Services::validation();
 						<div class="form-group row required ">
 							<label class="col-md-2 control-label" for="input-firstname">Date from</label>
 							<div class="col-md-3">
-								<?php echo form_input(array('class'=>'form-control datepicker','name' => 'leave_from', 'id' => 'leave_from', 'placeholder'=>"Leave From",'data-date-start-date'=>"0d",'value' => set_value('leave_from', date("d-m-Y",strtotime($leave_from))))); ?>
+								<?php echo form_input(array('class'=>'form-control datepicker','name' => 'leave_from', 'id' => 'leave_from', 'placeholder'=>"Leave From",'value' => set_value('leave_from', date("d-m-Y",strtotime($leave_from))))); ?>
 							</div>
 							<label class="col-md-2 control-label" for="input-firstname">Date To</label>
 							<div class="col-md-3">
-								<?php echo form_input(array('class'=>'form-control datepicker','name' => 'leave_to', 'id' => 'leave_to', 'placeholder'=>"Leave To",'data-date-start-date'=>"0d",'value' => set_value('leave_to', date("d-m-Y",strtotime($leave_to))))); ?>
+								<?php echo form_input(array('class'=>'form-control datepicker ','name' => 'leave_to', 'id' => 'leave_to', 'placeholder'=>"Leave To",'value' => set_value('leave_to', date("d-m-Y",strtotime($leave_to))))); ?>
 							</div>
 							<div class="col-md-2">
 								<?php echo form_input(array('class'=>'form-control','name' => 'leave_total', 'id' => 'leave_total', 'placeholder'=>"Total",'value' => set_value('leave_total',''),'readonly'=>'readonly')); ?>
@@ -205,27 +205,53 @@ $validation = \Config\Services::validation();
 		$('#leave_from, #leave_to').on('change', calculateTotalDays);
 
 		function calculateTotalDays() {
-			const fromDate = leaveFromDateInput.datepicker('getDate');
-			const toDate = leaveToDateInput.datepicker('getDate');
+			const dateFormat = 'dd-mm-yyyy'; // Desired date format
 
-			if (fromDate && toDate) {
-				const timeDifference = toDate.getTime() - fromDate.getTime();
-				const totalDays = timeDifference / (1000 * 60 * 60 * 24);
+			// Retrieve selected dates from input fields
+			const leaveFromDate = parseDate(leaveFromDateInput.val(), dateFormat);
+			const leaveToDate = parseDate(leaveToDateInput.val(), dateFormat);
 
-			totalDaysInput.val(totalDays+1);
-
+			// Check if both dates are valid
+			if (leaveFromDate && leaveToDate) {
+				// Calculate the difference in milliseconds
+				const timeDifference = leaveToDate.getTime() - leaveFromDate.getTime();
+				// Convert milliseconds to days
+				const totalDays = Math.ceil(timeDifference / (1000 * 3600 * 24));
+				// Update the total days input field
+				totalDaysInput.val(totalDays+1);
+			} else {
+				// If either of the dates is not valid, set total days input to empty
+				totalDaysInput.val('');
 			}
+		}
+
+		// Function to parse date string into Date object
+		function parseDate(dateString, format) {
+			const parts = dateString.split('-');
+			if (parts.length === 3) {
+				const day = parseInt(parts[0], 10);
+				const month = parseInt(parts[1], 10) - 1; // Month is zero-based
+				const year = parseInt(parts[2], 10);
+				return new Date(year, month, day);
+			}
+			return null;
 		}
 
 		$(".saveleave").click(function(e){
 			e.preventDefault();
 			$.ajax({
-				url: '<?php echo admin_url("leaveapplication/saveLeaveApplication"); ?>',
-				dataType: 'html',
+				url: '<?php echo admin_url("leaveapplication/add"); ?>',
+				dataType: 'json',
 				type: 'post',
 				data: $("#leaveapplicationForm").serialize(),
-				success: function(html) {
-					$('#leaveapplicationForm').html(html);
+				success: function(response) {
+					if(response.status==false){
+						$.each(response.message.errors,function(key,value){
+							$('<span class="text-danger">' + value + '</span>').insertAfter('#' + key);
+						});
+					}else{
+						window.location='<?php echo admin_url("leaveapplication"); ?>';
+					}
 				}
 			})
 		});

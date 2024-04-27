@@ -26,7 +26,8 @@ $user=service('user');
         <!-- Controller Defined Stylesheets -->
         <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
         <link href="<?php echo theme_url('assets/css/custom.css');  ?>" rel="stylesheet" type="text/css" />
-
+        <noscript>
+        </noscript>
 
         <script type="text/javascript">
             var BASE_URL = '<?php echo base_url(); ?>';
@@ -132,7 +133,7 @@ $user=service('user');
 
                         </div>
                     </li>
-                        
+
                     <li class="dropdown notification-list">
 
 
