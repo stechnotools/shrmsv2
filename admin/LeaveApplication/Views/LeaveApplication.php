@@ -8,7 +8,6 @@
 					<button type="button" data-toggle="tooltip" title="<?php echo $button_delete; ?>" class="btn btn-danger btn-sm" onclick="confirm('<?php echo $text_confirm; ?>') ? $('#form-datatable').submit() : false;"><i class="fa fa-trash"></i></button>
 				</div>
 			</div>
-
 			<div class="card-body">
 				<form action="<?php echo $delete; ?>" method="post" enctype="multipart/form-data" id="form-datatable">
 					<div class="row">

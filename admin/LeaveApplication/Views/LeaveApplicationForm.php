@@ -175,7 +175,6 @@ $validation = \Config\Services::validation();
 				}
 			});
 		});
-
 		$('#user_id').on('select2:select', function (event) {
 			//get leave details
 			var user_id=event.params.data.id;
