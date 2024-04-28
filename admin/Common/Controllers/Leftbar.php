@@ -234,13 +234,7 @@ class Leftbar extends AdminController{
             );
         }
 
-        if ($this->user->hasPermission('holiday')) {
-            $operations[] = array(
-                'name'	  => lang('Leftbar.text_holiday'),
-                'href'     => admin_url('holiday'),
-                'children' => array()
-            );
-        }
+
 
         if ($this->user->hasPermission('leave/approval')) {
             $operations[] = array(
@@ -262,6 +256,14 @@ class Leftbar extends AdminController{
             $operations[] = array(
                 'name'	  => lang('Leftbar.text_leaveencashment'),
                 'href'     => admin_url('leave/encashment'),
+                'children' => array()
+            );
+        }
+
+        if ($this->user->hasPermission('holiday')) {
+            $operations[] = array(
+                'name'	  => lang('Leftbar.text_holiday'),
+                'href'     => admin_url('holiday'),
                 'children' => array()
             );
         }
