@@ -1,5 +1,5 @@
 <?php
-namespace Admin\LeaveApplication\Models;
+namespace Admin\Leave\Models;
 use CodeIgniter\Model;
 
 class LeaveApplicationModel extends Model
@@ -159,5 +159,7 @@ class LeaveApplicationModel extends Model
 
         return $query;
 	}
+
+   
 
 }

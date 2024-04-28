@@ -1,13 +1,12 @@
 <?php
-namespace Admin\LeaveOpening\Controllers;
+namespace Admin\Leave\Controllers;
 
 use Admin\Branch\Models\BranchModel;
 use Admin\Department\Models\DepartmentModel;
 use Admin\Leave\Models\LeaveModel;
-use Admin\LeaveOpening\Models\LeaveOpeningModel;
+use Admin\Leave\Models\LeaveOpeningModel;
 use App\Controllers\AdminController;
-
-class LeaveOpening extends AdminController {
+class Opening extends AdminController {
 	private $error = array();
 	private $leaveOpeningModel;
 	public function __construct(){
@@ -39,8 +38,8 @@ class LeaveOpening extends AdminController {
 		$datatable=array();
 		foreach($filteredData as $result) {
 			$action  = '<div class="btn-group btn-group-sm pull-right">';
-			$action .= 		'<a class="btn btn-sm btn-primary" href="'.admin_url('leaveopening/edit/'.$result->id).'"><i class="fas fa-pencil-alt"></i></a>';
-			$action .=		'<a class="btn-sm btn btn-danger btn-remove" href="'.admin_url('leaveopening/delete/'.$result->id).'" onclick="return confirm(\'Are you sure?\') ? true : false;"><i class="fas fa-trash"></i></a>';
+			$action .= 		'<a class="btn btn-sm btn-primary" href="'.admin_url('leave/opening/edit/'.$result->id).'"><i class="fas fa-pencil-alt"></i></a>';
+			$action .=		'<a class="btn-sm btn btn-danger btn-remove" href="'.admin_url('leave/opening/delete/'.$result->id).'" onclick="return confirm(\'Are you sure?\') ? true : false;"><i class="fas fa-trash"></i></a>';
 			$action .= '</div>';
 
 			$datatable[]=array(
@@ -105,7 +104,7 @@ class LeaveOpening extends AdminController {
        }
 		$this->leaveOpeningModel->deleteLeaveOpening($selected);
 		$this->session->setFlashdata('message', 'LeaveOpening deleted Successfully.');
-		redirect(ADMIN_PATH.'/leaveopening');
+		redirect(ADMIN_PATH.'/leave/opening');
 	}
 
 	protected function getList() {
@@ -113,15 +112,15 @@ class LeaveOpening extends AdminController {
 		$data['breadcrumbs'] = array();
 		$data['breadcrumbs'][] = array(
 			'text' => lang('LeaveOpening.heading_title'),
-			'href' => admin_url('leaveopening')
+			'href' => admin_url('leave/opening')
 		);
 
 		$this->template->add_package(array('datatable'),true);
 
 
-		$data['add'] = admin_url('leaveopening/add');
-		$data['delete'] = admin_url('leaveopening/delete');
-		$data['datatable_url'] = admin_url('leaveopening/search');
+		$data['add'] = admin_url('leave/opening/add');
+		$data['delete'] = admin_url('leave/opening/delete');
+		$data['datatable_url'] = admin_url('leave/opening/search');
 
 		$data['heading_title'] = lang('LeaveOpening.heading_title');
 
@@ -148,7 +147,7 @@ class LeaveOpening extends AdminController {
 			$data['selected'] = array();
 		}
 
-		return $this->template->view('Admin\LeaveOpening\Views\leaveOpening', $data);
+		return $this->template->view('Admin\Leave\Views\leaveOpening', $data);
 	}
 
 	protected function getForm(){
@@ -159,12 +158,12 @@ class LeaveOpening extends AdminController {
 		$data['breadcrumbs'] = array();
 		$data['breadcrumbs'][] = array(
 			'text' => lang('LeaveOpening.heading_title'),
-			'href' => admin_url('leaveopening')
+			'href' => admin_url('leave/opening')
 		);
 
 		$data['breadcrumbs'][] = array(
 			'text' => lang('LeaveOpening.text_add'),
-			'href' => admin_url('leaveopening/add')
+			'href' => admin_url('leave/opening/add')
 		);
 
 		$_SESSION['isLoggedIn'] = true;
@@ -174,15 +173,15 @@ class LeaveOpening extends AdminController {
 		$data['text_form'] = $this->uri->getSegment(4) ? lang('LeaveOpening.text_edit') : lang('LeaveOpening.text_add');
 		$data['button_save'] = lang('LeaveOpening.button_save');
 		$data['button_cancel'] = lang('LeaveOpening.button_cancel');
-		$data['cancel'] = admin_url('leaveopening');
+		$data['cancel'] = admin_url('leave/opening');
 
 		if(isset($this->error['warning']))
 		{
 			$data['error'] 	= $this->error['warning'];
 		}
 
-		if ($this->uri->getSegment(4) && ($this->request->getMethod('REQUEST_METHOD') != 'POST')) {
-			$leaveopening_info = $this->leaveOpeningModel->find($this->uri->getSegment(4));
+		if ($this->uri->getSegment(5) && ($this->request->getMethod('REQUEST_METHOD') != 'POST')) {
+			$leaveopening_info = $this->leaveOpeningModel->find($this->uri->getSegment(5));
 		}
 
 		foreach($this->leaveOpeningModel->getFieldNames($this->leaveOpeningModel->table) as $field) {
@@ -199,8 +198,8 @@ class LeaveOpening extends AdminController {
 
 		if ($this->request->getPost('leave_field')) {
 			$data['leave_fields'] = $this->request->getPost('leave_field');
-		} elseif ($this->uri->getSegment(4)) {
-			$leavefields = $this->leaveOpeningModel->getLeaveOpeningValues($this->uri->getSegment(4));
+		} elseif ($this->uri->getSegment(5)) {
+			$leavefields = $this->leaveOpeningModel->getLeaveOpeningValues($this->uri->getSegment(5));
 			foreach($leavefields as $leavefield){
 				$data['leave_fields'][$leavefield->leave_id]=$leavefield->value;
 			}
@@ -221,7 +220,7 @@ class LeaveOpening extends AdminController {
 		$data['departments']=(new DepartmentModel())->getAll();
 
 
-		echo $this->template->view('Admin\LeaveOpening\Views\leaveOpeningForm',$data);
+		echo $this->template->view('Admin\Leave\Views\leaveOpeningForm',$data);
 	}
 
 	protected function validateForm() {

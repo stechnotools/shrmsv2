@@ -177,7 +177,7 @@ $validation = \Config\Services::validation();
 			//get leave details
 			var user_id=event.params.data.id;
 			$.ajax({
-				url: '<?php echo admin_url("leaveapplication/getLeaveDetails"); ?>',
+				url: '<?php echo admin_url("leave/application/getLeaveDetails"); ?>',
 				dataType: 'html',
 				type: 'post',
 				data:{
@@ -236,7 +236,7 @@ $validation = \Config\Services::validation();
 		$(".saveleave").click(function(e){
 			e.preventDefault();
 			$.ajax({
-				url: '<?php echo admin_url("leaveapplication/add"); ?>',
+				url: '<?php echo admin_url("leave/application/add"); ?>',
 				dataType: 'json',
 				type: 'post',
 				data: $("#leaveapplicationForm").serialize(),
@@ -246,7 +246,7 @@ $validation = \Config\Services::validation();
 							$('<span class="text-danger">' + value + '</span>').insertAfter('#' + key);
 						});
 					}else{
-						window.location='<?php echo admin_url("leaveapplication"); ?>';
+						window.location='<?php echo admin_url("leave/application"); ?>';
 					}
 				}
 			})

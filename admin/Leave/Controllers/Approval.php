@@ -1,30 +1,31 @@
 <?php
-namespace Admin\LeaveApplication\Controllers;
-
+namespace Admin\Leave\Controllers;
 use Admin\Branch\Models\BranchModel;
 use Admin\Department\Models\DepartmentModel;
 use Admin\Employee\Models\EmployeeModel;
+use Admin\Leave\Models\LeaveApplicationModel;
 use Admin\Leave\Models\LeaveModel;
-use Admin\LeaveApplication\Models\LeaveApplicationModel;
+
 use Admin\LeaveOpening\Models\LeaveOpeningModel;
 use Admin\Users\Models\UserModel;
 use App\Controllers\AdminController;
 
-class LeaveApplication extends AdminController {
+class Approval extends AdminController {
 	private $error = array();
-	private $leaveApplicationModel;
+	private $LeaveApplicationModel;
 	public function __construct(){
-        $this->leaveApplicationModel=new LeaveApplicationModel();
+        $this->LeaveApplicationModel=new LeaveApplicationModel();
 	}
 
 	public function index(){
-		$this->template->set_meta_title(lang('LeaveApplication.heading_title'));
+
+		$this->template->set_meta_title(lang('LeaveApproval.heading_title'));
         return $this->getList();
 	}
 
 	public function search() {
 		$requestData= $_REQUEST;
-		$totalData = $this->leaveApplicationModel->getTotal();
+		$totalData = $this->LeaveApplicationModel->getTotal();
 
 		$totalFiltered = $totalData;
 
@@ -35,16 +36,35 @@ class LeaveApplication extends AdminController {
 			'start' 		=> $requestData['start'],
 			'limit' 		=> $requestData['length']
 		);
-		$totalFiltered = $this->leaveApplicationModel->getTotal($filter_data);
+		$totalFiltered = $this->LeaveApplicationModel->getTotal($filter_data);
 
-		$filteredData = $this->leaveApplicationModel->getAll($filter_data);
+		$filteredData = $this->LeaveApplicationModel->getAll($filter_data);
 		//printr($filteredData);
 		$datatable=array();
 		foreach($filteredData as $result) {
-			$action  = '<div class="btn-group btn-group-sm pull-right">';
-			$action .= 		'<a class="btn btn-sm btn-primary" href="'.admin_url('leaveapplication/edit/'.$result->id).'"><i class="fas fa-pencil-alt"></i></a>';
-			$action .=		'<a class="btn-sm btn btn-danger btn-remove" href="'.admin_url('leaveapplication/delete/'.$result->id).'" onclick="return confirm(\'Are you sure?\') ? true : false;"><i class="fas fa-trash"></i></a>';
+			if($result->leave_status == 0){
+				$status = 'Applied';
+				$btn_color='badge-warning';
+			}elseif($result->leave_status == 1){
+				$status = 'Approved';
+				$btn_color='badge-success';
+			}
+			elseif($result->leave_status == 2){
+				$status = 'Rejected';
+				$btn_color='badge-danger';
+			}
+			$action  = '<div class="pull-right">';
+			$action .= 		'<a class="btn btn-info btn-sm waves-effect waves-light mt-1 mr-1" data-href="'.admin_url('leave/approval/approve/'.$result->id).'">View</a>';
+			$action .=  	'<div class="btn-group btn-group-sm mt-1 mr-1">';
+			$action .=		'<button type="button" class="btn btn-pink dropdown-toggle waves-effect waves-light btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions<i class="mdi mdi-chevron-down"></i></button>';
+			$action .=		'<ul class="dropdown-menu">';
+			$action .=		'<li><a href="'.admin_url('leave/approval/action/'.$result->id).'" data-action="1" class="dropdown-item btn-action">Approve</a></li>';
+			$action .=		'<li><a href="'.admin_url('leave/approval/action/'.$result->id).'" data-action="2" class="dropdown-item btn-action">Reject</a></li>';
+			$action .=		'</ul>';
+			$action .=		'</div>';
+			//$action .= 		'<a class="btn btn-sm '.$btn_color.' btn-approve" data-href="'.admin_url('leave/approval/approve/'.$result->id).'">'.$status.'</a>';
 			$action .= '</div>';
+
 
 			$datatable[]=array(
 				'<div class="checkbox checkbox-primary checkbox-single">
@@ -57,7 +77,7 @@ class LeaveApplication extends AdminController {
 				$result->leave_id,
 				$result->leave_type,
 				$result->reason,
-				$result->leave_status,
+				'<span class="badge '.$btn_color.'">'.$status.'</span>',
 				$action
 			);
 
@@ -74,8 +94,21 @@ class LeaveApplication extends AdminController {
             ->setJSON($json_data);  // send data as json format
 	}
 
+	public function action(){
+		$json=[];
+		$leave_id=$this->uri->getSegment(5);
+		$action = $this->request->getPost('action');
+		$this->LeaveApplicationModel
+		->where('id', $leave_id)
+		->set('leave_status', $action)
+		->update();
+		$json['success']=true;
+		echo json_encode($json);
+		exit();
+	}
+
 	public function add(){
-		$this->template->set_meta_title(lang('LeaveApplication.heading_title'));
+		$this->template->set_meta_title(lang('LeaveApproval.heading_title'));
 
 		if (is_ajax() && $this->request->getMethod('REQUEST_METHOD') === 'POST'){
 
@@ -108,9 +141,9 @@ class LeaveApplication extends AdminController {
 					'status'=>1
 				);
 
-				$leaveid=$this->leaveApplicationModel->insert($leave_data);
-				$this->session->setFlashdata('message', 'LeaveApplication Saved Successfully.');
-				echo json_encode(array('status'=>true,'message'=>'LeaveApplication Saved Successfully.'));
+				$leaveid=$this->LeaveApprovalModel->insert($leave_data);
+				$this->session->setFlashdata('message', 'LeaveApproval Saved Successfully.');
+				echo json_encode(array('status'=>true,'message'=>'LeaveApproval Saved Successfully.'));
 				exit;
 			}
 			//return redirect()->to(admin_url('leaveapplication'));
@@ -121,14 +154,14 @@ class LeaveApplication extends AdminController {
 
 	public function edit(){
 
-		$this->template->set_meta_title(lang('LeaveApplication.heading_title'));
+		$this->template->set_meta_title(lang('LeaveApproval.heading_title'));
 
 		if ($this->request->getMethod('REQUEST_METHOD') === 'POST' && $this->validateForm()){
 			$leaveapplication_id=$this->uri->getSegment(4);
 
-			$this->leaveApplicationModel->editLeaveApplication($leaveapplication_id,$this->request->getPost());
+			$this->LeaveApprovalModel->editLeaveApproval($leaveapplication_id,$this->request->getPost());
 
-			$this->session->setFlashdata('message', 'LeaveApplication Updated Successfully.');
+			$this->session->setFlashdata('message', 'LeaveApproval Updated Successfully.');
 			return redirect()->to(admin_url('leaveapplication'));
 		}
 		$this->getForm();
@@ -140,8 +173,8 @@ class LeaveApplication extends AdminController {
       }else{
          $selected = (array) $this->uri->getSegment(4);
        }
-		$this->leaveApplicationModel->deleteLeaveApplication($selected);
-		$this->session->setFlashdata('message', 'LeaveApplication deleted Successfully.');
+		$this->LeaveApprovalModel->deleteLeaveApproval($selected);
+		$this->session->setFlashdata('message', 'LeaveApproval deleted Successfully.');
 		redirect(ADMIN_PATH.'/leaveapplication');
 	}
 
@@ -149,31 +182,31 @@ class LeaveApplication extends AdminController {
 
 		$data['breadcrumbs'] = array();
 		$data['breadcrumbs'][] = array(
-			'text' => lang('LeaveApplication.heading_title'),
+			'text' => lang('LeaveApproval.heading_title'),
 			'href' => admin_url('leaveapplication')
 		);
 
 		$this->template->add_package(array('datatable'),true);
 
 
-		$data['add'] = admin_url('leaveapplication/add');
-		$data['delete'] = admin_url('leaveapplication/delete');
-		$data['datatable_url'] = admin_url('leaveapplication/search');
+		$data['add'] = admin_url('leave/approval/add');
+		$data['delete'] = admin_url('leave/approval/delete');
+		$data['datatable_url'] = admin_url('leave/approval/search');
 
-		$data['heading_title'] = lang('LeaveApplication.heading_title');
+		$data['heading_title'] = lang('LeaveApproval.heading_title');
 
-		$data['text_list'] = lang('LeaveApplication.text_list');
-		$data['text_no_results'] = lang('LeaveApplication.text_no_results');
-		$data['text_confirm'] = lang('LeaveApplication.text_confirm');
+		$data['text_list'] = lang('LeaveApproval.text_list');
+		$data['text_no_results'] = lang('LeaveApproval.text_no_results');
+		$data['text_confirm'] = lang('LeaveApproval.text_confirm');
 
-		$data['column_leaveapplicationname'] = lang('LeaveApplication.column_leaveapplicationname');
-		$data['column_status'] = lang('LeaveApplication.column_status');
-		$data['column_date_added'] = lang('LeaveApplication.column_date_added');
-		$data['column_action'] = lang('LeaveApplication.column_action');
+		$data['column_leaveapplicationname'] = lang('LeaveApproval.column_leaveapplicationname');
+		$data['column_status'] = lang('LeaveApproval.column_status');
+		$data['column_date_added'] = lang('LeaveApproval.column_date_added');
+		$data['column_action'] = lang('LeaveApproval.column_action');
 
-		$data['button_add'] = lang('LeaveApplication.button_add');
-		$data['button_edit'] = lang('LeaveApplication.button_edit');
-		$data['button_delete'] = lang('LeaveApplication.button_delete');
+		$data['button_add'] = lang('LeaveApproval.button_add');
+		$data['button_edit'] = lang('LeaveApproval.button_edit');
+		$data['button_delete'] = lang('LeaveApproval.button_delete');
 
 		if(isset($this->error['warning'])){
 			$data['error'] 	= $this->error['warning'];
@@ -185,7 +218,7 @@ class LeaveApplication extends AdminController {
 			$data['selected'] = array();
 		}
 
-		return $this->template->view('Admin\LeaveApplication\Views\leaveApplication', $data);
+		return $this->template->view('Admin\Leave\Views\leaveApproval', $data);
 	}
 
 	protected function getForm(){
@@ -195,22 +228,22 @@ class LeaveApplication extends AdminController {
 
 		$data['breadcrumbs'] = array();
 		$data['breadcrumbs'][] = array(
-			'text' => lang('LeaveApplication.heading_title'),
+			'text' => lang('LeaveApproval.heading_title'),
 			'href' => admin_url('leaveapplication')
 		);
 
 		$data['breadcrumbs'][] = array(
-			'text' => lang('LeaveApplication.text_add'),
+			'text' => lang('LeaveApproval.text_add'),
 			'href' => admin_url('leaveapplication/add')
 		);
 
 		$_SESSION['isLoggedIn'] = true;
 
-		$data['heading_title'] 	= lang('LeaveApplication.heading_title');
+		$data['heading_title'] 	= lang('LeaveApproval.heading_title');
 
-		$data['text_form'] = $this->uri->getSegment(4) ? lang('LeaveApplication.text_edit') : lang('LeaveApplication.text_add');
-		$data['button_save'] = lang('LeaveApplication.button_save');
-		$data['button_cancel'] = lang('LeaveApplication.button_cancel');
+		$data['text_form'] = $this->uri->getSegment(4) ? lang('LeaveApproval.text_edit') : lang('LeaveApproval.text_add');
+		$data['button_save'] = lang('LeaveApproval.button_save');
+		$data['button_cancel'] = lang('LeaveApproval.button_cancel');
 		$data['cancel'] = admin_url('leaveapplication');
 
 		if(isset($this->error['warning']))
@@ -219,10 +252,10 @@ class LeaveApplication extends AdminController {
 		}
 
 		if ($this->uri->getSegment(4) && ($this->request->getMethod('REQUEST_METHOD') != 'POST')) {
-			$leaveapplication_info = $this->leaveApplicationModel->find($this->uri->getSegment(4));
+			$leaveapplication_info = $this->LeaveApprovalModel->find($this->uri->getSegment(4));
 		}
 
-		foreach($this->leaveApplicationModel->getFieldNames($this->leaveApplicationModel->table) as $field) {
+		foreach($this->LeaveApprovalModel->getFieldNames($this->LeaveApprovalModel->table) as $field) {
 			if($this->request->getPost($field)) {
 				$data[$field] = $this->request->getPost($field);
 			} else if(isset($leaveapplication_info->{$field}) && $leaveapplication_info->{$field}) {
@@ -253,20 +286,17 @@ class LeaveApplication extends AdminController {
 		$data['leavetypes']=array('f'=>'Full day','h'=>'HalfDay','tf'=>'Three Fourth','q'=>'Quarter');
 
 
-		echo $this->template->view('Admin\LeaveApplication\Views\leaveApplicationForm',$data);
+		echo $this->template->view('Admin\LeaveApproval\Views\LeaveApprovalForm',$data);
 	}
 
 	public function getLeaveDetails(){
 		$data=$this->getEmployeeLeaveBalance();
-
-		echo view('Admin\LeaveApplication\Views\leaveBalance', $data);
+		echo view('Admin\LeaveApproval\Views\leaveBalance', $data);
 		exit;
 	}
 
 	protected function getEmployeeLeaveBalance(){
 		$user_id=$this->request->getPost('user_id');
-		$employee=(new EmployeeModel())->getEmployee($user_id);
-		//printr($employee);
 		$previous_balance=$this->getLeaveBalance($user_id,true);
 
 		//printr($previous_balance);
@@ -315,7 +345,6 @@ class LeaveApplication extends AdminController {
 			'total_leave_total' => $total_leave_total,
 			'total_balance_total' => $total_balance_total,
 		];
-		$data['heading']="Leaving Details of ".$employee->employee_name."(".$employee->paycode.")";
 		return $data;
 
 	}
@@ -372,7 +401,7 @@ class LeaveApplication extends AdminController {
 
 
 
-		$leave_taken_balance=$this->leaveApplicationModel->getLeaveTakenByUser($filter);
+		$leave_taken_balance=$this->LeaveApprovalModel->getLeaveTakenByUser($filter);
 
 		$leavetaken = [];
 		foreach ($leave_taken_balance as  $value) {
@@ -415,7 +444,7 @@ class LeaveApplication extends AdminController {
 	protected function validateForm() {
         $validation =  \Config\Services::validation();
         $id=$this->uri->getSegment(4);
-        $rules = $this->leaveApplicationModel->validationRules;
+        $rules = $this->LeaveApprovalModel->validationRules;
 
         if ($this->validate($rules)){
             return true;

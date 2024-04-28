@@ -64,6 +64,26 @@ $(function(){
 			dataType:'json'
 		},
 	});
+
+	$(document).on("click",".btn-action",function(e){
+		e.preventDefault();
+		var href = $(this).attr("href");
+		//alert(href);
+		var action = $(this).data("action");
+		$.ajax({
+			url:href,
+			method:"post",
+			dataType:"json",
+			data: {
+				action:action
+			},
+			success:function(json){
+				if(json.success){
+					$('#datatable').DataTable().ajax.reload();
+				}
+			}
+		})
+	})
 });
 //--></script>
 <?php js_end(); ?>

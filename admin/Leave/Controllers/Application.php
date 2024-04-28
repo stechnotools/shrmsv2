@@ -1,16 +1,16 @@
 <?php
-namespace Admin\LeaveApplication\Controllers;
+namespace Admin\Leave\Controllers;
 
 use Admin\Branch\Models\BranchModel;
 use Admin\Department\Models\DepartmentModel;
 use Admin\Employee\Models\EmployeeModel;
 use Admin\Leave\Models\LeaveModel;
-use Admin\LeaveApplication\Models\LeaveApplicationModel;
-use Admin\LeaveOpening\Models\LeaveOpeningModel;
+use Admin\Leave\Models\LeaveApplicationModel;
+use Admin\Leave\Models\LeaveOpeningModel;
 use Admin\Users\Models\UserModel;
 use App\Controllers\AdminController;
 
-class LeaveApplication extends AdminController {
+class Application extends AdminController {
 	private $error = array();
 	private $leaveApplicationModel;
 	public function __construct(){
@@ -42,8 +42,8 @@ class LeaveApplication extends AdminController {
 		$datatable=array();
 		foreach($filteredData as $result) {
 			$action  = '<div class="btn-group btn-group-sm pull-right">';
-			$action .= 		'<a class="btn btn-sm btn-primary" href="'.admin_url('leaveapplication/edit/'.$result->id).'"><i class="fas fa-pencil-alt"></i></a>';
-			$action .=		'<a class="btn-sm btn btn-danger btn-remove" href="'.admin_url('leaveapplication/delete/'.$result->id).'" onclick="return confirm(\'Are you sure?\') ? true : false;"><i class="fas fa-trash"></i></a>';
+			$action .= 		'<a class="btn btn-sm btn-primary" href="'.admin_url('leave/application/edit/'.$result->id).'"><i class="fas fa-pencil-alt"></i></a>';
+			$action .=		'<a class="btn-sm btn btn-danger btn-remove" href="'.admin_url('leave/application/delete/'.$result->id).'" onclick="return confirm(\'Are you sure?\') ? true : false;"><i class="fas fa-trash"></i></a>';
 			$action .= '</div>';
 
 			$datatable[]=array(
@@ -156,9 +156,9 @@ class LeaveApplication extends AdminController {
 		$this->template->add_package(array('datatable'),true);
 
 
-		$data['add'] = admin_url('leaveapplication/add');
-		$data['delete'] = admin_url('leaveapplication/delete');
-		$data['datatable_url'] = admin_url('leaveapplication/search');
+		$data['add'] = admin_url('leave/application/add');
+		$data['delete'] = admin_url('leave/application/delete');
+		$data['datatable_url'] = admin_url('leave/application/search');
 
 		$data['heading_title'] = lang('LeaveApplication.heading_title');
 
@@ -185,7 +185,7 @@ class LeaveApplication extends AdminController {
 			$data['selected'] = array();
 		}
 
-		return $this->template->view('Admin\LeaveApplication\Views\leaveApplication', $data);
+		return $this->template->view('Admin\Leave\Views\leaveApplication', $data);
 	}
 
 	protected function getForm(){
@@ -201,7 +201,7 @@ class LeaveApplication extends AdminController {
 
 		$data['breadcrumbs'][] = array(
 			'text' => lang('LeaveApplication.text_add'),
-			'href' => admin_url('leaveapplication/add')
+			'href' => admin_url('leave/application/add')
 		);
 
 		$_SESSION['isLoggedIn'] = true;
@@ -253,17 +253,20 @@ class LeaveApplication extends AdminController {
 		$data['leavetypes']=array('f'=>'Full day','h'=>'HalfDay','tf'=>'Three Fourth','q'=>'Quarter');
 
 
-		echo $this->template->view('Admin\LeaveApplication\Views\leaveApplicationForm',$data);
+		echo $this->template->view('Admin\Leave\Views\leaveApplicationForm',$data);
 	}
 
 	public function getLeaveDetails(){
 		$data=$this->getEmployeeLeaveBalance();
-		echo view('Admin\LeaveApplication\Views\leaveBalance', $data);
+
+		echo view('Admin\Leave\Views\leaveBalance', $data);
 		exit;
 	}
 
 	protected function getEmployeeLeaveBalance(){
 		$user_id=$this->request->getPost('user_id');
+		$employee=(new EmployeeModel())->getEmployee($user_id);
+		//printr($employee);
 		$previous_balance=$this->getLeaveBalance($user_id,true);
 
 		//printr($previous_balance);
@@ -312,6 +315,7 @@ class LeaveApplication extends AdminController {
 			'total_leave_total' => $total_leave_total,
 			'total_balance_total' => $total_balance_total,
 		];
+		$data['heading']="Leaving Details of ".$employee->employee_name."(".$employee->paycode.")";
 		return $data;
 
 	}

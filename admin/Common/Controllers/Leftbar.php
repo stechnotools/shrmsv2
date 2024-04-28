@@ -148,10 +148,10 @@ class Leftbar extends AdminController{
             );
         }
 
-        if ($this->user->hasPermission('leaveopening')) {
+        if ($this->user->hasPermission('leave/opening')) {
             $masters[] = array(
                 'name'	  => lang('Leftbar.text_leaveopening'),
-                'href'     => admin_url('leaveopening'),
+                'href'     => admin_url('leave/opening'),
                 'children' => array()
             );
         }
@@ -226,10 +226,10 @@ class Leftbar extends AdminController{
 
 
 
-        if ($this->user->hasPermission('leaveapplication')) {
+        if ($this->user->hasPermission('leave/application')) {
             $operations[] = array(
                 'name'	  => lang('Leftbar.text_tourapplication'),
-                'href'     => admin_url('leaveapplication'),
+                'href'     => admin_url('leave/application'),
                 'children' => array()
             );
         }
