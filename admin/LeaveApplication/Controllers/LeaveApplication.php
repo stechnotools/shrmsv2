@@ -258,12 +258,15 @@ class LeaveApplication extends AdminController {
 
 	public function getLeaveDetails(){
 		$data=$this->getEmployeeLeaveBalance();
+
 		echo view('Admin\LeaveApplication\Views\leaveBalance', $data);
 		exit;
 	}
 
 	protected function getEmployeeLeaveBalance(){
 		$user_id=$this->request->getPost('user_id');
+		$employee=(new EmployeeModel())->getEmployee($user_id);
+		//printr($employee);
 		$previous_balance=$this->getLeaveBalance($user_id,true);
 
 		//printr($previous_balance);
@@ -312,6 +315,7 @@ class LeaveApplication extends AdminController {
 			'total_leave_total' => $total_leave_total,
 			'total_balance_total' => $total_balance_total,
 		];
+		$data['heading']="Leaving Details of ".$employee->employee_name."(".$employee->paycode.")";
 		return $data;
 
 	}

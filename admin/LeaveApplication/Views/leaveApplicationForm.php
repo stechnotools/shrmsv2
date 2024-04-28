@@ -76,9 +76,7 @@ $validation = \Config\Services::validation();
 					</div>
 
 					<div class="col-md-6">
-						<h4>My Leave Details</h4>
 						<div id="leavedetails"></div>
-
 					</div>
 				</div>
 
