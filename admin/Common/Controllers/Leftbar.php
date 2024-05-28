@@ -328,10 +328,10 @@ class Leftbar extends AdminController{
         $payroll = array();
 
 
-        if ($this->user->hasPermission('salary/field')) {
+        if ($this->user->hasPermission('sfield')) {
             $payroll[] = array(
                 'name'	  => 'Salary Field',
-                'href'     => admin_url('salary/field'),
+                'href'     => admin_url('sfield'),
                 'children' => array()
             );
         }

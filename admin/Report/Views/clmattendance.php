@@ -100,14 +100,14 @@ $(function(){
         "scrollY": "300px", // Adjust as per your requirement
         "scrollCollapse": true,
 		"scrollX": true,
-        "paging":         false,
+        "paging":         true,
         "fixedColumns":   {
             left: 2
         },
 		"ordering": false,
         "info":     false,
-		"searching":false,
-		"dom": 'f<"download-btn"B>ltip',
+		"searching":true,
+		"dom": '<"left"l><"middle"B><"right"f>rtip',
         "buttons": [
             'csv',
 			'excel',

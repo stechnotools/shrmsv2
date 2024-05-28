@@ -695,6 +695,12 @@ class Attendance extends AdminController{
             $data['user_id'] = '';
         }
 
+		if($this->request->getGet('user_id')){
+            $data['user_id'] = $this->request->getGet('user_id');
+        }else{
+            $data['user_id'] = '';
+        }
+
         $filter_data=[
             'fromdate'=>$data['fromdate'],
             'todate'=>$data['todate'],
@@ -847,6 +853,7 @@ class Attendance extends AdminController{
 						$status="MIS";
 					}
 					if($daily['no_of_punch']>2 ){
+						
 						$lunch_out=$daily['lunch_out'];
 						$lunch_in=$daily['lunch_in'];
 						$lunch_duration=$daily['lunch_duration'];
