@@ -265,6 +265,7 @@ async function uploadBatches(rows, batchSize,sheetName) {
 
                 progressBar.css('width', `${progress}%`).attr('aria-valuenow', progress).text(`${progress}%`);
             } catch (error) {
+				console.log(error);
                 console.error(`Error uploading batch ${batchIndex}:`, error);
                 // Handle the error
             }

@@ -328,7 +328,7 @@ class MainPunch extends AdminController {
 
 			$safety_pass_no = trim($sheet[0]);
 			$flag=	trim($sheet[3]);
-			$shift = trim($sheet[7]);
+			$shift = trim($sheet[4]);
 			$punch_date = $punchdate;
 			$punch_time = date('H:i:s', strtotime($sheet[5]));
 			$location = trim($sheet[7]);
@@ -433,8 +433,8 @@ class MainPunch extends AdminController {
 			'auto_shift'=>$shiftdata->run_auto_shift,
 			'first_week'=>$shiftdata->first_week,
 			'second_week'=>$shiftdata->second_week,
-			'late_arrival'=>$timedata->perm_late,
-			'early_departure'=>$timedata->perm_early,
+			'late_arrival'=>$timedata ? ($timedata->perm_late ?? '00:00:00') : '00:00:00',
+			'early_departure'=>$timedata ? ($timedata->perm_early ?? '00:00:00') : '00:00:00',
 			'total_punch'=>$timedata->punches,
 			'punch_date'=>$punch_date,
 			'status'=>1
