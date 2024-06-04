@@ -456,9 +456,10 @@ class MainPunch extends AdminController {
 		$employeedata=(new EmployeeModel())->getEmployee($data['user_id']);
 
 		$no_of_punch=$mainpunchHistoryModel->where(['punch_id'=>$punch_id])-> countAllResults();
-		if($timedata->punches==-1){
+		$punches=$timedata?($timedata->punches ?? 0):0;
+		if($punches==-1){
 			$punch_status=1;
-		}else if($no_of_punch<=($timedata->punches)){
+		}else if($no_of_punch<=($punches)){
 			$punch_status=1;
 		}else{
 			$punch_status=0;
