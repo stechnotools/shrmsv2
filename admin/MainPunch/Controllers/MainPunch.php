@@ -435,7 +435,7 @@ class MainPunch extends AdminController {
 			'second_week'=>$shiftdata->second_week,
 			'late_arrival'=>$timedata ? ($timedata->perm_late ?? '00:00:00') : '00:00:00',
 			'early_departure'=>$timedata ? ($timedata->perm_early ?? '00:00:00') : '00:00:00',
-			'total_punch'=>$timedata->punches,
+			'total_punch'=>$timedata ? ($timedata->punches ?? 0) : 0,
 			'punch_date'=>$punch_date,
 			'status'=>1
 		);
