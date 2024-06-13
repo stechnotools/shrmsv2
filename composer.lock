@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8deff9b606f91ae9642338e295ec77ad",
+    "content-hash": "aeff1c49da939c11614206ae150fc075",
     "packages": [
         {
             "name": "codeigniter4/framework",
@@ -140,6 +140,172 @@
                 "source": "https://github.com/codeigniter4/queue/tree/develop"
             },
             "time": "2024-04-09T07:04:01+00:00"
+        },
+        {
+            "name": "codeigniter4/settings",
+            "version": "v2.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/codeigniter4/settings.git",
+                "reference": "2748f2b4572d44a940f98c31847d65272cac5666"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/codeigniter4/settings/zipball/2748f2b4572d44a940f98c31847d65272cac5666",
+                "reference": "2748f2b4572d44a940f98c31847d65272cac5666",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "codeigniter4/devkit": "^1.1.2",
+                "codeigniter4/framework": "^4.2.3",
+                "rector/rector": "0.18.13"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "CodeIgniter\\Settings\\": "src"
+                },
+                "exclude-from-classmap": [
+                    "**/Database/Migrations/**"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Lonnie Ezell",
+                    "email": "lonnieje@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Settings library for CodeIgniter 4",
+            "homepage": "https://github.com/codeigniter4/settings",
+            "keywords": [
+                "Settings",
+                "codeigniter",
+                "codeigniter4"
+            ],
+            "support": {
+                "issues": "https://github.com/codeigniter4/settings/issues",
+                "source": "https://github.com/codeigniter4/settings/tree/v2.2.0"
+            },
+            "time": "2024-01-06T07:10:58+00:00"
+        },
+        {
+            "name": "daycry/cronjob",
+            "version": "v2.2.25",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/daycry/cronjob.git",
+                "reference": "c4a35249b89f676f6a7871a16fdc2ffbf6ffd3af"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/daycry/cronjob/zipball/c4a35249b89f676f6a7871a16fdc2ffbf6ffd3af",
+                "reference": "c4a35249b89f676f6a7871a16fdc2ffbf6ffd3af",
+                "shasum": ""
+            },
+            "require": {
+                "codeigniter4/settings": "^2.0",
+                "dragonmantank/cron-expression": "^3.3",
+                "php": ">=8.0"
+            },
+            "require-dev": {
+                "codeigniter4/devkit": "^0.1.0",
+                "codeigniter4/framework": "^4",
+                "phpunit/phpunit": "^9.1",
+                "rector/rector": "0.14.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Daycry\\CronJob\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "daycry",
+                    "homepage": "https://github.com/daycry",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Cronjob library for Codeigniter 4",
+            "homepage": "https://github.com/daycry/cronjob",
+            "support": {
+                "issues": "https://github.com/daycry/cronjob/issues",
+                "source": "https://github.com/daycry/cronjob/tree/v2.2.25"
+            },
+            "time": "2024-03-16T19:52:29+00:00"
+        },
+        {
+            "name": "dragonmantank/cron-expression",
+            "version": "v3.3.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dragonmantank/cron-expression.git",
+                "reference": "adfb1f505deb6384dc8b39804c5065dd3c8c8c0a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dragonmantank/cron-expression/zipball/adfb1f505deb6384dc8b39804c5065dd3c8c8c0a",
+                "reference": "adfb1f505deb6384dc8b39804c5065dd3c8c8c0a",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2|^8.0",
+                "webmozart/assert": "^1.0"
+            },
+            "replace": {
+                "mtdowling/cron-expression": "^1.0"
+            },
+            "require-dev": {
+                "phpstan/extension-installer": "^1.0",
+                "phpstan/phpstan": "^1.0",
+                "phpstan/phpstan-webmozart-assert": "^1.0",
+                "phpunit/phpunit": "^7.0|^8.0|^9.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Cron\\": "src/Cron/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Tankersley",
+                    "email": "chris@ctankersley.com",
+                    "homepage": "https://github.com/dragonmantank"
+                }
+            ],
+            "description": "CRON for PHP: Calculate the next or previous run date and determine if a CRON expression is due",
+            "keywords": [
+                "cron",
+                "schedule"
+            ],
+            "support": {
+                "issues": "https://github.com/dragonmantank/cron-expression/issues",
+                "source": "https://github.com/dragonmantank/cron-expression/tree/v3.3.3"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/dragonmantank",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-08-10T19:36:49+00:00"
         },
         {
             "name": "ezyang/htmlpurifier",
@@ -817,6 +983,64 @@
                 "source": "https://github.com/php-fig/simple-cache/tree/3.0.0"
             },
             "time": "2021-10-29T13:26:27+00:00"
+        },
+        {
+            "name": "webmozart/assert",
+            "version": "1.11.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webmozarts/assert.git",
+                "reference": "11cb2199493b2f8a3b53e7f19068fc6aac760991"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/11cb2199493b2f8a3b53e7f19068fc6aac760991",
+                "reference": "11cb2199493b2f8a3b53e7f19068fc6aac760991",
+                "shasum": ""
+            },
+            "require": {
+                "ext-ctype": "*",
+                "php": "^7.2 || ^8.0"
+            },
+            "conflict": {
+                "phpstan/phpstan": "<0.12.20",
+                "vimeo/psalm": "<4.6.1 || 4.6.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8.5.13"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.10-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webmozart\\Assert\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bernhard Schussek",
+                    "email": "bschussek@gmail.com"
+                }
+            ],
+            "description": "Assertions to validate method input/output with nice error messages.",
+            "keywords": [
+                "assert",
+                "check",
+                "validate"
+            ],
+            "support": {
+                "issues": "https://github.com/webmozarts/assert/issues",
+                "source": "https://github.com/webmozarts/assert/tree/1.11.0"
+            },
+            "time": "2022-06-03T18:03:27+00:00"
         }
     ],
     "packages-dev": [
@@ -2797,9 +3021,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "codeigniter4/queue": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

@@ -11,5 +11,6 @@ $routes->group('admin', ['namespace' => 'Admin','filter' => 'login'], function($
     $routes->get('mainpunch/deletehistory/(:segment)',   'MainPunch\Controllers\MainPunch::deleteHistory/$1');
 
     $routes->post('mainpunch/uploadpunch','MainPunch\Controllers\MainPunch::uploadpunch');
+    $routes->post('mainpunch/uploadpunchbyqueue','MainPunch\Controllers\MainPunch::uploadPunchByQueue');
 });
 

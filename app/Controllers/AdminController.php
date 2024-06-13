@@ -63,7 +63,7 @@ abstract class AdminController extends Controller
 
         // E.g.: $this->session = \Config\Services::session();
 
-        $this->settings = new \Config\Settings();
+        $this->settings = new \Config\Setting();
 		$this->template = service('template');
         $this->user = service('user');
 		$this->session = service('session');

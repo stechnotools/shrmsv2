@@ -44,9 +44,9 @@
 			<div class="card-header py-2 text-white">
 				<h3 class="card-title float-left my-2"><?php echo $heading_title; ?></h3>
 				<div class="panel-tools float-right">
-					<?php echo form_open_multipart('admin/employee/upload','class="upload-form"');?>
+					<?php echo form_open_multipart('admin/employee/upload','id="upload-form"');?>
 					<a href="<?=$download_sample?>" data-toggle="tooltip"  class="btn btn-primary btn-sm" target="_self" download>Download Sample</a>
-					<input type="file" name="bpunch" id="bpunch" style="display:none">
+					<input type="file" name="mpunch" id="mpunch" style="display:none">
 					<button type="button" data-toggle="tooltip" title="Upload Bulk Attendance" class="btn btn-info btn-sm" onclick="thisFileUpload();">Attendance Upload</i></button>
 
 					<a href="<?php echo $add; ?>" data-toggle="tooltip" title="<?php echo $button_add; ?>" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i></a>
@@ -187,7 +187,7 @@ let batchProgress = 0; // Variable to track batch progress
 let batchIndex = 0; // Variable to track batch index
 let totalBatches = 0; // Variable to track total number of batches
 
-$("#bpunch").change(async function(evt) {
+$("#mpunch").change(async function(evt) {
     const [selectedFile] = evt.target.files;
     const fileReader = new FileReader();
 
@@ -288,7 +288,25 @@ function updateBatchProgress(progress) {
 
 
 function thisFileUpload() {
-	document.getElementById("bpunch").click();
+	document.getElementById("mpunch").click();
 };
+$('#punch').on('change', function(e) {
+	e.preventDefault();
+	var formData = new FormData($('#upload-form')[0]);
+	//toastr["success"]("Have fun storming the castle!");
+	$.ajax({
+		url: '<?=admin_url('mainpunch/uploadpunchbyqueue')?>',
+		type: 'POST',
+		data: formData,
+		contentType: false,
+		processData: false,
+		success: function(response) {
+			toastr["success"]( response.message);
+		},
+		error: function() {
+			toastr["error"]("An error occurred while uploading the file.");
+		}
+	});
+});
 </script>
 <?php js_end(); ?>

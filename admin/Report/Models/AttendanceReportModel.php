@@ -271,7 +271,7 @@ class AttendanceReportModel extends Model
 		  ORDER BY mh.punch_time ASC) savior
 		  ON savior.user_id = e.user_id";
 		  //echo $sql;
-		  //exit;
+		 // exit;
 		  return $this->db->query($sql)->getResultArray();
 
 	}

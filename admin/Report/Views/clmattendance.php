@@ -100,7 +100,7 @@ $(function(){
         "scrollY": "300px", // Adjust as per your requirement
         "scrollCollapse": true,
 		"scrollX": true,
-        "paging":         true,
+        "paging":         false,
         "fixedColumns":   {
             left: 2
         },

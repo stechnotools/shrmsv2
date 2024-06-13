@@ -3,7 +3,7 @@ namespace Config;
 
 use CodeIgniter\Config\BaseConfig;
 
-class Settings extends BaseConfig
+class Setting extends BaseConfig
 {
 
 	const TABLE = 'config';

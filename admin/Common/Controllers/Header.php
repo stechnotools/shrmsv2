@@ -7,7 +7,7 @@ class Header extends AdminController
 {
 	public function __construct()
     {
-		$this->settings = new \Config\Settings();
+		$this->settings = new \Config\Setting();
 	}
 	public function index()
 	{

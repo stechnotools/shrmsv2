@@ -680,7 +680,7 @@ class Attendance extends AdminController{
         if($this->request->getGet('fromdate')){
             $data['fromdate'] = $data['todate'] = $this->request->getGet('fromdate');
         }else{
-            $data['fromdate'] = $data['todate'] = date('Y-m-d');
+            $data['fromdate'] = $data['todate'] = date('d-m-Y');
         }
 
         if($this->request->getGet('branch_id')){
@@ -702,8 +702,8 @@ class Attendance extends AdminController{
         }
 
         $filter_data=[
-            'fromdate'=>$data['fromdate'],
-            'todate'=>$data['todate'],
+            'fromdate'=>date('Y-m-d',strtotime($data['fromdate'])), //$data['fromdate'],
+            'todate'=>date('Y-m-d',strtotime($data['todate'])), //$$data['todate'],
             'branch_id'=>$data['branch_id'],
             'user_id'=>$data['user_id']
         ];

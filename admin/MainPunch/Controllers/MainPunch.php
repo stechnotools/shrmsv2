@@ -17,7 +17,14 @@ use Admin\Section\Controllers\Section;
 use Admin\Section\Models\SectionModel;
 use Admin\Shift\Models\ShiftModel;
 use App\Controllers\AdminController;
+use App\Jobs\Email;
+use CodeIgniter\I18n\Time;
+use Config\Services;
 use DateTime;
+use Daycry\CronJob\Config\CronJob;
+use Daycry\CronJob\Job;
+use Daycry\CronJob\JobRunner;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class MainPunch extends AdminController {
 	private $error = array();
@@ -30,7 +37,11 @@ class MainPunch extends AdminController {
 
 	public function index(){
 		$this->template->set_meta_title(lang('MainPunch.heading_title'));
-        return $this->getList();
+		//echo Time::now()->timestamp;
+		//exit;
+		//service('queue')->push('emails', 'email', ['message' => 'Email message with low priority']);
+		
+		return $this->getList();
 	}
 
 	public function search() {
@@ -315,6 +326,71 @@ class MainPunch extends AdminController {
 
 	}
 
+	public function uploadPunchByQueue(){
+		$response = ['message' => ''];
+        $file = $this->request->getFile('punch');
+        if ($file->isValid() && !$file->hasMoved()) {
+            $filename = $file->getRandomName();
+			$filePath = WRITEPATH . 'uploads/' . $filename;
+			
+            $file->move(WRITEPATH . 'uploads/', $filename);
+			
+            // Load Excel file
+            $spreadsheet = IOFactory::load($filePath);
+            $sheetCount = $spreadsheet->getSheetCount();
+            // Process each sheet
+            for ($i = 0; $i < $sheetCount; $i++) {
+                $sheet = $spreadsheet->getSheet($i);
+                $sheetName = $sheet->getTitle();
+                $sheetData = $sheet->toArray();
+				$queuename=preg_replace('/[^A-Za-z0-9]/', '', $sheetName);
+                $this->processSheetData($sheetName, $sheetData,$queuename);
+				//$this->scheduleJob($queuename);         
+            }
+
+            $response['message'] = 'File uploaded and jobs added to the queue successfully.';
+        } else {
+            $response['message'] = 'Failed to upload file.';
+        }
+
+        return $this->response->setJSON($response);
+	}
+
+	private function processSheetData($sheetName, $sheetData,$queuename)
+    {
+		$queue = Services::queue();
+		$queue->push($queuename,'mainpunch', ['sheetName' => $sheetName, 'sheetData' => $sheetData]);  
+		//$chunkSize = 100; // Adjust the chunk size as needed
+        //$chunks = array_chunk($sheetData, $chunkSize);
+		//printr($sheetData);
+		//exit;
+        // Enqueue tasks for each chunk
+       /* foreach ($chunks as $key => $chunk) {
+			$queuename.=$key;
+			$queue->push($queuename,'mainpunch', ['sheetName' => $sheetName, 'chunk' => $chunk]);
+			//exit;
+        } */
+    }
+
+	
+
+	private function scheduleJob($queueName)
+    {
+        /*$scheduler = Services::scheduler();
+		//$scheduler->command("queue:work --queue={$queueName}")->named($queueName)->daily();
+		$scheduler->url(base_url('test'))->named($queueName)->daily();
+		
+		$scheduler->start();*/
+		//$task = (new Job('command', "queue:work --queue={$queueName}"))->named($queueName)->daily();
+        //$task->getAction();
+
+		$job = (new Job('url', 'https://google.es'))->daily('12:00 am')->named('1234');
+
+        $scheduler = service('scheduler');
+        $scheduler->setPrivateProperty($scheduler, 'tasks', [$job]);
+        \Config\Services::injectMock('scheduler', $scheduler);
+    }
+	
 	public function uploadpunch(){
 		$mainrawpunchModel = new MainRawPunchModel();
 		$mainpunchModel = new MainPunchModel();
@@ -449,7 +525,6 @@ class MainPunch extends AdminController {
 
 	}
 
-
 	public function saveMainPunchHistory($data,$punch_id,$punch_history_id=0){
 		$mainpunchHistoryModel=new MainPunchHistoryModel();
 		$timedata=(new EmployeeModel())->getEmployeeTime($data['user_id']);
@@ -503,7 +578,7 @@ class MainPunch extends AdminController {
 			'href' => admin_url('mainpunch')
 		);
 
-		$this->template->add_package(array('datatable','select2','daterangepicker'),true);
+		$this->template->add_package(array('datatable','select2','daterangepicker','toastr'),true);
 
 
 		$data['add'] = admin_url('mainpunch/add');

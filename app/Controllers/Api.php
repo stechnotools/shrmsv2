@@ -43,7 +43,7 @@ class Api extends ResourceController
             foreach ($chunks as $chunk) {
                 // Enqueue a job for each batch
 				service('queue')->push('punch_data', new ProcessPunchDataJob($chunk));
-				service('queue')->push('queueName', 'jobName', ['array' => 'parameters']);
+				//service('queue')->push('queueName', 'jobName', ['array' => 'parameters']);
 
             }
 

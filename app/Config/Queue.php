@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Config;
 
+use App\Jobs\Email;
+use App\Jobs\MainPunch;
 use App\Jobs\Rawpaunch;
 use CodeIgniter\Queue\Config\Queue as BaseQueue;
 use CodeIgniter\Queue\Exceptions\QueueException;
@@ -87,13 +89,17 @@ class Queue extends BaseQueue
      * Default priorities for the queue
      * if different from the "default".
      */
-    public array $queueDefaultPriority = [];
+    public array $queueDefaultPriority = [
+        'emails' => 'low',
+    ];
 
     /**
      * Valid priorities in the order for the queue,
      * if different from the "default".
      */
-    public array $queuePriorities = [];
+    public array $queuePriorities = [
+        'emails'=>['high','low'],
+    ];
 
     /**
      * Your jobs handlers.
@@ -101,7 +107,9 @@ class Queue extends BaseQueue
      * @var array<string, class-string<JobInterface>>
      */
     public array $jobHandlers = [
-        'rawpunch' => Rawpaunch::class,
+        //'rawpunch' => Rawpaunch::class,
+        //'email' => Email::class,
+        'mainpunch' => MainPunch::class,
     ];
 
 }
