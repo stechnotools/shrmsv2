@@ -390,198 +390,199 @@ class MainPunch extends AdminController {
         \Config\Services::injectMock('scheduler', $scheduler);
     }
 	
-	public function uploadpunch() {
-		ini_set('max_execution_time', 600000);
-		ini_set('memory_limit', '10G');
-		ini_set('display_errors', 1);
-		ini_set('display_startup_errors', 1);
-		error_reporting(E_ALL);
-	
-		try {
+	public function uploadpunch(){
+		try{
 			$mainrawpunchModel = new MainRawPunchModel();
 			$mainpunchModel = new MainPunchModel();
-			$mainpunchHistoryModel = new MainPunchHistoryModel();
+			$mainpunchHistoryModel= new MainPunchHistoryModel();
 			$json = $this->request->getBody();
-	
+
 			// Decode the JSON data into an array
 			$sheets = json_decode($json, true);
-	
-			$punchdate = date('Y-m-d', strtotime($sheets['sheetName']));
-			$batchSize = 100; // Define batch size for processing
-	
-			$batch = [];
-			foreach ($sheets['sheetData'] as $sheet) {
+			
+			$punchdate=date('Y-m-d',strtotime($sheets['sheetName']));
+			foreach($sheets['sheetData'] as $sheet){
+
 				$safety_pass_no = trim($sheet[0]);
-				$flag = trim($sheet[3]);
+				$flag=	trim($sheet[3]);
 				$shift = trim($sheet[4]);
 				$punch_date = $punchdate;
 				$punch_time = date('H:i:s', strtotime($sheet[5]));
 				$location = trim($sheet[7]);
-	
-				$employee = $this->employeeModel->where('safety_pass_no', $safety_pass_no)->first();
-				if ($employee) {
-					$employeoffice = $this->employeeModel->getEmployee($employee->user_id);
-					$machinerawpunch = [
+
+
+				$employee=$this->employeeModel->where('safety_pass_no', $safety_pass_no)->first();
+				if($employee){
+					$employeoffice=$this->employeeModel->getEmployee($employee->user_id);
+					$machinerawpunch=[
+						'user_id'=>$employeoffice->user_id,
+						'branch_id'=>$employeoffice->branch_id,
+						'safety_pass_no'=>$safety_pass_no,
+						'punch_date'=>$punch_date,
+						'punch_time'=>$punch_time,
+						'flag'=>$flag,
+						'shift'=>$employeoffice->shift_id,
+						'department_id'=>$employeoffice->department_id,
+						'location'=>$location
+					];
+
+					$checkdata = $mainrawpunchModel->where($machinerawpunch)->first();
+					$lastquery= $mainrawpunchModel->getLastQuery();
+
+					$errorMessage = 'Raw punch last query 1: ' . $lastquery;
+					//log_message('info', $errorMessage);
+					if (empty($checkdata)) {
+						$lastid=$mainrawpunchModel->insert($machinerawpunch);
+						$errorMessage = 'Raw punch insert id 2: ' . $lastid;
+						//log_message('info', $errorMessage);
+					} else {
+						$mainrawpunchModel->update($checkdata->id, $machinerawpunch);
+						$lastquery= $mainrawpunchModel->getLastQuery();
+						$errorMessage = 'Raw punch update last query 2: ' . $lastquery;
+						//log_message('info', $errorMessage);
+					}
+
+					$pdata = [
 						'user_id' => $employeoffice->user_id,
+						'paycode' => $employeoffice->paycode,
 						'branch_id' => $employeoffice->branch_id,
-						'safety_pass_no' => $safety_pass_no,
 						'punch_date' => $punch_date,
 						'punch_time' => $punch_time,
-						'flag' => $flag,
-						'shift' => $employeoffice->shift_id,
-						'department_id' => $employeoffice->department_id,
-						'location' => $location
+						'punch_type' => 'A'
 					];
-	
-					$batch[] = $machinerawpunch;
-	
-					if (count($batch) >= $batchSize) {
-						$this->processBatch($batch, $mainrawpunchModel, $mainpunchModel, $mainpunchHistoryModel);
-						$batch = []; // Clear the batch
+
+					$singledata = $mainpunchModel->where(['user_id' => $employeoffice->user_id, 'punch_date' => $punch_date, 'branch_id' => $employeoffice->branch_id])->first();
+					$lastquery= $mainpunchModel->getLastQuery();
+					$errorMessage = 'singledata last query 3: ' . $lastquery;
+					//log_message('info', $errorMessage);
+					if (empty($singledata)) {
+						$punch_id = $this->saveMainPunch($pdata);
+						$errorMessage = 'savepunch id 4: ' . $punch_id;
+						//log_message('info', $errorMessage);
+					} else {
+						$punch_id = $singledata->id;
+						$this->saveMainPunch($pdata, $punch_id);
+						$errorMessage = 'updatepunch id 4: ' . $punch_id;
+						//log_message('info', $errorMessage);
 					}
+
+					$singlepdata = $mainpunchHistoryModel->where(['punch_id' => $punch_id, 'punch_date' => $punch_date, 'punch_time' => $punch_time, 'branch_id' => $employeoffice->branch_id])->first();
+					$lastquery= $mainpunchHistoryModel->getLastQuery();
+					$errorMessage = 'single histroy data last query 5: ' . $lastquery;
+					//log_message('info', $errorMessage);
+					if (empty($singlepdata)) {
+						$this->saveMainPunchHistory($pdata, $punch_id);
+						$errorMessage = ' add 6';
+						//log_message('info', $errorMessage);
+					} else {
+						$this->saveMainPunchHistory($pdata, $punch_id, $singlepdata->id);
+						$errorMessage = 'update 6';
+						//log_message('info', $errorMessage);
+					}
+
+
 				}
+
+
 			}
-	
-			// Process any remaining records in the last batch
-			if (!empty($batch)) {
-				$this->processBatch($batch, $mainrawpunchModel, $mainpunchModel, $mainpunchHistoryModel);
-			}
-	
-			echo json_encode(["status" => "added"]);
-		} catch (Exception $e) {
-			log_message('error', $e->getMessage());
-			echo json_encode(["status" => "error", "message" => $e->getMessage()]);
+		}catch(Exception $e){
+			log_message('error catch', $e->getMessage());
 		}
+
+		echo json_encode(array("status"=>"added"));
 		exit;
+
 	}
-	
-	private function processBatch($batch, $mainrawpunchModel, $mainpunchModel, $mainpunchHistoryModel) {
-		$db = \Config\Database::connect();
-		$db->transStart();
-	
-		foreach ($batch as $machinerawpunch) {
-			try {
-				$checkdata = $mainrawpunchModel->where($machinerawpunch)->first();
-				if (empty($checkdata)) {
-					$mainrawpunchModel->insert($machinerawpunch);
-				} else {
-					$mainrawpunchModel->update($checkdata->id, $machinerawpunch);
-				}
-	
-				$employeoffice = $this->employeeModel->getEmployee($machinerawpunch['user_id']);
-				$pdata = [
-					'user_id' => $machinerawpunch['user_id'],
-					'paycode' => $employeoffice->paycode,
-					'branch_id' => $machinerawpunch['branch_id'],
-					'punch_date' => $machinerawpunch['punch_date'],
-					'punch_time' => $machinerawpunch['punch_time'],
-					'punch_type' => 'A'
-				];
-	
-				$singledata = $mainpunchModel->where(['user_id' => $machinerawpunch['user_id'], 'punch_date' => $machinerawpunch['punch_date'], 'branch_id' => $machinerawpunch['branch_id']])->first();
-				if (empty($singledata)) {
-					$punch_id = $this->saveMainPunch($pdata);
-				} else {
-					$punch_id = $singledata->id;
-					$this->saveMainPunch($pdata, $punch_id);
-				}
-	
-				$singlepdata = $mainpunchHistoryModel->where(['punch_id' => $punch_id, 'punch_date' => $machinerawpunch['punch_date'], 'punch_time' => $machinerawpunch['punch_time'], 'branch_id' => $machinerawpunch['branch_id']])->first();
-				if (empty($singlepdata)) {
-					$this->saveMainPunchHistory($pdata, $punch_id);
-				} else {
-					$this->saveMainPunchHistory($pdata, $punch_id, $singlepdata->id);
-				}
-			} catch (Exception $e) {
-				log_message('error', 'Error processing record: ' . json_encode($machinerawpunch) . ' - ' . $e->getMessage());
-			}
-		}
-	
-		$db->transComplete();
-	
-		if ($db->transStatus() === FALSE) {
-			log_message('error', 'Transaction failed for batch: ' . json_encode($batch));
-		}
-	}
-	
-	public function saveMainPunch($data, $punch_id = 0) {
-		$mainpunchModel = new MainPunchModel();
-	
-		$employeedata = (new EmployeeModel())->getEmployee($data['user_id']);
-		$shiftdata = (new EmployeeModel())->getEmployeeShift($data['user_id']);
-		$timedata = (new EmployeeModel())->getEmployeeTime($data['user_id']);
-	
-		$punch_date = date("Y-m-d", strtotime($data['punch_date']));
-		$punch_data = array(
-			'user_id' => $data['user_id'],
-			'employee_name' => $employeedata->employee_name,
-			'paycode' => $employeedata->paycode,
-			'branch_id' => $employeedata->branch_id,
-			'branch_name' => $employeedata->branch_name,
-			'department_id' => $employeedata->department_id,
-			'department_name' => $employeedata->department_name,
-			'category_id' => $employeedata->category_id,
-			'category_name' => $employeedata->category_name,
-			'section_id' => $employeedata->section_id,
-			'section_name' => $employeedata->section_name,
-			'grade_id' => $employeedata->grade_id,
-			'grade_name' => $employeedata->grade_name,
-			'designation_id' => $employeedata->designation_id,
-			'designation_name' => $employeedata->designation_name,
-			'shift_type' => $employeedata->shift_type,
-			'shift_id' => $shiftdata->shift_id,
-			'shift_name' => $shiftdata->shift_name,
-			'shift_pattern' => $shiftdata->shift_pattern,
-			'shift_start_time' => $shiftdata->shift_start_time,
-			'shift_end_time' => $shiftdata->shift_end_time,
-			'auto_shift' => $shiftdata->run_auto_shift,
-			'first_week' => $shiftdata->first_week,
-			'second_week' => $shiftdata->second_week,
-			'late_arrival' => $timedata ? ($timedata->perm_late ?? '00:00:00') : '00:00:00',
-			'early_departure' => $timedata ? ($timedata->perm_early ?? '00:00:00') : '00:00:00',
-			'total_punch' => $timedata ? ($timedata->punches ?? 0) : 0,
-			'punch_date' => $punch_date,
-			'status' => 1
+
+	public function saveMainPunch($data,$punch_id=0){
+		$mainpunchModel=new MainPunchModel();
+
+		$employeedata=(new EmployeeModel())->getEmployee($data['user_id']);
+		$shiftdata=(new EmployeeModel())->getEmployeeShift($data['user_id']);
+		$timedata=(new EmployeeModel())->getEmployeeTime($data['user_id']);
+
+		$punch_date=date("Y-m-d",strtotime($data['punch_date']));
+		$punch_data=array(
+			'user_id'=>$data['user_id'],
+			'employee_name'=>$employeedata->employee_name,
+			'paycode'=>$employeedata->paycode,
+			'branch_id'=>$employeedata->branch_id,
+			'branch_name'=>$employeedata->branch_name,
+			'department_id'=>$employeedata->department_id,
+			'department_name'=>$employeedata->department_name,
+			'category_id'=>$employeedata->category_id,
+			'category_name'=>$employeedata->category_name,
+			'section_id'=>$employeedata->section_id,
+			'section_name'=>$employeedata->section_name,
+			'grade_id'=>$employeedata->grade_id,
+			'grade_name'=>$employeedata->grade_name,
+			'designation_id'=>$employeedata->designation_id,
+			'designation_name'=>$employeedata->designation_name,
+			'shift_type'=>$employeedata->shift_type,
+			'shift_id'=>$shiftdata->shift_id,
+			'shift_name'=>$shiftdata->shift_name,
+			'shift_pattern'=>$shiftdata->shift_pattern,
+			'shift_start_time'=>$shiftdata->shift_start_time,
+			'shift_end_time'=>$shiftdata->shift_end_time,
+			'auto_shift'=>$shiftdata->run_auto_shift,
+			'first_week'=>$shiftdata->first_week,
+			'second_week'=>$shiftdata->second_week,
+			'late_arrival'=>$timedata ? ($timedata->perm_late ?? '00:00:00') : '00:00:00',
+			'early_departure'=>$timedata ? ($timedata->perm_early ?? '00:00:00') : '00:00:00',
+			'total_punch'=>$timedata ? ($timedata->punches ?? 0) : 0,
+			'punch_date'=>$punch_date,
+			'status'=>1
 		);
-	
-		if ($punch_id) {
-			$mainpunchModel->update($punch_id, $punch_data);
-		} else {
-			$punch_id = $mainpunchModel->insert($punch_data);
+		if($punch_id){
+			$mainpunchModel->update($punch_id,$punch_data);
+		}else{
+			$punch_id=$mainpunchModel->insert($punch_data);
 		}
-	
+		$lastquery= $mainpunchModel->getLastQuery();
+		$errorMessage = 'main punch save data last query: ' . $lastquery;
+		//log_message('info', $errorMessage);
+
 		return $punch_id;
+
 	}
-	
-	public function saveMainPunchHistory($data, $punch_id, $punch_history_id = 0) {
-		$mainpunchHistoryModel = new MainPunchHistoryModel();
-		$timedata = (new EmployeeModel())->getEmployeeTime($data['user_id']);
-		$employeedata = (new EmployeeModel())->getEmployee($data['user_id']);
-	
-		$no_of_punch = $mainpunchHistoryModel->where(['punch_id' => $punch_id])->countAllResults();
-		$punches = $timedata ? ($timedata->punches ?? 0) : 0;
-		$punch_status = ($punches == -1 || $no_of_punch <= $punches) ? 1 : 0;
-	
-		$punch_history = array(
-			'punch_id' => $punch_id,
-			'user_id' => $data['user_id'],
-			'card_no' => $employeedata->card_no,
-			'paycode' => $data['paycode'],
-			'punch_date' => $data['punch_date'],
-			'punch_time' => $data['punch_time'],
-			'punch_type' => $data['punch_type'],
-			'branch_id' => $data['branch_id'],
-			'no_of_punch' => $no_of_punch + 1,
-			'punch_status' => $punch_status
-		);
-	
-		if ($punch_history_id) {
-			$mainpunchHistoryModel->update($punch_history_id, $punch_history);
-		} else {
-			$punch_history_id = $mainpunchHistoryModel->insert($punch_history);
+
+	public function saveMainPunchHistory($data,$punch_id,$punch_history_id=0){
+		$mainpunchHistoryModel=new MainPunchHistoryModel();
+		$timedata=(new EmployeeModel())->getEmployeeTime($data['user_id']);
+		$employeedata=(new EmployeeModel())->getEmployee($data['user_id']);
+
+		$no_of_punch=$mainpunchHistoryModel->where(['punch_id'=>$punch_id])-> countAllResults();
+		$punches=$timedata?($timedata->punches ?? 0):0;
+		if($punches==-1){
+			$punch_status=1;
+		}else if($no_of_punch<=($punches)){
+			$punch_status=1;
+		}else{
+			$punch_status=0;
 		}
+		$punch_history=array(
+			'punch_id'=>$punch_id,
+			'user_id'=>$data['user_id'],
+			'card_no'=>$employeedata->card_no,
+			'paycode'=>$data['paycode'],
+			'punch_date'=>$data['punch_date'],
+			'punch_time'=>$data['punch_time'],
+			'punch_type'=>$data['punch_type'],
+			'branch_id'=>$data['branch_id'],
+			'no_of_punch'=>$no_of_punch+1,
+			'punch_status'=>$punch_status
+		);
+		if($punch_history_id){
+			$mainpunchHistoryModel->update($punch_history_id,$punch_history);
+		}else{
+			$punch_history_id=$mainpunchHistoryModel->insert($punch_history);
+		}
+
+		$lastquery= $mainpunchHistoryModel->getLastQuery();
+		$errorMessage = 'main mainpunchHistoryModel save data last query: ' . $lastquery;
+		//log_message('info', $errorMessage);
+
 	}
-	
 
 	public function delete(){
 		if ($this->request->getPost('selected')){
