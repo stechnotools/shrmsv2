@@ -682,6 +682,7 @@ class Attendance extends AdminController{
         }else{
             $data['fromdate'] = $data['todate'] = date('d-m-Y');
         }
+		
 
         if($this->request->getGet('branch_id')){
             $data['branch_id'] = $this->request->getGet('branch_id');
