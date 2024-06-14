@@ -227,7 +227,7 @@ $("#mpunch").change(async function(evt) {
 
             // Calculate the total number of batches
             totalBatches = Math.ceil(rows.length / 100); // Assuming 100 as batchSize
-
+			//alert(totalBatches);
             // Upload batches
             batchIndex = 0;
             await uploadBatches(rows, 100,sheetName); // Upload batches with default batch runs
@@ -243,7 +243,7 @@ $("#mpunch").change(async function(evt) {
 
 async function uploadBatches(rows, batchSize,sheetName) {
     const progressBar = $('#batchprogressbar');
-
+	
     while (batchIndex < totalBatches) {
         const start = batchIndex * batchSize;
         const end = Math.min(start + batchSize, rows.length);
@@ -265,12 +265,13 @@ async function uploadBatches(rows, batchSize,sheetName) {
 
                 progressBar.css('width', `${progress}%`).attr('aria-valuenow', progress).text(`${progress}%`);
             } catch (error) {
+				batchIndex++;
 				console.log(error);
                 console.error(`Error uploading batch ${batchIndex}:`, error);
                 // Handle the error
             }
         } else {
-            // If all batches are uploaded, break the loop
+			batchIndex++;
             break;
         }
     }

@@ -109,7 +109,7 @@ class Queue extends BaseQueue
     public array $jobHandlers = [
         //'rawpunch' => Rawpaunch::class,
         //'email' => Email::class,
-        'mainpunch' => MainPunch::class,
+       // 'mainpunch' => MainPunch::class,
     ];
 
 }

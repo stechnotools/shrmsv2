@@ -30,7 +30,7 @@ class CronController extends BaseController
                 $sheet = $spreadsheet->getSheet($i);
                 $sheetName = $sheet->getTitle();
                 $sheetData = $sheet->toArray();
-				$queuename=preg_replace('/[^A-Za-z0-9]/', '', $sheetName);
+                $queuename=preg_replace('/[^A-Za-z0-9]/', '', $sheetName);
                 $this->processSheetData($sheetName, $sheetData,$queuename);
 				//$this->scheduleJob($queuename);         
             }

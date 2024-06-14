@@ -131,6 +131,6 @@ class CronJob extends \Daycry\CronJob\Config\CronJob
         // $schedule->shell('cp foo bar')->daily( '11:00 pm' );
 
         // $schedule->call( function() { do something.... } )->everyMonday()->named( 'foo' )
-        $schedule->url(base_url('cron/clmpunch'))->named("clmpunch")->daily();
+       //$schedule->url(base_url('cron/clmpunch'))->named("clmpunch")->everyMinute();
     }
 }
